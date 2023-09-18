@@ -13,23 +13,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9"]
-        singularity-version: ["3.10.5"]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.9"
           cache: "pip"
       - name: Install nextflow
         uses: nf-core/setup-nextflow@v1
       - uses: eWaterCycle/setup-singularity@v7
         with:
-          singularity-version: ${{ matrix.singularity-version }}
+          singularity-version: "3.8.3"
       - name: Install champagne
         run: |
           python -m pip install --upgrade pip setuptools
