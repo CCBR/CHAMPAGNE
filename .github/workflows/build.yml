@@ -30,15 +30,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install .[dev,test]
-      - uses: actions/cache/restore@v3
-        id: cache-containers-restore
-        with:
-          path: .singularity
-          key: ${{ runner.os }}-containers
+      # - uses: actions/cache/restore@v3
+      #   id: cache-containers-restore
+      #   with:
+      #     path: .singularity
+      #     key: ${{ runner.os }}-containers
 
       - name: Test stub run
         run: |
+          echo $NXF_SINGULARITY_CACHEDIR
           champagne run -profile ci_stub,github -stub
+          echo $NXF_SINGULARITY_CACHEDIR
 
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
@@ -46,8 +48,8 @@ jobs:
           name: nextflow-log
           path: .nextflow.log
 
-      - uses: actions/cache/save@v3
-        id: cache-containers-save
-        with:
-          path: .singularity
-          key: ${{ steps.cache-cache-containers-restore.outputs.cache-primary-key }}
+      # - uses: actions/cache/save@v3
+      #   id: cache-containers-save
+      #   with:
+      #     path: .singularity
+      #     key: ${{ steps.cache-cache-containers-restore.outputs.cache-primary-key }}
