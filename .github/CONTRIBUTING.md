@@ -25,3 +25,16 @@ Keep the changelog up to date with all notable changes in `CHANGELOG.md`[^2].
 ## VS code extensions
 
 If you use VS code, installing [nf-core extension pack](https://marketplace.visualstudio.com/items?itemName=nf-core.nf-core-extensionpack) is recommended.
+
+## Installation
+
+For testing and debugging, We recommend installing the dev version of champagne in editable mode to a user-specific location.
+
+```
+git clone https://github.com/CCBR/CHAMPAGNE
+mkdir -p ~/bin/champagne
+pip install -e CHAMPAGNE -t ~/bin/champagne
+export PATH="$HOME/bin/champagne/bin:$PATH"
+```
+
+Then you can run your local version of champagne, make edits to the code as needed, and run your edited version again without reinstalling it.

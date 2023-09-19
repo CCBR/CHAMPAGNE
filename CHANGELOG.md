@@ -11,9 +11,14 @@
   - Error when biowulf-specific environment variables are not defined. (#54)
   - The host is now correctly detected as biowulf via `scontrol`. (#75)
 - Containers:
-  - When mount binding paths to containers, we use `--mount type=bind` for Singularity and `--volume` for Docker for compatibility. (#69)
   - Containers are now specified in process definitions instead of `withName`/`withLabel` for better control. (#69)
-    - Shared containers are specified as parameters in the config file.
+    - Shared containers are specified as parameters in the config file `conf/containers.config`.
+  - No longer use `--mount type=bind` or `--volume` for making directories available to processes in containers. Instead, use Nextflow's `Channel.fromPath` constructor with `type: 'dir'`. (#71)
+
+### API-breaking changes
+
+- An error is thrown when a required input file doesn't exist. (#71)
+  - Previously, the workflow quietly didn't run the process(es) that required the missing file.
 
 ## CHAMPAGNE 0.1.0
 

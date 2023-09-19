@@ -41,7 +41,6 @@ jobs:
           echo $NXF_SINGULARITY_CACHEDIR
           champagne run -profile ci_stub,github -stub
           echo $NXF_SINGULARITY_CACHEDIR
-
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         with:

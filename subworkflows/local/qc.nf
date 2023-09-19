@@ -33,7 +33,10 @@ workflow QC {
     main:
         raw_fastqs.combine(Channel.value("raw")) | FASTQC_RAW
         trimmed_fastqs.combine(Channel.value("trimmed")) | FASTQC_TRIMMED
-        trimmed_fastqs.combine(Channel.fromPath(params.fastq_screen.conf)) | FASTQ_SCREEN
+        trimmed_fastqs
+          .combine(Channel.fromPath(params.fastq_screen.conf, checkIfExists: true))
+          .combine(Channel.fromPath(params.fastq_screen.db_dir,
+                                    type: 'dir', checkIfExists: true)) | FASTQ_SCREEN
 
         PRESEQ(aligned_bam)
         // when preseq fails, write NAs for the stats that are calculated from its log
@@ -77,8 +80,9 @@ workflow QC {
                     meta1.control == meta2.id ? [ meta1, [ bam1, bam2 ], [ bai1, bai2 ] ] : null
             }
             .set { ch_ip_ctrl_bam_bai }
-        PLOT_FINGERPRINT(ch_ip_ctrl_bam_bai)
-        BED_PROTEIN_CODING(Channel.fromPath(params.genomes[ params.genome ].gene_info))
+        ch_ip_ctrl_bam_bai | PLOT_FINGERPRINT
+        Channel.fromPath(params.genomes[ params.genome ].gene_info,
+                         checkIfExists: true) | BED_PROTEIN_CODING
         COMPUTE_MATRIX(bigwig_list,
                        BED_PROTEIN_CODING.out.bed.combine(Channel.from('metagene','TSS'))
         )
@@ -98,7 +102,7 @@ workflow QC {
             .set { ch_ip_ctrl_bigwig }
 
         MULTIQC(
-            Channel.fromPath(params.multiqc_config),
+            Channel.fromPath(params.multiqc_config, checkIfExists: true),
             FASTQC_RAW.out.zip.collect(),
             FASTQC_TRIMMED.out.zip.collect(),
             FASTQ_SCREEN.out.screen.collect(),

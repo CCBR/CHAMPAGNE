@@ -41,3 +41,6 @@ replay_pid*
 # code editors
 .vscode/
 *.code-workspace
+
+# user-specific dev files
+*KLS*

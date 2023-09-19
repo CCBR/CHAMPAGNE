@@ -51,14 +51,15 @@ process ALIGN_GENOME {
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     # current working directory is a tmpdir when 'scratch' is set
-    tmp=tmp/
-    trap 'rm -rf "\$tmp"' EXIT
+    TMP=tmp/
+    mkdir \$TMP
+    trap 'rm -rf "\$TMP"' EXIT
 
     bwa mem -t ${task.cpus} ${params.genome} ${fastq} > ${prefix}.bam
     samtools sort \\
       -@ ${task.cpus} \\
       -m 2G \\
-      -T \$tmp \\
+      -T \$TMP \\
       ${prefix}.bam > ${prefix}.sorted.bam
     samtools view \\
       -@ ${task.cpus} \\

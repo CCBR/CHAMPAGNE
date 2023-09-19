@@ -37,17 +37,19 @@ workflow {
     INPUT_CHECK.out.reads.set { raw_fastqs }
     raw_fastqs | TRIM_SE
     TRIM_SE.out.set{ trimmed_fastqs }
-    blacklist_files = Channel
-                        .fromPath(params.genomes[ params.genome ].blacklist_files)
-                        .collect()
+
+    Channel.fromPath(params.genomes[ params.genome ].blacklist_files, checkIfExists: true)
+        .collect()
+        .set{ blacklist_files }
     ALIGN_BLACKLIST(trimmed_fastqs, blacklist_files)
-    reference_files = Channel
-                        .fromPath(params.genomes[ params.genome ].reference_files)
-                        .collect()
+    Channel.fromPath(params.genomes[ params.genome ].reference_files, checkIfExists: true)
+        .collect()
+        .set{ reference_files }
     ALIGN_GENOME(ALIGN_BLACKLIST.out.reads, reference_files)
     ALIGN_GENOME.out.bam.set{ aligned_bam }
 
-    chrom_sizes = Channel.fromPath(params.genomes[ params.genome ].chrom_sizes)
+    Channel.fromPath(params.genomes[ params.genome ].chrom_sizes, checkIfExists: true)
+        .set{ chrom_sizes }
     aligned_bam.combine(chrom_sizes) | DEDUPLICATE
     DEDUPLICATE.out.bam.set{ deduped_bam }
     DEDUPLICATE.out.tag_align.set{ deduped_tagalign }
@@ -62,12 +64,11 @@ workflow {
            deduped_bam, DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths
            )
-    }
-
-    if (params.run.normalize_input) {
-        // Create channel: [ meta, [ ip_bam, control_bam ] [ ip_bai, control_bai ] ]
         QC.out.bigwigs.set{ ch_ip_ctrl_bigwig }
-        ch_ip_ctrl_bigwig | NORMALIZE_INPUT
+
+        if (params.run.normalize_input) {
+            ch_ip_ctrl_bigwig | NORMALIZE_INPUT
+        }
     }
 
     if (params.run.call_peaks) {

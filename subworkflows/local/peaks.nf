@@ -32,10 +32,11 @@ workflow CALL_PEAKS {
                 meta1, tag1, meta2, tag2 ->
                     meta1.control == meta2.id ? [ meta1, tag1, tag2 ]: null
             }
-            .combine(Channel.fromPath(params.gem_read_dists))
+            .combine(Channel.fromPath(params.gem_read_dists, checkIfExists: true))
             .combine(chrom_sizes)
             .set { ch_gem }
-            chrom_files = Channel.fromPath(params.genomes[ params.genome ].chromosomes_dir).collect()
+        Channel.fromPath("${params.genomes[ params.genome ].chromosomes_dir}", type: 'dir', checkIfExists: true)
+            .set{ chrom_files }
 
         ch_tagalign | MACS_BROAD
         ch_tagalign | MACS_NARROW

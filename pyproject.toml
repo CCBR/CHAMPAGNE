@@ -61,7 +61,7 @@ Changelog = "https://github.com/CCBR/CHAMPAGNE/blob/main/docs/CHANGELOG.md"
 champagne = "."
 
 [tool.setuptools.package-data]
-"*" = ["CITATION.cff", "LICENSE", "VERSION", "main.nf", "nextflow.conf", "assets/", "bin/", "conf/", "modules/*/*", "subworkflows/*/*", "tests/"]
+"*" = ["CITATION.cff", "LICENSE", "VERSION", "main.nf", "nextflow.conf", "assets/", "bin/", "conf/", "modules/*/*", "subworkflows/*/*", "tests/*/*"]
 
 [tool.setuptools.dynamic]
 version = {file = "src/VERSION"}
