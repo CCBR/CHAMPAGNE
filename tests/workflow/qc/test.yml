@@ -1,0 +1,2 @@
+- name: test_qc
+  command: nextflow run ./tests/workflow/qc/main.nf -entry test_qc_stats -c conf/base.config -c tests/config/nextflow.config -c tests/workflow/qc/nextflow.config

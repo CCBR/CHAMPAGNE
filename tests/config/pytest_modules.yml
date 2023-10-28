@@ -1,0 +1,4 @@
+qc:
+  - modules/local/qc/**
+  - subworkflows/local/qc/**
+  - tests/workflow/qc/**
