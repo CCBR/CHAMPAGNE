@@ -1,6 +1,7 @@
 ## development version
 
 - Support multiple replicates per sample and call consensus peaks. (#129)
+- Increased default `q` for macs2 to `0.1`.
 
 ## CHAMPAGNE 0.2.1
 
