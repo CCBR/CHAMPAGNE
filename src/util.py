@@ -99,11 +99,12 @@ def chmod_bins_exec():
     bin_dir = nek_base("bin/")
     for filename in os.listdir(bin_dir):
         bin_path = os.path.join(bin_dir, filename)
-        file_stat = os.stat(bin_path)
-        # below is equivalent to `chmod +x`
-        os.chmod(
-            bin_path, file_stat.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
-        )
+        if bin_path.is_file(follow_symlinks=False):
+            file_stat = os.stat(bin_path)
+            # below is equivalent to `chmod +x`
+            os.chmod(
+                bin_path, file_stat.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+            )
 
 
 class OrderedCommands(click.Group):
@@ -153,8 +154,6 @@ def run_nextflow(
 ):
     """Run a Nextflow workflow"""
     nextflow_command = ["nextflow", "run", nextfile_path]
-    # make sure bins are executable for nextflow processes
-    chmod_bins_exec()
 
     hpc = get_hpc()
     if mode == "slurm" and not hpc:
