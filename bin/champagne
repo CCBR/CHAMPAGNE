@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+TOOLDIR=$(realpath $(dirname $(dirname ${BASH_SOURCE})))
+
+${TOOLDIR}/main.py "$@"

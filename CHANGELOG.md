@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- Create a script (`bin/champagne`) to provide an interface to the champagne CLI that works out-of-the-box without the need to install the python package with `pip`. (#180, @kelly-sovacool)
+  - However, any dependencies not in the Python Standard Library must be installed for this to work. See the dependencies list in `pyproject.toml`.
 - Fix configuration files for compatibility with using the GitHub repo as the source. (#173, @kelly-sovacool)
   - These equivalent commands now work:
     ```sh
