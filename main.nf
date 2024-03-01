@@ -36,6 +36,9 @@ include { PHANTOM_PEAKS
           PPQT_PROCESS
           MULTIQC                  } from "./modules/local/qc.nf"
 
+
+contrastsheet = params.contrastsheet ?: "/assets/contrast_test.ymls"
+
 workflow.onComplete {
     if (!workflow.stubRun && !workflow.commandLine.contains('-preview')) {
         def message = Utils.spooker(workflow)
@@ -64,7 +67,7 @@ workflow {
 }
 
 workflow CHIPSEQ {
-    INPUT_CHECK(file(params.input, checkIfExists: true), params.seq_center)
+    INPUT_CHECK(file(params.input, checkIfExists: true), params.seq_center, file(contrastsheet))
 
     INPUT_CHECK.out.reads.set { raw_fastqs }
     raw_fastqs | CUTADAPT
@@ -129,7 +132,6 @@ workflow CHIPSEQ {
             }
             .set{ ch_consensus_peaks }
         if (params.contrasts) {
-            contrasts = file(params.contrasts, checkIfExists: true)
             // TODO use consensus peaks for regions of interest in diffbind
             CALL_PEAKS.out.bam_peaks
                 .combine(deduped_bam)
@@ -145,8 +147,7 @@ workflow CHIPSEQ {
                 .set{ tagalign_peaks }
             DIFF( bam_peaks,
                   tagalign_peaks,
-                  INPUT_CHECK.out.csv,
-                  contrasts
+                  INPUT_CHECK.out.contrasts
                 )
 
         }

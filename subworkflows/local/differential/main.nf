@@ -1,4 +1,3 @@
-include { CHECK_CONTRASTS } from "../../../modules/local/check_contrasts/"
 include { DIFFBIND        } from "../../../subworkflows/local/diffbind/"
 include { MANORM          } from "../../../subworkflows/local/manorm/"
 
@@ -6,22 +5,9 @@ workflow DIFF {
     take:
         bam_peaks
         tagalign_peaks
-        samplesheet_file
-        contrasts_file
+        contrasts
 
     main:
-
-        CHECK_CONTRASTS(samplesheet_file, contrasts_file)
-            .csv
-            .flatten()
-            .splitCsv( header: true, sep: ',' )
-            .map{ it ->
-                meta = get_contrast_meta(it)
-                [ sample_basename: meta.sample_basename, group: meta.group, contrast: meta.contrast ]
-            }
-            .unique()
-            .set{ contrasts }
-
         bam_peaks
             .map{ meta, bam, bai, peak, ctrl_bam, ctrl_bai -> [meta.sample_basename, meta.rep] }
             .groupTuple()
@@ -71,18 +57,4 @@ workflow DIFF {
         diff_peaks = bam_peaks
         // TODO
 
-}
-
-def get_contrast_meta(LinkedHashMap row) {
-    def meta = [:]
-    meta.id              = row.sample
-    meta.sample_basename = row.sample_basename
-    meta.rep             = row.rep
-    meta.single_end      = row.single_end.toBoolean()
-    meta.antibody        = row.antibody
-    meta.control         = row.control
-    meta.group           = row.group
-    meta.contrast        = row.contrast
-
-    return meta
 }

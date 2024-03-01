@@ -70,7 +70,7 @@ process NORMALIZE_INPUT {
 process BIGWIG_SUM {
     label 'qc'
     label 'deeptools'
-    label 'process_high'
+    label 'process_high_memory'
 
     container "${params.containers.deeptools}"
 
@@ -307,7 +307,7 @@ process PLOT_HEATMAP {
 process PLOT_PROFILE {
   label 'qc'
   label 'deeptools'
-  label 'process_single'
+  label 'process_low'
 
   container "${params.containers.deeptools}"
 

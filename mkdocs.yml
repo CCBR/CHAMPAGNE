@@ -96,6 +96,8 @@ nav:
   - Home: index.md
   - Usage:
       - Getting Started: getting-started.md
+      - Creating Manifests: manifests.md
+      - Workflow Overview: workflow.md
   - Developer Guide:
       - How to contribute: contributing.md
       - Release guide: release-guide.md

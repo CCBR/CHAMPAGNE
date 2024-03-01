@@ -26,6 +26,7 @@ load_package(args$txdb)
 txdb <- args$txdb %>%
   rlang::sym() %>%
   eval()
+dir.create(file.path(outfile_prefix), showWarnings = FALSE)
 
 # parse peak file
 np <- read.table(args$peak, sep = "\t")
@@ -71,7 +72,7 @@ annot <- annotatePeak(
   ignoreDownstream = FALSE,
   overlap = "TSS"
 )
-saveRDS(annot, file = glue("{outfile_prefix}.annotation.Rds"))
+saveRDS(annot, file = glue("{outfile_prefix}/{outfile_prefix}.annotation.Rds"))
 
 padf <- as.data.frame(annot)
 padf$peakID <- paste(padf$seqnames, ":", padf$start, "-", padf$end, sep = "")
@@ -103,7 +104,7 @@ merged <- dplyr::full_join(padf, np, by = "peakID") %>%
   dplyr::rename("#peakID" = "peakID") %>%
   dplyr::arrange(dplyr::desc(qValue))
 
-annotated_outfile <- glue("{outfile_prefix}.annotated.txt")
+annotated_outfile <- glue("{outfile_prefix}/{outfile_prefix}.annotated.txt")
 write.table(merged, annotated_outfile, sep = "\t", quote = FALSE, row.names = FALSE)
 l <- paste("# Median peak width : ", median(merged$width), sep = "")
 write(l, annotated_outfile, append = TRUE)
@@ -114,7 +115,7 @@ write(l, annotated_outfile, append = TRUE)
 
 
 # get promoter genes
-outfile_genelist <- glue("{outfile_prefix}.genelist.txt")
+outfile_genelist <- glue("{outfile_prefix}/{outfile_prefix}.genelist.txt")
 # ... all lines with annotation starting with "Promoter"
 promoters1 <- dplyr::filter(merged, grepl("Promoter", annotation))
 # ... all lines with annotation is "5' UTR"
@@ -138,7 +139,7 @@ write(l, outfile_genelist, append = TRUE)
 # annotation type frequency table
 
 l <- paste("#annotationType", "frequency", "medianWidth", "medianpValue", "medianqValue", sep = "\t")
-outfile_summary <- glue("{outfile_prefix}.summary.txt")
+outfile_summary <- glue("{outfile_prefix}/{outfile_prefix}.summary.txt")
 write(l, outfile_summary)
 atypes <- c(
   "3' UTR",
@@ -169,7 +170,7 @@ for (ann in c("Exon", "Intron")) {
 
 # upset plot
 ggsave(
-  filename = glue("{outfile_prefix}_upsetplot.png"),
+  filename = glue("{outfile_prefix}/{outfile_prefix}_upsetplot.png"),
   plot = upsetplot(annot, vennpie = TRUE),
   device = "png"
 )

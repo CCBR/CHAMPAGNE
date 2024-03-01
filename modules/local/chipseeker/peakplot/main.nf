@@ -1,7 +1,7 @@
 process CHIPSEEKER_PEAKPLOT {
     tag "${meta.id}"
     label 'peaks'
-    label 'process_medium'
+    label 'process_high'
 
     container 'nciccbr/ccbr_chipseeker:1.1.2'
 
