@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- The CHAMPAGNE nextflow workflow now has a version entry in `nextflow.config`, in compliance with nf-core. (#213, @kelly-sovacool)
+
 ## CHAMPAGNE 0.4.0
 
 ### New features
