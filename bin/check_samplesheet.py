@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 """
-source: https://github.com/nf-core/chipseq/blob/51eba00b32885c4d0bec60db3cb0a45eb61e34c5/bin/check_samplesheet.py
+adapted from: https://github.com/nf-core/chipseq/blob/51eba00b32885c4d0bec60db3cb0a45eb61e34c5/bin/check_samplesheet.py
 """
-
+import collections
 import os
 import errno
 import argparse
@@ -52,6 +52,7 @@ def check_samplesheet(file_in, file_out):
     """
 
     sample_mapping_dict = {}
+    input_dict = collections.defaultdict(list)
     with open(file_in, "r", encoding="utf-8-sig") as fin:
         ## Check header
         MIN_COLS = 2
@@ -144,6 +145,7 @@ def check_samplesheet(file_in, file_out):
                         "Line",
                         line,
                     )
+            is_control_input = not antibody and not control
 
             ## Auto-detect paired-end/single-end
             if not sample or not fastq_1:
@@ -172,7 +174,9 @@ def check_samplesheet(file_in, file_out):
                     print_error("Samplesheet contains duplicate rows!", "Line", line)
                 else:
                     sample_mapping_dict[sample].append(sample_info)
-    # pprint.pprint(sample_mapping_dict)
+            if is_control_input:
+                input_dict[sample_basename].append(sample_info)
+
     ## Write validated samplesheet with appropriate columns
     if len(sample_mapping_dict) > 0:
         out_dir = os.path.dirname(file_out)
@@ -205,11 +209,12 @@ def check_samplesheet(file_in, file_out):
                         sample,
                     )
 
+                # check that the control/input exists
                 for idx, val in enumerate(sample_mapping_dict[sample]):
                     control = val[-1]
-                    if control and control not in sample_mapping_dict.keys():
+                    if control and control not in input_dict.keys():
                         print_error(
-                            f"Control identifier has to match a provided sample identifier!",
+                            "Control identifier has to match a provided sample identifier!",
                             "Control",
                             control,
                         )

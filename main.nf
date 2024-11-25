@@ -32,6 +32,7 @@ include { DIFF                     } from './subworkflows/local/differential/'
 
 // MODULES
 include { CUTADAPT                 } from "./modules/CCBR/cutadapt"
+include { CAT_CAT                  } from "./modules/nf-core/cat/cat"
 include { PHANTOM_PEAKS
           PPQT_PROCESS
           MULTIQC                  } from "./modules/local/qc.nf"
@@ -75,15 +76,38 @@ workflow CHIPSEQ {
 
     INPUT_CHECK.out.reads.set { raw_fastqs }
     raw_fastqs | CUTADAPT
-    CUTADAPT.out.reads.set{ trimmed_fastqs }
+
+    // pool inputs to one fastq file
+    if (params.pool_inputs) {
+        CUTADAPT.out.reads.branch { meta, reads ->
+                input: meta.is_input
+                samples: !meta.is_input
+            }
+            .set{ fastqs_branched }
+        fastqs_branched.input.map { meta, reads ->
+            [ meta.sample_basename, meta, reads ]
+            }
+            .groupTuple()
+            .map{ sample_basename, metas, reads ->
+                [ [id: sample_basename, sample_basename: sample_basename, rep: '', single_end: metas[0].single_end, antibody: '', control: '', is_input: true], reads.flatten() ]}
+            | CAT_CAT
+        CAT_CAT.out.file_out
+            .mix(fastqs_branched.samples)
+            .set{ trimmed_fastqs }
+    } else {
+        CUTADAPT.out.reads.set { trimmed_fastqs }
+    }
 
     PREPARE_GENOME()
     chrom_sizes = PREPARE_GENOME.out.chrom_sizes
 
     effective_genome_size = PREPARE_GENOME.out.effective_genome_size
+
+    PREPARE_GENOME.out.blacklist_index
     FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
     ALIGN_GENOME(FILTER_BLACKLIST.out.reads, PREPARE_GENOME.out.reference_index)
     ALIGN_GENOME.out.bam.set{ aligned_bam }
+    /*
 
     DEDUPLICATE(aligned_bam, chrom_sizes, effective_genome_size)
     DEDUPLICATE.out.bam.set{ deduped_bam }
@@ -95,7 +119,7 @@ workflow CHIPSEQ {
 
     ch_multiqc = Channel.of()
     if (params.run.qc) {
-        QC(raw_fastqs, trimmed_fastqs, FILTER_BLACKLIST.out.n_surviving_reads,
+        QC(raw_fastqs, CUTADAPT.out.reads, FILTER_BLACKLIST.out.n_surviving_reads,
            aligned_bam, ALIGN_GENOME.out.aligned_flagstat, ALIGN_GENOME.out.filtered_flagstat,
            deduped_bam, DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths,
@@ -157,6 +181,7 @@ workflow CHIPSEQ {
                 )
 
         }
+
     }
 
     if (!workflow.stubRun) {
@@ -166,4 +191,5 @@ workflow CHIPSEQ {
             ch_multiqc.collect()
         )
     }
+    */
 }

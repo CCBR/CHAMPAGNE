@@ -50,6 +50,7 @@ def create_fastq_channel(LinkedHashMap row, String seq_center) {
     meta.single_end      = row.single_end.toBoolean()
     meta.antibody        = row.antibody
     meta.control         = row.control
+    meta.is_input        = row.control == ''
 
     // add path(s) of the fastq file(s) to the meta map
     def fastq_meta = []
