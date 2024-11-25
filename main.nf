@@ -1,5 +1,5 @@
 log.info """\
-         CHAMPAGNE 🍾
+         CHAMPAGNE $workflow.manifest.version 🍾
          =============
          NF version   : $nextflow.version
          runName      : $workflow.runName
@@ -46,6 +46,10 @@ workflow.onComplete {
             println message
         }
     }
+}
+
+workflow version {
+    println "CHAMPAGNE ${workflow.manifest.version}"
 }
 
 workflow DOWNLOAD_SRA {
