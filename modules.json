@@ -100,6 +100,11 @@
                         "git_sha": "8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a",
                         "installed_by": ["modules"]
                     },
+                    "cat/cat": {
+                        "branch": "master",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+                        "installed_by": ["modules"]
+                    },
                     "custom/sratoolsncbisettings": {
                         "branch": "master",
                         "git_sha": "20e78a9868eaa69c8cac91152397def32374b807",
