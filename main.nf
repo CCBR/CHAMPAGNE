@@ -21,6 +21,7 @@ log.info """\
 include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools'
 include { INPUT_CHECK              } from './subworkflows/local/input_check.nf'
 include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome.nf'
+include { POOL_INPUTS              } from './subworkflows/local/pool_inputs/'
 include { FILTER_BLACKLIST         } from './subworkflows/CCBR/filter_blacklist/'
 include { ALIGN_GENOME             } from "./subworkflows/local/align.nf"
 include { DEDUPLICATE              } from "./subworkflows/local/deduplicate.nf"
@@ -32,7 +33,6 @@ include { DIFF                     } from './subworkflows/local/differential/'
 
 // MODULES
 include { CUTADAPT                 } from "./modules/CCBR/cutadapt"
-include { CAT_CAT                  } from "./modules/nf-core/cat/cat"
 include { PHANTOM_PEAKS
           PPQT_PROCESS
           MULTIQC                  } from "./modules/local/qc.nf"
@@ -75,47 +75,23 @@ workflow CHIPSEQ {
     INPUT_CHECK(file(params.input, checkIfExists: true), params.seq_center, contrast_sheet)
 
     INPUT_CHECK.out.reads.set { raw_fastqs }
-    raw_fastqs | CUTADAPT
-
-    // pool inputs to one fastq file
-    if (params.pool_inputs) {
-        CUTADAPT.out.reads.branch { meta, reads ->
-                input: meta.is_input
-                samples: !meta.is_input
-            }
-            .set{ fastqs_branched }
-        fastqs_branched.input.map { meta, reads ->
-            [ meta.sample_basename, meta, reads ]
-            }
-            .groupTuple()
-            .map{ sample_basename, metas, reads ->
-                [ [id: sample_basename, sample_basename: sample_basename, rep: '', single_end: metas[0].single_end, antibody: '', control: '', is_input: true], reads.flatten() ]}
-            | CAT_CAT
-        CAT_CAT.out.file_out
-            .mix(fastqs_branched.samples)
-            .set{ trimmed_fastqs }
-    } else {
-        CUTADAPT.out.reads.set { trimmed_fastqs }
-    }
+    CUTADAPT(raw_fastqs).reads | POOL_INPUTS
+    trimmed_fastqs = POOL_INPUTS.out.reads
 
     PREPARE_GENOME()
     chrom_sizes = PREPARE_GENOME.out.chrom_sizes
-
     effective_genome_size = PREPARE_GENOME.out.effective_genome_size
 
-    PREPARE_GENOME.out.blacklist_index
     FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
     ALIGN_GENOME(FILTER_BLACKLIST.out.reads, PREPARE_GENOME.out.reference_index)
-    ALIGN_GENOME.out.bam.set{ aligned_bam }
-    /*
+    aligned_bam = ALIGN_GENOME.out.bam
 
     DEDUPLICATE(aligned_bam, chrom_sizes, effective_genome_size)
-    DEDUPLICATE.out.bam.set{ deduped_bam }
-    DEDUPLICATE.out.tag_align.set{ deduped_tagalign }
+    deduped_bam = DEDUPLICATE.out.bam
+    deduped_tagalign = DEDUPLICATE.out.tag_align
 
-    deduped_bam | PHANTOM_PEAKS
-    PHANTOM_PEAKS.out.fraglen | PPQT_PROCESS
-    PPQT_PROCESS.out.fraglen.set { frag_lengths }
+    PHANTOM_PEAKS(deduped_bam).fraglen | PPQT_PROCESS
+    frag_lengths = PPQT_PROCESS.out.fraglen
 
     ch_multiqc = Channel.of()
     if (params.run.qc) {
@@ -191,5 +167,4 @@ workflow CHIPSEQ {
             ch_multiqc.collect()
         )
     }
-    */
 }
