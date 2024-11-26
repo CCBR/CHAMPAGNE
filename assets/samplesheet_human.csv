@@ -11,3 +11,11 @@ fastq_1,fastq_2,sample,rep,antibody,control
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14638304.fastq.gz,,A549_JUN_INPUT,1,,
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14638305.fastq.gz,,A549_JUN_INPUT,2,,
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14638306.fastq.gz,,A549_JUN_INPUT,3,,
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF391TRF_ENCFF822KCO.fastq.gz,,BLaER1_H3K4me3,1,H3K4me3,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF989TVW.fastq.gz,,BLaER1_H3K4me3,2,H3K4me3,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF097DJJ_ENCFF815UIL.fastq.gz,,BLaER1_H3K27ac,1,H3K27ac,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF161DOP.fastq.gz,,BLaER1_H3K27ac,2,H3K27ac,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF963ONJ.fastq.gz,,BLaER1_H3K36me3,1,H3K36me3,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF686GPG.fastq.gz,,BLaER1_H3K36me3,2,H3K36me3,BLaER1_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF259JCU.fastq.gz,,BLaER1_INPUT,1,,
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/ENCFF622MZI.fastq.gz,,BLaER1_INPUT,2,,

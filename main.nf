@@ -72,9 +72,8 @@ workflow {
 }
 
 workflow CHIPSEQ {
-    INPUT_CHECK(file(params.input, checkIfExists: true), params.seq_center, contrast_sheet)
+    raw_fastqs = INPUT_CHECK(file(params.input, checkIfExists: true), params.seq_center, contrast_sheet).reads
 
-    INPUT_CHECK.out.reads.set { raw_fastqs }
     CUTADAPT(raw_fastqs).reads | POOL_INPUTS
     trimmed_fastqs = POOL_INPUTS.out.reads
 
