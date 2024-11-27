@@ -2,6 +2,7 @@
 
 - The CHAMPAGNE nextflow workflow now has a version entry in `nextflow.config`, in compliance with nf-core. (#213, @kelly-sovacool)
 - Pool input (control) reads of the same sample name by default. Any inputs that should not be pooled must have different sample names in the samplesheet. (#214, @kelly-sovacool)
+- Add histone samples to the `test_human` dataset. (#215, @kelly-sovacool)
 
 ## CHAMPAGNE 0.4.0
 
