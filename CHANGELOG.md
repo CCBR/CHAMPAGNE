@@ -1,4 +1,4 @@
-## CHAMPAGNE development version
+## CHAMPAGNE 0.4.1
 
 - The CHAMPAGNE nextflow workflow now has a version entry in `nextflow.config`, in compliance with nf-core. (#213, @kelly-sovacool)
 - Pool input (control) reads of the same sample name by default. Any inputs that should not be pooled must have different sample names in the samplesheet. (#214, @kelly-sovacool)
