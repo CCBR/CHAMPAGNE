@@ -153,10 +153,12 @@ def get_hpc():
 
 def run_nextflow(
     nextfile_path=None,
+    mode="local",
+    force_all=False,
     merge_config=None,
     threads=None,
     nextflow_args=None,
-    mode="local",
+    debug=False,
 ):
     """Run a Nextflow workflow"""
     nextflow_command = ["nextflow", "run", nextfile_path]
@@ -187,6 +189,13 @@ def run_nextflow(
         profiles
     ):  # only add to the profiles if there are any. there are none when champagne is run on GitHub Actions.
         args_dict["-profile"] = ",".join(sorted(profiles))
+
+    # use -resume by default, or do not use resume if force_all is True
+    if force_all and "-resume" in args_dict.keys():
+        args_dict.pop("-resume")
+    elif not force_all and "-resume" not in args_dict.keys():
+        args_dict["-resume"] = ""
+
     nextflow_command += list(f"{k} {v}" for k, v in args_dict.items())
 
     # Print nextflow command
@@ -208,4 +217,7 @@ def run_nextflow(
     else:
         raise ValueError(f"mode {mode} not recognized")
     # Run Nextflow!!!
-    subprocess.run(run_command, shell=True, check=True)
+    if not debug:
+        subprocess.run(run_command, shell=True, check=True)
+    else:
+        return run_command

@@ -85,8 +85,17 @@ Run with a specific tag, branch, or commit from GitHub:
     default="local",
     show_default=True,
 )
+@click.option(
+    "--forceall",
+    "-F",
+    "force_all",
+    help="Force all processes to run (i.e. do not use nextflow -resume)",
+    is_flag=True,
+    default=False,
+    show_default=True,
+)
 @common_options
-def run(main_path, _mode, **kwargs):
+def run(main_path, _mode, force_all, **kwargs):
     """Run the workflow"""
     if (  # this is the only acceptable github repo option for champagne
         main_path != "CCBR/CHAMPAGNE"
@@ -100,6 +109,7 @@ def run(main_path, _mode, **kwargs):
     run_nextflow(
         nextfile_path=main_path,
         mode=_mode,
+        force_all=force_all,
         **kwargs,
     )
 
