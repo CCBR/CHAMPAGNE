@@ -39,19 +39,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install click pyyaml cffconvert
-      - name: check out-of-the-box CLI script
-        run: |
-          bash bin/champagne --help
-          cd tests/nxf && ../../bin/champagne --help
       - name: Install champagne python package
         run: |
           pip install .[dev,test]
           python -c 'from champagne.src.util import chmod_bins_exec; chmod_bins_exec()'
-      - name: Check CLI basics
+      - name: pytest
         run: |
-          which champagne
-          champagne --version
-          champagne --citation
+          pytest tests
       - name: Stub run
         run: |
           cd tests/nxf
