@@ -42,7 +42,7 @@ jobs:
       - name: check out-of-the-box CLI script
         run: |
           bash bin/champagne --help
-          cd tests/cli && ../../bin/champagne --help
+          cd tests/nxf && ../../bin/champagne --help
       - name: Install champagne python package
         run: |
           pip install .[dev,test]
@@ -54,13 +54,13 @@ jobs:
           champagne --citation
       - name: Stub run
         run: |
-          cd tests/cli
+          cd tests/nxf
           champagne init
           champagne run -stub -c ci_stub.config --max_cpus 2 --max_memory 6.GB
       - name: Test run
         if: ${{ env.test_run == 'true' }}
         run: |
-          cd tests/cli
+          cd tests/nxf
           champagne init
           champagne run -profile docker -c ci_test.config
       - name: "Upload Artifact"
