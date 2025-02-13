@@ -1,4 +1,4 @@
-fastq_1,fastq_2,sample,rep,antibody,control
+fastq_1,fastq_2,sample,rep,antibody,input
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129678.fastq.gz,,A549_CTCF,1,CTCF,A549_CTCF_INPUT
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129676.fastq.gz,,A549_CTCF,2,CTCF,A549_CTCF_INPUT
 /data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129677.fastq.gz,,A549_CTCF,3,CTCF,A549_CTCF_INPUT

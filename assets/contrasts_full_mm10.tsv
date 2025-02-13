@@ -1,0 +1,3 @@
+contrast_name	group1	group2
+antibody	CTCF_ChIP_macrophage_p20,CTCF_ChIP_MEF_p20	CTCF_ChIP_macrophage_p3
+celltype_macrophage_vs_fibroblast	CTCF_ChIP_macrophage_p20,CTCF_ChIP_macrophage_p3	CTCF_ChIP_MEF_p20

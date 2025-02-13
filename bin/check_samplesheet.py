@@ -42,7 +42,7 @@ def print_error(error, context="Line", context_str=""):
 def check_samplesheet(file_in, file_out):
     """
     This function checks that the samplesheet follows the following structure:
-    sample,rep,fastq_1,fastq_2,antibody,control
+    sample,rep,fastq_1,fastq_2,antibody,input
     SPT5_T0_REP1,1,SRR1822153_1.fastq.gz,SRR1822153_2.fastq.gz,SPT5,SPT5_INPUT_REP1
     SPT5_T0_REP2,2,SRR1822154_1.fastq.gz,SRR1822154_2.fastq.gz,SPT5,SPT5_INPUT_REP2
     SPT5_INPUT_REP1,1,SRR5204809_Spt5-ChIP_Input1_SacCer_ChIP-Seq_ss100k_R1.fastq.gz,SRR5204809_Spt5-ChIP_Input1_SacCer_ChIP-Seq_ss100k_R2.fastq.gz,,
@@ -56,7 +56,7 @@ def check_samplesheet(file_in, file_out):
     with open(file_in, "r", encoding="utf-8-sig") as fin:
         ## Check header
         MIN_COLS = 2
-        HEADER_MIN = ["sample", "rep", "fastq_1", "fastq_2", "antibody", "control"]
+        HEADER_MIN = ["sample", "rep", "fastq_1", "fastq_2", "antibody", "input"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
 
         header_int = set(HEADER_MIN).intersection(set(header))
@@ -70,13 +70,6 @@ def check_samplesheet(file_in, file_out):
         for line in fin:
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
-            # Check valid number of columns per row
-            if len(lspl) != len(header):
-                print_error(
-                    f"Invalid number of columns (header length = {len(header)})!",
-                    "Line",
-                    line,
-                )
             num_cols = len([x for x in lspl if x])
             if num_cols < MIN_COLS:
                 print_error(
@@ -95,7 +88,7 @@ def check_samplesheet(file_in, file_out):
                 fastq_1,
                 fastq_2,
                 antibody,
-                control,
+                input,
             ) = operator.itemgetter(*HEADER_MIN)(line_dict)
             print("lspl")
             pprint.pprint(lspl)
@@ -120,32 +113,32 @@ def check_samplesheet(file_in, file_out):
                             line,
                         )
 
-            ## Check antibody and control columns have valid values
+            ## Check antibody and input columns have valid values
             if antibody:
                 if antibody.find(" ") != -1:
                     print(
                         f"WARNING: Spaces have been replaced by underscores for antibody: {antibody}"
                     )
                     antibody = antibody.replace(" ", "_")
-                if not control:
+                if not input:
                     print_error(
-                        "Both antibody and control columns must be specified for non-control samples!",
+                        "Both antibody and input columns must be specified for non-input samples!",
                         "Line",
                         line,
                     )
-            if control:
-                if control.find(" ") != -1:
+            if input:
+                if input.find(" ") != -1:
                     print(
-                        f"WARNING: Spaces have been replaced by underscores for control: {control}"
+                        f"WARNING: Spaces have been replaced by underscores for input: {input}"
                     )
-                    control = control.replace(" ", "_")
+                    input = input.replace(" ", "_")
                 if not antibody:
                     print_error(
-                        "Both antibody and control columns must be specified for non-control samples!",
+                        "Both antibody and input columns must be specified for non-input samples!",
                         "Line",
                         line,
                     )
-            is_control_input = not antibody and not control
+            is_input_input = not antibody and not input
 
             ## Auto-detect paired-end/single-end
             if not sample or not fastq_1:
@@ -160,12 +153,12 @@ def check_samplesheet(file_in, file_out):
                 fastq_1,
                 fastq_2,
                 antibody,
-                control,
+                input,
             ]
             print("sample_info")
             pprint.pprint(sample_info)
 
-            ## Create sample mapping dictionary = {sample: [[ single_end, fastq_1, fastq_2, antibody, control ]]}
+            ## Create sample mapping dictionary = {sample: [[ single_end, fastq_1, fastq_2, antibody, input ]]}
             if sample not in sample_mapping_dict.keys():
                 sample_mapping_dict[sample] = [sample_info]
             else:
@@ -174,7 +167,7 @@ def check_samplesheet(file_in, file_out):
                     print_error("Samplesheet contains duplicate rows!", "Line", line)
                 else:
                     sample_mapping_dict[sample].append(sample_info)
-            if is_control_input:
+            if is_input_input:
                 input_dict[sample_basename].append(sample_info)
 
     ## Write validated samplesheet with appropriate columns
@@ -192,7 +185,7 @@ def check_samplesheet(file_in, file_out):
                         "fastq_1",
                         "fastq_2",
                         "antibody",
-                        "control",
+                        "input",
                     ]
                 )
                 + "\n"
@@ -209,14 +202,14 @@ def check_samplesheet(file_in, file_out):
                         sample,
                     )
 
-                # check that the control/input exists
+                # check that the input/input exists
                 for idx, val in enumerate(sample_mapping_dict[sample]):
-                    control = val[-1]
-                    if control and control not in input_dict.keys():
+                    input = val[-1]
+                    if input and input not in input_dict.keys():
                         print_error(
-                            "Control identifier has to match a provided sample identifier!",
-                            "Control",
-                            control,
+                            "input identifier has to match a provided sample identifier!",
+                            "input",
+                            input,
                         )
                     fout.write(",".join(val) + "\n")
     else:

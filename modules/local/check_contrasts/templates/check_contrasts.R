@@ -1,57 +1,49 @@
 #!/usr/bin/env Rscript
+options(error = rlang::entrace)
 library(assertthat)
 library(dplyr)
 library(glue)
 
-main <- function(contrasts_filename = "${contrasts}",
-                 samplesheet_filename = "${samplesheet}",
-                 output_basename = "${output_basename}",
+main <- function(contrasts_filename = "${contrasts}", 
+                 samplesheet_filename = "${samplesheet}",               
                  versions_filename = "versions.yml",
                  process_name = "${task.process}") {
   write_version(versions_filename, process_name = process_name)
-  contrasts_lst <- yaml::read_yaml(contrasts_filename)
-  samples_df <- readr::read_csv(samplesheet_filename)
+  contrasts_df <- readr::read_tsv(contrasts_filename)
+  assert_that(all(colnames(contrasts_df) == c("contrast_name", "group1", "group2")))
 
+  samples_df <- readr::read_csv(samplesheet_filename)
+  sample_names  <- samples_df %>% dplyr::pull(sample)
+  # check individual contrasts
+  purrr::pmap(contrasts_df, check_contrast, sample_names = sample_names)
+
+  # ensure contrast names are unique
+  contrast_names <- contrasts_df %>% dplyr::pull(contrast_name)
   assert_that(
-    all(unlist(contrasts_lst) %in% (samples_df %>% dplyr::pull(sample_basename))),
-    msg = glue("All sample names in contrasts must also be in the sample sheet")
+    length(unique(contrast_names)) == length(contrast_names),
+    msg = glue("Contrast names must be unique")
   )
-  names(contrasts_lst) %>% lapply(check_contrast, contrasts_lst)
-  names(contrasts_lst) %>% lapply(
-    write_contrast_samplesheet,
-    contrasts_lst, samples_df, output_basename
-  )
+  message("✅ Contrasts are all valid")
 }
 
 #' Check an individual contrast comparison
-check_contrast <- function(contrast_name, contrasts_lst) {
-  curr_contrast <- contrasts_lst[[contrast_name]]
-  # Ensure contrast has exactly two groups to compare
-  contrast_len <- length(curr_contrast)
+check_contrast <- function(contrast_name, group1, group2, sample_names) {
+  group1_samples <- unlist(strsplit(group1, ","))
+  group2_samples <- unlist(strsplit(group2, ","))
+  # Ensure each group has at least 1 sample
+  assert_that(length(group1_samples) > 0,
+              msg = glue("group1 must have at least one sample for {contrast_name}"))
+  assert_that(length(group2_samples) > 0,
+              msg = glue("group2 must have at least one sample for {contrast_name}"))
+  # Ensure every sample is in the sample sheet
+  extra_samples <- setdiff(c(group1_samples,group2_samples), sample_names)
+  assert_that(length(extra_samples) == 0,
+              msg = glue("All samples in {contrast_name} must be in the sample sheet. Extra samples found: {paste(extra_samples, collapse = ',')}"))
+  # Ensure each sample is in only one group
   assert_that(
-    contrast_len == 2,
-    msg = glue("Contrasts must have only two groups per comparison, but {contrast_name} has {contrast_len}")
+    length(intersect(group1_samples, group2_samples)) == 0,
+    msg = glue("Each sample can only appear in one group per contrast (check {contrast_name})")
   )
-  group_names <- names(curr_contrast)
-  assert_that(
-    length(intersect(curr_contrast[[group_names[1]]], curr_contrast[[group_names[2]]])) == 0,
-    msg = glue("Each sample can only appear in one group per contrast ({contrast_name})")
-  )
-}
-
-#' Combine sample sheet with contrast group
-write_contrast_samplesheet <- function(contrast_name, contrasts_lst, samples_df, output_basename) {
-  contrast_df <- contrasts_lst[[contrast_name]] %>%
-    tibble::as_tibble() %>%
-    tidyr::pivot_longer(
-      cols = everything(),
-      names_to = "group", values_to = "sample_basename"
-    ) %>%
-    mutate(contrast = contrast_name)
-  print(head(contrast_df))
-  samples_df %>%
-    dplyr::inner_join(contrast_df, by = "sample_basename") %>%
-    readr::write_csv(glue("{output_basename}.{contrast_name}.csv"))
 }
 
 #' Get R version as a semantic versioning string

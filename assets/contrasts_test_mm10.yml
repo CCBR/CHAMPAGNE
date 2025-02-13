@@ -1,5 +1,0 @@
-celltype:
-  macrophage:
-    - CTCF_ChIP_macrophage_p20
-  fibroblast:
-    - CTCF_ChIP_MEF_p20

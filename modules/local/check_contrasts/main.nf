@@ -9,10 +9,8 @@ process CHECK_CONTRASTS {
         path(contrasts)
 
     output:
-        path("*.csv"),        emit: csv
         path("versions.yml"), emit: versions
 
     script:
-    output_basename = "sample_contrasts"
     template 'check_contrasts.R'
 }
