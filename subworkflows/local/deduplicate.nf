@@ -8,7 +8,6 @@ workflow DEDUPLICATE {
         effective_genome_size
 
     main:
-
         // branch reads: single end to macs2 filterdup, paired end to picard markduplicates
         aligned_bam.branch { meta, bam ->
             single: meta.single_end

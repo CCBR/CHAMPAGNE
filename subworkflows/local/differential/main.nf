@@ -5,7 +5,7 @@ workflow DIFF {
     take:
         bam_peaks
         tagalign_peaks
-        contrasts
+        ch_contrasts
 
     main:
         bam_peaks
@@ -16,10 +16,9 @@ workflow DIFF {
             }
             .min() // if any sample only has one replicate, do MAnorm, otherwise do diffbind
             .set{ ch_min_reps }
-
         // prepare bam channel for diffbind
         bam_peaks
-            .combine( contrasts )
+            .combine( ch_contrasts )
             .map{ peak_meta, bam, bai, peak, ctrl_bam, ctrl_bai, con_meta ->
                 peak_meta.sample_basename == con_meta.sample_basename ? [ peak_meta + con_meta, bam, bai, peak, ctrl_bam, ctrl_bai ] : null
             }
@@ -37,7 +36,7 @@ workflow DIFF {
 
         // prepare tagalign channel for manorm
         tagalign_peaks
-            .combine(contrasts)
+            .combine(ch_contrasts)
             .map{ peak_meta, tagalign, peak, con_meta ->
                 peak_meta.sample_basename == con_meta.sample_basename ? [ peak_meta + con_meta, tagalign, peak ] : null
             }

@@ -29,12 +29,12 @@ workflow DEEPTOOLS {
         bw_array.combine(Channel.of('heatmap', 'scatterplot')) | PLOT_CORRELATION
         bw_array | PLOT_PCA
 
-        // Create channel: [ meta, ip_bw, control_bw ]
+        // Create channel: [ meta, ip_bw, input_bw ]
         bigwigs
             .combine(bigwigs)
             .map {
                 meta1, bw1, meta2, bw2 ->
-                    meta1.control == meta2.id ? [ meta1, bw1, bw2 ] : null
+                    meta1.input == meta2.id ? [ meta1, bw1, bw2 ] : null
             }
             .set { ch_ip_ctrl_bigwig }
 
@@ -48,12 +48,12 @@ workflow DEEPTOOLS {
 
         // group raw bigwigs by sample basename to group replicates & sample/input pairs together
         bigwigs_raw = ch_ip_ctrl_bigwig
-            .map{ meta, sample_bw, control_bw ->
+            .map{ meta, sample_bw, input_bw ->
                 [ [ id: meta.sample_basename ], sample_bw ]
             }
             .concat(ch_ip_ctrl_bigwig
-                .map{ meta, sample_bw, control_bw ->
-                    [ [ id: meta.sample_basename], control_bw ]
+                .map{ meta, sample_bw, input_bw ->
+                    [ [ id: meta.sample_basename], input_bw ]
                 }
             )
         // create plots with:
@@ -73,19 +73,19 @@ workflow DEEPTOOLS {
         PLOT_HEATMAP(COMPUTE_MATRIX.out.mat)
         PLOT_PROFILE(COMPUTE_MATRIX.out.mat)
 
-        ch_controls = deduped_bam
+        ch_inputs = deduped_bam
             .combine(deduped_bam)
             .map {
                 meta1, bam1, bai1, meta2, bam2, bai2 ->
-                    meta1.control == meta2.id ? [ [id: meta1.sample_basename], bam2, bai2 ] : null
+                    meta1.input == meta2.id ? [ [id: meta1.sample_basename], bam2, bai2 ] : null
             }
         ch_samples = deduped_bam
             .combine(deduped_bam)
             .map {
                 meta1, bam1, bai1, meta2, bam2, bai2 ->
-                    meta1.control == meta2.id ? [ [id: meta1.sample_basename], bam1, bai1 ] : null
+                    meta1.input == meta2.id ? [ [id: meta1.sample_basename], bam1, bai1 ] : null
             }
-        ch_controls.mix(ch_samples)
+        ch_inputs.mix(ch_samples)
             .groupTuple()
             .map{ meta, bams, bais ->
                 [ meta, bams.unique(), bais.unique() ]

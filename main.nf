@@ -143,13 +143,14 @@ workflow CHIPSEQ {
             }
             .set{ ch_consensus_peaks }
 
+        // run differential analysis
         ch_contrasts = INPUT_CHECK.out.contrasts
-        if (!ch_contrasts.ifEmpty(null)) {
+        if (params.contrasts) {
             // TODO use consensus peaks for regions of interest in diffbind
             CALL_PEAKS.out.bam_peaks
                 .combine(deduped_bam)
                 .map{meta1, bam1, bai1, peak, tool, meta2, bam2, bai2 ->
-                    meta1.control == meta2.id ? [ meta1 + [tool: tool], bam1, bai1, peak, bam2, bai2 ] : null
+                    meta1.input == meta2.id ? [ meta1 + [tool: tool], bam1, bai1, peak, bam2, bai2 ] : null
                 }
                 .set{bam_peaks}
             CALL_PEAKS.out.tagalign_peaks

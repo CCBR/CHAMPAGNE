@@ -160,7 +160,7 @@ process CONVERT_SICER { // https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d5838
     import math
     with open("${sicer_peaks}",'r') as f:
         intxt = f.readlines()
-    # input columns if input-normalized: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
+    # input columns if input-normalized: chrom, start, end, ChIP tag count, input tag count, p-value, fold-enrichment, q-value
     # input columns if no input: chrom, start, end, score
     outBroadPeak = [None] * len(intxt)
     outBed = [None] * len(intxt)

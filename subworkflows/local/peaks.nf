@@ -34,7 +34,7 @@ workflow CALL_PEAKS {
             .combine(deduped_tagalign)
             .map {
                 meta1, tag1, format1, meta2, tag2, format2 ->
-                    meta1.control == meta2.id && format1 == format2 ? [ meta1, tag1, tag2, format1 ]: null
+                    meta1.input == meta2.id && format1 == format2 ? [ meta1, tag1, tag2, format1 ]: null
             }
             .set{ ch_tagalign }
 
@@ -60,7 +60,7 @@ workflow CALL_PEAKS {
             .combine(tag_all_bed)
             .map {
                 meta1, tag1, meta2, tag2 ->
-                    meta1.control == meta2.id ? [ meta1, tag1, tag2 ]: null
+                    meta1.input == meta2.id ? [ meta1, tag1, tag2 ]: null
             }
             .join(frag_lengths)
             .combine(genome_frac)

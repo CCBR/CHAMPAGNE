@@ -5,8 +5,7 @@ workflow MANORM {
     take:
         ch_tagalign_peaks
     main:
-        ch_tagalign_peaks.view()
-
+        
         ch_tagalign_peaks
             .combine(ch_tagalign_peaks)
             .map{ meta1, tag1, peak1, meta2, tag2, peak2 ->

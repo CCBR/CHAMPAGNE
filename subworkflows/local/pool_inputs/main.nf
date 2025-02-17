@@ -16,7 +16,7 @@ workflow POOL_INPUTS {
             }
             .groupTuple()
             .map{ sample_basename, metas, reads ->
-                [ [id: sample_basename, sample_basename: sample_basename, rep: '', single_end: metas[0].single_end, antibody: '', control: '', is_input: true], reads.flatten() ]}
+                [ [id: sample_basename, sample_basename: sample_basename, rep: '', single_end: metas[0].single_end, antibody: '', input: '', is_input: true], reads.flatten() ]}
             | CONCAT_INPUTS
 
         CONCAT_INPUTS.out.file_out
