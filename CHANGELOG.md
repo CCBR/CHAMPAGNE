@@ -1,5 +1,13 @@
 ## CHAMPAGNE development version
 
+- Contrasts are now specified as a TSV file instead of YAML. (#224, @kelly-sovacool)
+  - See the example contrast sheets in `assets/`.
+- Refactor checks for the sample sheet & contrast sheet to prevent unnecessary re-running. (#224, @kelly-sovacool)
+- Set `publish_dir_mode` to `link` by default.
+- Set `process.cache` to `deep` by default rather than lenient. (#224, @kelly-sovacool)
+- Fix a file name clash during input pooling. (#224, @kelly-sovacool)
+- Use `nextflow run -resume` by default, or turn it off with `champagne run --forceall`. (#224, @kelly-sovacool)
+
 ## CHAMPAGNE 0.4.1
 
 - The CHAMPAGNE nextflow workflow now has a version entry in `nextflow.config`, in compliance with nf-core. (#213, @kelly-sovacool)
