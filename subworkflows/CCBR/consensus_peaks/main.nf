@@ -1,7 +1,7 @@
 include { CAT_CAT        } from '../../../modules/CCBR/cat/cat/'
 include { SORT_BED  } from '../../../modules/CCBR/sort/bed'
 include { BEDTOOLS_MERGE } from '../../../modules/CCBR/bedtools/merge/'
-include { CUSTOM_FORMATMERGEDBED as CONSENSUS_PEAKS_OUT  } from '../../../modules/CCBR/custom/formatmergedbed/'
+include { CUSTOM_FORMATMERGEDBED as CONSENSUS_UNION  } from '../../../modules/CCBR/custom/formatmergedbed/'
 include { CUSTOM_NORMALIZEPEAKS     } from '../../../modules/CCBR/custom/normalizepeaks/'
 
 workflow CONSENSUS_PEAKS {
@@ -32,14 +32,14 @@ workflow CONSENSUS_PEAKS {
         peaks_grouped | CAT_CAT
         SORT_BED( CAT_CAT.out.file_out )
         BEDTOOLS_MERGE(SORT_BED.out.bed, ' -c 1,5,6,7,8,9 -o count,collapse,collapse,collapse,collapse,collapse ')
-        CONSENSUS_PEAKS_OUT(BEDTOOLS_MERGE.out.bed)
-        consensus_peaks = CONSENSUS_PEAKS_OUT.out.bed
+        CONSENSUS_UNION(BEDTOOLS_MERGE.out.bed)
+        consensus_peaks = CONSENSUS_UNION.out.bed
 
         ch_versions = ch_versions.mix(
             CAT_CAT.out.versions,
             SORT_BED.out.versions,
             BEDTOOLS_MERGE.out.versions,
-            CONSENSUS_PEAKS_OUT.out.versions
+            CONSENSUS_UNION.out.versions
         )
 
     emit:

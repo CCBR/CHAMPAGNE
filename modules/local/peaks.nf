@@ -78,8 +78,8 @@ process MACS_NARROW {
 
     output:
         tuple val(meta), path("${meta.id}_peaks.narrowPeak"), val("${task.process.tokenize(':')[-1].toLowerCase()}"), emit: peak
-        path("${meta.id}_peaks.xls")
-        path("${meta.id}_summits.bed")
+        tuple val(meta), path("${meta.id}_peaks.xls"), val("${task.process.tokenize(':')[-1].toLowerCase()}"),        emit: xls
+        tuple val(meta), path("${meta.id}_summits.bed"), val("${task.process.tokenize(':')[-1].toLowerCase()}"),      emit: summits
 
     script:
     """

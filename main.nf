@@ -18,7 +18,7 @@ log.info """\
          .stripIndent()
 
 // SUBWORKFLOWS
-include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools'
+include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools/'
 include { INPUT_CHECK              } from './subworkflows/local/input_check.nf'
 include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome.nf'
 include { POOL_INPUTS              } from './subworkflows/local/pool_inputs/'
@@ -27,15 +27,17 @@ include { ALIGN_GENOME             } from "./subworkflows/local/align.nf"
 include { DEDUPLICATE              } from "./subworkflows/local/deduplicate.nf"
 include { QC                       } from './subworkflows/local/qc.nf'
 include { CALL_PEAKS               } from './subworkflows/local/peaks.nf'
-include { CONSENSUS_PEAKS          } from './subworkflows/CCBR/consensus_peaks/'
-include { ANNOTATE                 } from './subworkflows/local/annotate.nf'
+include { CONSENSUS_PEAKS as CONSENSUS_UNION } from './subworkflows/CCBR/consensus_peaks/'
+include { ANNOTATE as ANNOTATE_CONS_UNION;
+          ANNOTATE as ANNOTATE_CONS_CORCES   } from './subworkflows/local/annotate.nf'
 include { DIFF                     } from './subworkflows/local/differential/'
 
 // MODULES
-include { CUTADAPT                 } from "./modules/CCBR/cutadapt"
+include { CUTADAPT                 } from "./modules/CCBR/cutadapt/"
 include { PHANTOM_PEAKS
           PPQT_PROCESS
           MULTIQC                  } from "./modules/local/qc.nf"
+include { CONSENSUS_CORCES         } from "./modules/local/consensus/corces/main.nf"
 
 
 workflow.onComplete {
@@ -119,29 +121,46 @@ workflow CHIPSEQ {
                    frag_lengths,
                    effective_genome_size
                    )
-
-        // consensus peak calling on replicates
+        ch_multiqc = ch_multiqc.mix(CALL_PEAKS.out.plots)
+        // consensus peak calling with union method
         ch_peaks_grouped = CALL_PEAKS.out.peaks
             .map{ meta, bed, tool ->
                 [ [ group: "${meta.sample_basename}.${tool}" ], bed ]
             }
-        CONSENSUS_PEAKS( ch_peaks_grouped, params.run.normalize_peaks )
-
-        ANNOTATE(CONSENSUS_PEAKS.out.peaks,
-                 PREPARE_GENOME.out.fasta,
-                 PREPARE_GENOME.out.meme_motifs,
-                 PREPARE_GENOME.out.bioc_txdb,
-                 PREPARE_GENOME.out.bioc_annot)
-        ch_multiqc = ch_multiqc.mix(CALL_PEAKS.out.plots, ANNOTATE.out.plots)
-
+        CONSENSUS_UNION( ch_peaks_grouped, params.run.normalize_peaks )
         // retrieve sample basename and peak-calling tool from metadata
-        CONSENSUS_PEAKS.out.peaks
+        CONSENSUS_UNION.out.peaks
             .map{ meta, bed ->
                 def meta_split = meta.id.tokenize('.')
                 assert meta_split.size() == 2
                 [ [ sample_basename: meta_split[0], tool: meta_split[1] ], bed ]
             }
-            .set{ ch_consensus_peaks }
+            .set{ ch_consensus_union }
+
+        // consensus peak calling with corces method
+        // only works on narrowPeak files, as the 10th column is the summit coordinate
+        ch_narrow_peaks = CALL_PEAKS.out.narrow_peaks
+            .map{ meta, bed, tool ->
+                def meta2 = [tool: tool, id: meta.sample_basename]
+                [ meta2, bed ]
+            }
+            .groupTuple()
+        CONSENSUS_CORCES(ch_narrow_peaks, chrom_sizes)
+
+        ANNOTATE_CONS_UNION(CONSENSUS_UNION.out.peaks,
+                 PREPARE_GENOME.out.fasta,
+                 PREPARE_GENOME.out.meme_motifs,
+                 PREPARE_GENOME.out.bioc_txdb,
+                 PREPARE_GENOME.out.bioc_annot)
+        ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_UNION.out.plots)
+        
+        ANNOTATE_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
+                 PREPARE_GENOME.out.fasta,
+                 PREPARE_GENOME.out.meme_motifs,
+                 PREPARE_GENOME.out.bioc_txdb,
+                 PREPARE_GENOME.out.bioc_annot)
+        ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_CORCES.out.plots)
+        
 
         // run differential analysis
         ch_contrasts = INPUT_CHECK.out.contrasts
