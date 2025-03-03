@@ -76,6 +76,7 @@ workflow CALL_PEAKS {
             .set { ch_gem }
 
         ch_peaks = Channel.empty()
+        ch_narrow_peaks = Channel.empty()
         if (params.run.macs_broad) {
             ch_macs | MACS_BROAD
             ch_peaks = ch_peaks.mix(MACS_BROAD.out.peak)
@@ -83,6 +84,7 @@ workflow CALL_PEAKS {
         if (params.run.macs_narrow) {
             ch_macs | MACS_NARROW
             ch_peaks = ch_peaks.mix(MACS_NARROW.out.peak)
+            ch_narrow_peaks = ch_narrow_peaks.mix(MACS_NARROW.out.peak)
         }
         if (params.run.sicer) {
             ch_sicer | SICER
@@ -94,6 +96,7 @@ workflow CALL_PEAKS {
             GEM.out.peak
                 .combine(chrom_sizes) | FILTER_GEM
             ch_peaks = ch_peaks.mix(FILTER_GEM.out.peak)
+            ch_narrow_peaks = ch_narrow_peaks.mix(FILTER_GEM.out.peak)
         }
 
         // Create tag align w/ peaks
@@ -135,6 +138,7 @@ workflow CALL_PEAKS {
 
     emit:
         peaks = ch_peaks
+        narrow_peaks = ch_narrow_peaks
         bam_peaks = ch_bam_peaks
         tagalign_peaks = ch_tagalign_peaks
         plots = ch_plots

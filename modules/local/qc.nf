@@ -141,7 +141,7 @@ process PHANTOM_PEAKS {
     tag { meta.id }
     label 'qc'
     label 'ppqt'
-    label 'process_low'
+    label 'process_medium'
 
     container = "${params.containers.phantom_peaks}"
 

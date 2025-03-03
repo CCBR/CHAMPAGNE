@@ -15,12 +15,14 @@ process CUSTOM_FORMATMERGEDBED {
     task.ext.when == null || task.ext.when
 
     script:
-    outfile = "${merged_bed.baseName}.consensus.bed"
+    prefix  = task.ext.prefix ?: "${merged_bed.baseName}.consensus_union"
+    outfile = "${prefix}.bed"
     template 'format_merged_bed.R'
 
     stub:
+    prefix  = task.ext.prefix ?: "${merged_bed.baseName}.consensus_union"
     """
-    touch ${merged_bed.baseName}.consensus.bed
+    touch ${prefix}.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
