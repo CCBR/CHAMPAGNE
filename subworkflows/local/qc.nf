@@ -85,7 +85,8 @@ workflow QC {
         )
 
         if (params.run.deeptools) {
-            DEEPTOOLS( deduped_bam,
+            DEEPTOOLS( aligned_filtered_bam,
+                       deduped_bam,
                        frag_lengths,
                        effective_genome_size,
                        gene_info

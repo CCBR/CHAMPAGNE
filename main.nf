@@ -91,9 +91,9 @@ workflow CHIPSEQ {
 
     FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
     ALIGN_GENOME(FILTER_BLACKLIST.out.reads, PREPARE_GENOME.out.reference_index)
-    aligned_bam = ALIGN_GENOME.out.bam
+    bam_aln_filt = ALIGN_GENOME.out.bam_aln_filt
 
-    DEDUPLICATE(aligned_bam, chrom_sizes, effective_genome_size)
+    DEDUPLICATE(bam_aln_filt, chrom_sizes, effective_genome_size)
     deduped_bam = DEDUPLICATE.out.bam
     deduped_tagalign = DEDUPLICATE.out.tag_align
 
@@ -103,7 +103,7 @@ workflow CHIPSEQ {
     ch_multiqc = Channel.of()
     if (params.run.qc) {
         QC(raw_fastqs, CUTADAPT.out.reads, FILTER_BLACKLIST.out.n_surviving_reads,
-           aligned_bam, ALIGN_GENOME.out.aligned_flagstat, ALIGN_GENOME.out.filtered_flagstat,
+           bam_aln_filt, ALIGN_GENOME.out.flagstat_aln, ALIGN_GENOME.out.flagstat_aln_filt,
            deduped_bam, DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths,
            PREPARE_GENOME.out.gene_info,

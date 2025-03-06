@@ -23,8 +23,9 @@ workflow ALIGN_GENOME {
         )
 
     emit:
-        bam               = FILTER_QUALITY.out.bam
-        aligned_flagstat  = SAMTOOLS_FLAGSTAT_ALIGN.out.flagstat
-        filtered_flagstat = SAMTOOLS_FLAGSTAT_FILTER.out.flagstat
+        bam_aln           = BWA_MEM_REF.out.bam
+        bam_aln_filt      = FILTER_QUALITY.out.bam
+        flagstat_aln      = SAMTOOLS_FLAGSTAT_ALIGN.out.flagstat
+        flagstat_aln_filt = SAMTOOLS_FLAGSTAT_FILTER.out.flagstat
         versions          = ch_versions
 }

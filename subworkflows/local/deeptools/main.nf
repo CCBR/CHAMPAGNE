@@ -11,6 +11,7 @@ include { BAM_COVERAGE
 
 workflow DEEPTOOLS {
     take:
+        bam_aln_filt
         deduped_bam
         frag_lengths
         effective_genome_size
@@ -18,7 +19,7 @@ workflow DEEPTOOLS {
 
     main:
 
-        deduped_bam.join(frag_lengths).combine(effective_genome_size) | BAM_COVERAGE
+        bam_aln_filt.join(frag_lengths).combine(effective_genome_size) | BAM_COVERAGE
         BAM_COVERAGE.out.bigwig
             .set { bigwigs }
 
