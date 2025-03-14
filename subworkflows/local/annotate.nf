@@ -32,9 +32,7 @@ workflow ANNOTATE {
                         )
 
             if (params.run.meme && meme_motifs) {
-                MEME_AME(HOMER_MOTIFS.out.ame,
-                         meme_motifs
-                        )
+                MEME_AME(HOMER_MOTIFS.out.ame.combine(meme_motifs))
             }
         }
 

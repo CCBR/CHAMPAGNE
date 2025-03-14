@@ -172,5 +172,4 @@ def main():
 cli(prog_name="champagne")
 
 if __name__ == "__main__":
-    msg_box(f"CWD {pathlib.Path.cwd()}")
     main()

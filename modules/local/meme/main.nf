@@ -6,17 +6,17 @@ process MEME_AME {
     container 'nciccbr/ccbr_atacseq:v1.10'
 
     input:
-        tuple val(meta), path(background), path(target)
-        path(motifs)
+        tuple val(meta), path(background), path(target), path(motifs)
 
     output:
-        tuple val(meta), path("${meta.id}.${meta.group}.ame.tsv"), emit: ame
+        tuple val(meta), path("*.ame.tsv"), emit: ame
 
     script:
+    prefix = "${meta.group}".length() > 0 ? "${meta.id}.${meta.group}" : "${meta.id}"
     """
     run_ame() {
         motif_file=\$1
-        ame_dir=${meta.id}.${meta.group}/\$motif_file/
+        ame_dir=${prefix}/\$motif_file/
         mkdir -p \$ame_dir
         ame \\
             --o \$ame_dir \\
@@ -36,13 +36,16 @@ process MEME_AME {
         -j ${task.cpus} \\
         run_ame
     # get header row
-    sed -n '1p;2q' ${meta.id}.${meta.group}/motifs/*/ame.tsv > ${meta.id}.${meta.group}.ame.tsv
+    sed -n '1p;2q' ${prefix}/motifs/*/ame.tsv > tmp.tsv
     # concatenate data row from all ame output files
-    sed -sn 2p ${meta.id}.${meta.group}/motifs/*/ame.tsv | sort -k 6,6g >> ${meta.id}.${meta.group}.ame.tsv
+    sed -sn 2p ${prefix}/motifs/*/ame.tsv | sort -k 6,6g >> tmp.tsv
+    # recalculate ranks after concatenating motifs & sorting by column 6
+    cat tmp.tsv | awk 'NR==1 {print; next} {OFS="\\t"; \$1=NR-1; print}' > ${prefix}.ame.tsv
     """
 
     stub:
+    prefix = "${meta.group}".length() > 0 ? "${meta.id}.${meta.group}" : "${meta.id}"
     """
-    touch ${meta.id}.${meta.group}.ame.tsv
+    touch ${prefix}.ame.tsv
     """
 }
