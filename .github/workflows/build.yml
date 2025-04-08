@@ -18,7 +18,8 @@ on:
 
 env:
   test_run: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_run }}
-
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
