@@ -2,7 +2,12 @@ class Utils {
     // run spooker for the workflow
     public static String spooker(workflow) {
         def pipeline_name = "${workflow.manifest.name.tokenize('/')[-1]}"
-        def command_string = "spooker ${workflow.launchDir} ${pipeline_name}"
+        def command_string = """
+if ! command -v spooker 2>&1 >/dev/null; then
+    export PATH="$PATH:/data/CCBR_Pipeliner/Tools/ccbr_tools/v0.2/bin/"
+fi
+spooker ${workflow.launchDir} ${pipeline_name} ${workflow.manifest.version}
+"""
         def out = new StringBuilder()
         def err = new StringBuilder()
         def spooker_in_path = check_command_in_path("spooker")
