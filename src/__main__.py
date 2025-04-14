@@ -155,12 +155,6 @@ def init(output):
     ccbr_tools.pipeline.util.copy_config(paths, repo_base=repo_base, outdir=output_dir)
 
 
-@click.command()
-def citation(**kwargs):
-    """Print the citation"""
-    print_citation()
-
-
 cli.add_command(run)
 cli.add_command(init)
 
