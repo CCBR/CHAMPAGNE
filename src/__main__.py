@@ -85,7 +85,7 @@ Run with a specific tag, branch, or commit from GitHub:
 )
 @click.option(
     "--output",
-    help="Output directory path for champagne init & run. Equivalient to nextflow launchDir. Defaults to your current working directory.",
+    help="Output directory path for champagne init & run. Equivalent to nextflow launchDir. Defaults to your current working directory.",
     type=click.Path(file_okay=False, dir_okay=True, writable=True),
     default=pathlib.Path.cwd(),
     show_default=False,
