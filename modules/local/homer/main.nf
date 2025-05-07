@@ -6,9 +6,9 @@ process HOMER_MOTIFS {
     container 'nciccbr/ccbr_homer_4.11:v1'
 
     input:
-        tuple val(meta), path(bed), path(genome_fasta)
+        tuple val(meta), path(bed), path(genome_fasta), path(motif_db)
         val(de_novo) // true or false
-        path(motif_db)
+
 
     output:
         tuple val(meta), path("${meta.id}_homer/*"), emit: motifs
