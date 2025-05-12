@@ -30,6 +30,7 @@ replay_pid*
 /results/
 /output/
 /params.yaml
+.singularity
 
 # python packaging
 *.pyc
