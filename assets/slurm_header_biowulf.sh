@@ -10,4 +10,4 @@
 
 module load ccbrpipeliner
 module load nextflow
-NXF_SINGULARITY_CACHEDIR=/data/CCBR_Pipeliner/SIFS
+NXF_SINGULARITY_CACHEDIR=/data/CCBR_Pipeliner/SIFs

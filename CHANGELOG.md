@@ -13,6 +13,7 @@
   - This is equivalent to the nextflow launchDir constant.
 - Fix bug in MEME AME process that caused it not to run on all samples. (#234, @kelly-sovacool)
   - Also correct the motif rank calculation. (#234, @kopardev)
+- Now using the readthedocs theme for the docs website. (#236, @kelly-sovacool)
 
 ## CHAMPAGNE 0.4.1
 

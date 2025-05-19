@@ -18,7 +18,8 @@ on:
 
 env:
   test_run: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_run }}
-
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,7 +43,6 @@ jobs:
       - name: Install champagne python package
         run: |
           pip install .[dev,test]
-          python -c 'from champagne.src.util import chmod_bins_exec; chmod_bins_exec()'
       - name: pytest
         run: |
           pytest tests
