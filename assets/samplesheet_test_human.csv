@@ -1,0 +1,9 @@
+fastq_1,fastq_2,sample,rep,antibody,input
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129678.fastq.gz,,A549_CTCF,1,CTCF,A549_CTCF_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129676.fastq.gz,,A549_CTCF,2,CTCF,A549_CTCF_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129560.fastq.gz,,A549_CTCF_INPUT,1,,
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR5129561.fastq.gz,,A549_CTCF_INPUT,2,,
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14636612.fastq.gz,,A549_JUN,1,JUN,A549_JUN_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14636613.fastq.gz,,A549_JUN,2,JUN,A549_JUN_INPUT
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14638304.fastq.gz,,A549_JUN_INPUT,1,,
+/data/CCBR_Pipeliner/testdata/CHAMPAGNE/human/SRR14638305.fastq.gz,,A549_JUN_INPUT,2,,
