@@ -1,5 +1,6 @@
 ## CHAMPAGNE development version
 
+- CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
 - Contrasts are now specified as a TSV file instead of YAML. (#224, @kelly-sovacool)
   - See the example contrast sheets in `assets/`.
 - Refactor checks for the sample sheet & contrast sheet to prevent unnecessary re-running. (#224, @kelly-sovacool)
