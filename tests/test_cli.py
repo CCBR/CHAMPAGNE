@@ -32,7 +32,7 @@ def test_citation():
 
 def test_preview():
     output = subprocess.run(
-        "./bin/champagne run -preview -c tests/nxf/ci_stub.config",
+        "./bin/champagne run -preview -c tests/nxf/ci_stub.config --mode local",
         capture_output=True,
         shell=True,
         text=True,
@@ -48,7 +48,7 @@ def test_preview():
 
 def test_forceall():
     output = subprocess.run(
-        "./bin/champagne run --forceall -preview -c tests/nxf/ci_stub.config",
+        "./bin/champagne run --forceall -preview -c tests/nxf/ci_stub.config --mode local",
         capture_output=True,
         shell=True,
         text=True,
@@ -86,7 +86,7 @@ def test_run_no_init():
     with pytest.raises(Exception) as exc_info:
         with tempfile.TemporaryDirectory() as tmp_dir:
             output = shell_run(
-                f"./bin/champagne run --output {tmp_dir}",
+                f"./bin/champagne run --output {tmp_dir} --mode local",
                 check=True,
                 capture_output=True,
             )

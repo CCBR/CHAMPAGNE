@@ -50,13 +50,13 @@ jobs:
         run: |
           cd tests/nxf
           champagne init
-          champagne run -stub -c ci_stub.config --max_cpus 2 --max_memory 6.GB
+          champagne run -stub -c ci_stub.config --max_cpus 2 --max_memory 6.GB --mode local
       - name: Test run
         if: ${{ env.test_run == 'true' }}
         run: |
           cd tests/nxf
           champagne init
-          champagne run -profile docker -c ci_test.config
+          champagne run -profile docker -c ci_test.config --mode local
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v4
         if: always() # run even if previous steps fail
