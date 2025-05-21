@@ -55,13 +55,20 @@ def cli():
 
 help_msg_extra = """
 \b
+Nextflow options:
+  -profile <profile>    Nextflow profile to use (e.g. test)
+  -params-file <file>   Nextflow params file to use (e.g. assets/params.yml)
+  -preview              Preview the processes that will run without executing them
+
+\b
 EXAMPLES:
 Execute with slurm:
-    champagne run ... --mode slurm
+  champagne run --output path/to/outdir --mode slurm
 Preview the processes that will run:
-    champagne run ... --mode local -preview
+  champagne run .--output path/to/outdir --mode local -preview
 Add nextflow args (anything supported by `nextflow run`):
-    champagne run ... -work-dir path/to/workDir
+  champagne run --output path/to/outdir --mode slurm -profile test
+  champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml
 """
 
 
@@ -94,7 +101,7 @@ Add nextflow args (anything supported by `nextflow run`):
     "_mode",
     help="Run mode (slurm, local)",
     type=str,
-    default="local",
+    default="slurm",
     show_default=True,
 )
 @click.option(
@@ -110,6 +117,9 @@ Add nextflow args (anything supported by `nextflow run`):
 def run(main_path, output, _mode, force_all, **kwargs):
     """
     Run the workflow
+
+    Note: you must first run `champagne init --output <output_dir>` to initialize
+    the output directory.
 
     docs: https://ccbr.github.io/CHAMPAGNE
     """
