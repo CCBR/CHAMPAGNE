@@ -29,7 +29,7 @@ workflow POOL_INPUTS {
                 meta.id = group_name
                 meta.rep = ''
                 meta.remove('r')
-                [ meta, reads.flatten().sort() ]
+                [ meta, reads.flatten() ]
             }
             | CONCAT_INPUTS_PAIRED
         CONCAT_INPUTS_PAIRED.out.file_out
@@ -40,9 +40,11 @@ workflow POOL_INPUTS {
             | map { sample_basename, metas, reads ->
                 def meta = metas[0]
                 meta.id = sample_basename
-                [ meta, reads.flatten().sort() ]
+                [ meta, reads.flatten().sort({ a, b -> a.baseName <=> b.baseName }) ]
             }
+            | set { ch_pooled_paired }
 
+        // concatenate single-end reads
         fastqs_branched.input_single
             | map { meta, reads ->
                 [ meta.sample_basename, meta, reads ]
@@ -52,11 +54,11 @@ workflow POOL_INPUTS {
                 def meta = metas[0]
                 meta.id = sample_basename
                 meta.rep = ''
-                [ meta, reads.flatten().sort() ]}
+                [ meta, reads.flatten() ]}
             | CONCAT_INPUTS_SINGLE
 
-
         CONCAT_INPUTS_SINGLE.out.file_out
+            .mix(ch_pooled_paired)
             .mix(fastqs_branched.samples)
             .set{ mixed_reads }
 

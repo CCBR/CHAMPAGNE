@@ -39,6 +39,8 @@ process CAT_CAT {
         $command2 \\
         > ${prefix}
 
+    echo "Concatenated file order: ${file_list.join(' ')}"
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         pigz: \$( pigz --version 2>&1 | sed 's/pigz //g' )
