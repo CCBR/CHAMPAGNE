@@ -165,7 +165,7 @@ workflow CHIPSEQ {
         // run differential analysis
         ch_contrasts = INPUT_CHECK.out.contrasts
         if (params.contrasts) {
-            // TODO use consensus peaks for regions of interest in diffbind
+            // TODO use consensus peaks for regions of interest in diffbind (merge peaks within contrast to create ROI)
             CALL_PEAKS.out.bam_peaks
                 .combine(deduped_bam)
                 .map{meta1, bam1, bai1, peak, tool, meta2, bam2, bai2 ->
