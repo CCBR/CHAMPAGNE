@@ -1,6 +1,7 @@
 ## CHAMPAGNE development version
 
 - CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
+- fix: ensure inputs are pooled correctly for paired end reads. (#250, @kelly-sovacool)
 
 ### New features
 
