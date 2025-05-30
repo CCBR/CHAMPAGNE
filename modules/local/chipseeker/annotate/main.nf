@@ -19,7 +19,7 @@ process CHIPSEEKER_ANNOTATE {
     """
     chipseeker_annotate.R \\
         --peak ${bed} \\
-        --outfile-prefix ${meta.id} \\
+        --outfile-prefix ${bed.baseName} \\
         --genome-txdb ${txdb} \\
         --genome-annot ${annot_db} \\
         --uptss 2000 \\

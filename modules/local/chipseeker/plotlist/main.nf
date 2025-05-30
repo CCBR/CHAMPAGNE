@@ -14,7 +14,7 @@ process CHIPSEEKER_PLOTLIST {
     """
     chipseeker_plotlist.R \\
         --annotations ${rds.join(' ')} \\
-        --outfile ${meta.id}_plot_anno_bar.png
+        --outfile ${rds.baseName}_plot_anno_bar.png
     """
 
     stub:

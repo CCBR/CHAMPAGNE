@@ -17,7 +17,7 @@ process CHIPSEEKER_PEAKPLOT {
     """
     chipseeker_peakplot.R \\
         --peak ${bed} \\
-        --outfile-prefix ${meta.id} \\
+        --outfile-prefix ${bed.baseName} \\
         --genome-txdb ${txdb} \\
         --genome-annot ${annot_db}
     """
