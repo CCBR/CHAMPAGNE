@@ -11,9 +11,9 @@ process CHIPSEEKER_ANNOTATE {
         val(annot_db)
 
     output:
-        tuple val(meta), path("${meta.id}/*.annotated.txt"), path("${meta.id}/*.summary.txt"), path("${meta.id}/*.genelist.txt"), emit: txt
-        path("${meta.id}/*.annotation.Rds"),                                                                emit: annot
-        path("${meta.id}/*.png"),                                                                           emit: plots
+        tuple val(meta), path("*/*.annotated.txt"), path("*/*.summary.txt"), path("*/*.genelist.txt"), emit: txt
+        path("*/*.annotation.Rds"),                                                                emit: annot
+        path("*/*.png"),                                                                           emit: plots
 
     script:
     """
