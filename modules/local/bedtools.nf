@@ -1,7 +1,7 @@
 process BAM_TO_BED {
     tag { meta.id }
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(bam)

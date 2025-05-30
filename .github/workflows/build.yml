@@ -46,6 +46,10 @@ jobs:
       - name: pytest
         run: |
           pytest tests
+      - name: lint nxf
+        if: always()
+        run: |
+          nf-core pipelines schema lint
       - name: Stub run
         run: |
           cd tests/nxf

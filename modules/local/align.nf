@@ -3,7 +3,7 @@ process FILTER_QUALITY {
     label 'align'
     label 'process_medium'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(bam), path(bai)

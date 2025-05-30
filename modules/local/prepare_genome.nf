@@ -24,7 +24,7 @@ process GTF2BED {
 process SPLIT_REF_CHROMS {
     tag { fasta }
     label 'process_single'
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         path(fasta)
@@ -51,7 +51,7 @@ process RENAME_FASTA_CONTIGS {
     """
     tag { fasta }
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         path(fasta)
@@ -124,7 +124,7 @@ process RENAME_DELIM_CONTIGS {
 
 process WRITE_GENOME_CONFIG {
     label 'process_single'
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     publishDir = [
         path: { "${params.outdir}/genome" },

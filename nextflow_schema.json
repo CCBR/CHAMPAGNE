@@ -1,0 +1,370 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/CCBR/CHAMPAGNE//nextflow_schema.json",
+    "title": "CCBR/CHAMPAGNE pipeline parameters",
+    "description": "CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline",
+    "type": "object",
+    "$defs": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where the pipeline should find input data and save output data.",
+            "required": [
+                "input",
+                "outdir"
+            ],
+            "properties": {
+                "input": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "fa_icon": "fas fa-folder-open",
+                    "default": "output"
+                },
+                "contrasts": {
+                    "type": "string",
+                    "fa_icon": "far fa-file"
+                },
+                "genome": {
+                    "type": "string"
+                },
+                "tracedir": {
+                    "type": "string",
+                    "default": "output/pipeline_info",
+                    "fa_icon": "fas fa-folder"
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "link"
+                }
+            }
+        },
+        "custom_genome_options": {
+            "title": "custom genome options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "genome_fasta": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file"
+                },
+                "genes_gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file"
+                },
+                "blacklist": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file"
+                },
+                "rename_contigs": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file"
+                },
+                "index_dir": {
+                    "type": "string",
+                    "fa_icon": "fas fa-folder-open"
+                }
+            }
+        },
+        "general_parameters": {
+            "title": "General parameters",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "seq_center": {
+                    "type": "string"
+                },
+                "read_length": {
+                    "type": "integer"
+                },
+                "max_memory": {
+                    "type": "string",
+                    "default": "224 GB"
+                },
+                "max_cpus": {
+                    "type": "integer",
+                    "default": 32
+                },
+                "max_time": {
+                    "type": "string",
+                    "default": "72 h"
+                },
+                "align_min_quality": {
+                    "type": "integer",
+                    "default": 6
+                },
+                "min_fragment_length": {
+                    "type": "integer",
+                    "default": 200
+                }
+            }
+        },
+        "qc_options": {
+            "title": "QC options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "fastq_screen_conf": {
+                    "type": "string"
+                },
+                "fastq_screen_db_dir": {
+                    "type": "string"
+                },
+                "deeptools_bin_size": {
+                    "type": "integer",
+                    "default": 25
+                },
+                "deeptools_smooth_length": {
+                    "type": "integer",
+                    "default": 75
+                },
+                "deeptools_normalize_using": {
+                    "type": "string",
+                    "default": "RPGC"
+                },
+                "deeptools_excluded_chroms": {
+                    "type": "string",
+                    "default": "chrM chrX chrY"
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/multiqc_config.yaml"
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/ccbr_logo.png"
+                }
+            }
+        },
+        "peak_callers": {
+            "title": "Peak callers",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "macs_narrow_q": {
+                    "type": "number",
+                    "default": 0.01
+                },
+                "macs_broad_q": {
+                    "type": "number",
+                    "default": 0.01
+                },
+                "macs_broad_cutoff": {
+                    "type": "number",
+                    "default": 0.01
+                },
+                "gem_read_dists": {
+                    "type": "string",
+                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/gem/Read_Distribution_default.txt"
+                },
+                "gem_fold": {
+                    "type": "integer",
+                    "default": 3
+                },
+                "gem_k_min": {
+                    "type": "integer",
+                    "default": 6
+                },
+                "gem_k_max": {
+                    "type": "integer",
+                    "default": 13
+                },
+                "sicer_species": {
+                    "type": "string"
+                }
+            }
+        },
+        "motifs": {
+            "title": "motifs",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "homer_de_novo": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "homer_jaspar_db": {
+                    "type": "string",
+                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt"
+                }
+            }
+        },
+        "run_control": {
+            "title": "run control",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "run_qc": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_deeptools": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_normalize_input": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_call_peaks": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_gem": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_sicer": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_macs_broad": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_macs_narrow": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_normalize_peaks": {
+                    "type": "boolean"
+                },
+                "run_chipseeker": {
+                    "type": "boolean"
+                },
+                "run_homer": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_meme": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_consensus_union": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "run_consensus_corces": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "containers": {
+            "title": "containers",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "fa_icon": "fab fa-docker",
+            "properties": {
+                "containers_base": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_ubuntu_base_20.04:v6.1"
+                },
+                "containers_deeptools": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_deeptools_3.5.3:v1"
+                },
+                "containers_fastqc": {
+                    "type": "string",
+                    "default": "nciccbr/ccrgb_qctools:v4.0"
+                },
+                "containers_fastq_screen": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_fastq_screen_0.14.1:v1.0"
+                },
+                "containers_frip": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_frip:v1"
+                },
+                "containers_gem": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_gem_3.4:v1"
+                },
+                "containers_macs2": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_macs2_2.2.9.1:v1"
+                },
+                "containers_multiqc": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_multiqc_1.15:v1"
+                },
+                "containers_ngsqc": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_ngsqc_0.31:v1"
+                },
+                "containers_phantom_peaks": {
+                    "type": "string",
+                    "default": "quay.io/biocontainers/phantompeakqualtools:1.2.2--hdfd78af_1"
+                },
+                "containers_picard": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_picard_2.27.5:v1"
+                },
+                "containers_preseq": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_preseq_v2.0:v1"
+                },
+                "containers_r": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_r_4.3.0:v1"
+                },
+                "containers_sicer": {
+                    "type": "string",
+                    "default": "nciccbr/ccbr_sicer2_1.0.3:v1"
+                }
+            }
+        }
+    },
+    "allOf": [
+        {
+            "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/custom_genome_options"
+        },
+        {
+            "$ref": "#/$defs/general_parameters"
+        },
+        {
+            "$ref": "#/$defs/qc_options"
+        },
+        {
+            "$ref": "#/$defs/peak_callers"
+        },
+        {
+            "$ref": "#/$defs/motifs"
+        },
+        {
+            "$ref": "#/$defs/run_control"
+        },
+        {
+            "$ref": "#/$defs/containers"
+        }
+    ],
+    "properties": {
+        "diffbind_report": {
+            "type": "string",
+            "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/diffbind_report.Rmd",
+            "fa_icon": "fas fa-file",
+            "hidden": true
+        }
+    }
+}

@@ -9,7 +9,8 @@ recursive-include tests
 include CITATION.cff
 include LICENSE
 include main.nf
-include nextflow.conf
+include nextflow.config
+include nextflow_schema.json
 include README.md
 include VERSION
 exclude *.py[ocd]

@@ -21,7 +21,7 @@ workflow INPUT_CHECK {
 
         // Run check on the contrast manifest
         ch_contrasts = Channel.empty()
-        
+
         if (contrastsheet) {
             CHECK_CONTRASTS(samplesheet, contrastsheet)
             contrastsheet
@@ -29,14 +29,14 @@ workflow INPUT_CHECK {
                 .flatMap { row ->
                    [[[contrast: row.contrast_name, group: 'group1'],  row.group1.tokenize(',').flatten()], [[contrast: row.contrast_name, group: 'group2'], row.group2.tokenize(',').flatten()]]
                 }
-                .transpose() 
+                .transpose()
                 .map{ meta, sample ->
                     meta.sample_basename = sample
                     [ meta ]
                 }
                 .set{ ch_contrasts }
         }
-        
+
 
     emit:
         reads                               = reads      // channel: [ meta, [ reads ] ]
@@ -72,4 +72,3 @@ def create_fastq_channel(LinkedHashMap row, String seq_center) {
     }
     return fastq_meta
 }
-

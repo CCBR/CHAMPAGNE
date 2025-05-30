@@ -37,7 +37,7 @@ workflow DIFFBIND {
 
         contrast_files
             .map{ meta, params, file -> [ meta, params ] }
-            .combine(Channel.fromPath(file(params.diffbind.report, checkIfExists: true)))
+            .combine(Channel.fromPath(file(params.diffbind_report, checkIfExists: true)))
             .set{ ch_rmarkdown }
 
         DIFFBIND_RMD( ch_rmarkdown, ch_data_files )

@@ -5,7 +5,7 @@ process BAM_COVERAGE {
     label 'deeptools'
     label 'process_high'
 
-    container "${params.containers.deeptools}"
+    container "${params.containers_deeptools}"
 
     input:
         tuple val(meta), path(bam), path(bai), val(fraglen), val(effective_genome_size)
@@ -19,11 +19,11 @@ process BAM_COVERAGE {
     bamCoverage \\
       --bam ${bam} \\
       -o ${meta.id}.bw \\
-      --binSize ${params.deeptools.bin_size} \\
-      --smoothLength ${params.deeptools.smooth_length} \\
-      --ignoreForNormalization ${params.deeptools.excluded_chroms} \\
+      --binSize ${params.deeptools_bin_size} \\
+      --smoothLength ${params.deeptools_smooth_length} \\
+      --ignoreForNormalization ${params.deeptools_excluded_chroms} \\
       --numberOfProcessors ${task.cpus} \\
-      --normalizeUsing ${params.deeptools.normalize_using} \\
+      --normalizeUsing ${params.deeptools_normalize_using} \\
       --effectiveGenomeSize ${effective_genome_size} \\
       ${args}
     """
@@ -40,7 +40,7 @@ process NORMALIZE_INPUT {
   label 'deeptools'
   label 'process_high'
 
-  container "${params.containers.deeptools}"
+  container "${params.containers_deeptools}"
 
   input:
     tuple val(meta), path(chip), path(input)
@@ -51,7 +51,7 @@ process NORMALIZE_INPUT {
   script:
   """
   bigwigCompare \\
-  --binSize ${params.deeptools.bin_size} \\
+  --binSize ${params.deeptools_bin_size} \\
   --outFileName ${meta.id}.inputnorm.bw \\
   --outFileFormat 'bigwig' \\
   --bigwig1 ${chip} \\
@@ -72,7 +72,7 @@ process BIGWIG_SUM {
     label 'deeptools'
     label 'process_high_memory'
 
-    container "${params.containers.deeptools}"
+    container "${params.containers_deeptools}"
 
     input:
         path(bigwigs)
@@ -100,7 +100,7 @@ process PLOT_CORRELATION {
     label 'deeptools'
     label 'process_single'
 
-    container "${params.containers.deeptools}"
+    container "${params.containers_deeptools}"
 
     input:
         tuple path(array), val(plottype)
@@ -134,7 +134,7 @@ process PLOT_PCA {
     label 'deeptools'
     label 'process_single'
 
-    container "${params.containers.deeptools}"
+    container "${params.containers_deeptools}"
 
     input:
         path(array)
@@ -162,7 +162,7 @@ process PLOT_FINGERPRINT {
   label 'deeptools'
   label 'process_high'
 
-  container "${params.containers.deeptools}"
+  container "${params.containers_deeptools}"
 
   input:
     tuple val(meta), path(bams), path(bais)
@@ -201,7 +201,7 @@ process BED_PROTEIN_CODING {
     label 'qc'
     label 'process_single'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
       path(bed)
@@ -228,7 +228,7 @@ process COMPUTE_MATRIX {
   label 'deeptools'
   label 'process_high'
 
-  container "${params.containers.deeptools}"
+  container "${params.containers_deeptools}"
 
   input:
     tuple val(meta), path(bigwigs), path(bed), val(mattype)
@@ -276,7 +276,7 @@ process PLOT_HEATMAP {
   label 'deeptools'
   label 'process_medium'
 
-  container "${params.containers.deeptools}"
+  container "${params.containers_deeptools}"
 
   input:
     path(mat)
@@ -309,7 +309,7 @@ process PLOT_PROFILE {
   label 'deeptools'
   label 'process_low'
 
-  container "${params.containers.deeptools}"
+  container "${params.containers_deeptools}"
 
   input:
     path(mat)

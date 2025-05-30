@@ -79,7 +79,7 @@ workflow PREPARE_GENOME {
             } else {
                 meme_motif_name = 'null'
                 ch_meme_motifs = Channel.empty()
-                params.run.meme = false
+                params.run_meme = false
             }
             ch_bioc_txdb = Channel.value(params.bioc_txdb)
             ch_bioc_annot = Channel.value(params.bioc_annot)

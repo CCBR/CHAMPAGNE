@@ -69,7 +69,7 @@ workflow CALL_PEAKS {
 
         // create gem channel with [ meta, chip_tag, input_tag, format, read_dists, chrom_sizes, chrom_dir, effective_genome_sizes ]
         ch_tagalign
-            .combine(Channel.fromPath(params.gem.read_dists, checkIfExists: true))
+            .combine(Channel.fromPath(params.gem_read_dists, checkIfExists: true))
             .combine(chrom_sizes)
             .combine(chrom_dir)
             .combine(effective_genome_size)
@@ -77,22 +77,22 @@ workflow CALL_PEAKS {
 
         ch_peaks = Channel.empty()
         ch_narrow_peaks = Channel.empty()
-        if (params.run.macs_broad) {
+        if (params.run_macs_broad) {
             ch_macs | MACS_BROAD
             ch_peaks = ch_peaks.mix(MACS_BROAD.out.peak)
         }
-        if (params.run.macs_narrow) {
+        if (params.run_macs_narrow) {
             ch_macs | MACS_NARROW
             ch_peaks = ch_peaks.mix(MACS_NARROW.out.peak)
             println 'adding macs peaks to ch_narrow_peaks'
             ch_narrow_peaks = ch_narrow_peaks.mix(MACS_NARROW.out.peak)
         }
-        if (params.run.sicer) {
+        if (params.run_sicer) {
             ch_sicer | SICER
             SICER.out.peak | CONVERT_SICER
             ch_peaks = ch_peaks.mix(CONVERT_SICER.out.peak)
         }
-        if (params.run.gem) {
+        if (params.run_gem) {
             ch_gem | GEM
             GEM.out.peak
                 .combine(chrom_sizes) | FILTER_GEM

@@ -2,7 +2,7 @@ process PREP_DIFFBIND {
     tag { "${meta.id}.${meta.contrast}.${meta.tool}" }
     label 'process_low'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(bam), path(bai), path(peak), path(ctrl_bam), path(ctrl_bai)

@@ -31,13 +31,12 @@ workflow QC {
         raw_fastqs.combine(Channel.value("raw")) | FASTQC_RAW
         trimmed_fastqs.combine(Channel.value("trimmed")) | FASTQC_TRIMMED
         ch_multiqc = Channel.empty()
-        if (params.fastq_screen)  {
-            trimmed_fastqs
-            .combine(Channel.fromPath(params.fastq_screen.conf, checkIfExists: true))
-            .combine(Channel.fromPath(params.fastq_screen.db_dir,
+        trimmed_fastqs
+            .combine(Channel.fromPath(params.fastq_screen_conf, checkIfExists: true))
+            .combine(Channel.fromPath(params.fastq_screen_db_dir,
                                         type: 'dir', checkIfExists: true)) | FASTQ_SCREEN
-            ch_multiqc = ch_multiqc.mix(FASTQ_SCREEN.out.screen)
-        }
+        ch_multiqc = ch_multiqc.mix(FASTQ_SCREEN.out.screen)
+
         PRESEQ(aligned_filtered_bam)
         // when preseq fails, write NAs for the stats that are calculated from its log
         PRESEQ.out.log
@@ -84,7 +83,7 @@ workflow QC {
             PRESEQ.out.c_curve
         )
 
-        if (params.run.deeptools) {
+        if (params.run_deeptools) {
             DEEPTOOLS( deduped_bam,
                        frag_lengths,
                        effective_genome_size,

@@ -3,7 +3,7 @@ process CALC_GENOME_FRAC {
     label 'peaks'
     label 'process_single'
 
-    container = "${params.containers.base}"
+    container = "${params.containers_base}"
 
     input:
         path(chrom_sizes)
@@ -31,7 +31,7 @@ process MACS_BROAD {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers.macs2}"
+    container = "${params.containers_macs2}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), val(fraglen), val(genome_frac), val(effective_genome_size)
@@ -50,11 +50,11 @@ process MACS_BROAD {
       -n ${meta.id} \\
       --extsize ${fraglen} \\
       --nomodel \\
-      -q ${params.macs.broad.q} \\
+      -q ${params.macs_broad.q} \\
       --keep-dup='all' \\
       --format ${format} \\
       --broad \\
-      --broad-cutoff ${params.macs.broad.cutoff}
+      --broad-cutoff ${params.macs_broad.cutoff}
     """
 
     stub:
@@ -71,7 +71,7 @@ process MACS_NARROW {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers.macs2}"
+    container = "${params.containers_macs2}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), val(fraglen), val(genome_frac), val(effective_genome_size)
@@ -90,7 +90,7 @@ process MACS_NARROW {
       -n ${meta.id} \\
       --extsize ${fraglen} \\
       --nomodel \\
-      -q ${params.macs.narrow.q} \\
+      -q ${params.macs_narrow.q} \\
       --keep-dup='all' \\
       --format ${format}
     """
@@ -108,7 +108,7 @@ process SICER {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers.sicer}"
+    container = "${params.containers_sicer}"
 
     input:
         tuple val(meta), path(chip), path(input), val(fraglen), val(genome_frac)
@@ -122,7 +122,7 @@ process SICER {
     sicer \\
       -t ${chip} \\
       -c ${input} \\
-      -s ${params.sicer.species} \\
+      -s ${params.sicer_species} \\
       -rt 100 \\
       -w 300 \\
       -f ${fraglen} \\
@@ -145,7 +145,7 @@ process CONVERT_SICER { // https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d5838
     label 'peaks'
     label 'process_single'
 
-    container = "${params.containers.base}"
+    container = "${params.containers_base}"
 
     input:
         tuple val(meta), path(sicer_peaks), val(peak_tool)
@@ -219,7 +219,7 @@ process GEM {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers.gem}"
+    container = "${params.containers_gem}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), path(read_dists), path(chrom_sizes), path(chrom_dir), val(effective_genome_size)
@@ -242,9 +242,9 @@ process GEM {
       --ctrl ${input} \\
       --f ${f} \\
       --out ${meta.id} \\
-      --fold ${params.gem.fold} \\
-      --k_min ${params.gem.k_min} \\
-      --k_max ${params.gem.k_max} \\
+      --fold ${params.gem_fold} \\
+      --k_min ${params.gem_k_min} \\
+      --k_max ${params.gem_k_max} \\
       --nrf \\
       --outNP \\
       --outMEME
@@ -262,7 +262,7 @@ process GEM {
 process FILTER_GEM {
     tag { meta.id }
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(peak), val(tool), path(chrom_sizes)
@@ -306,7 +306,7 @@ process FRACTION_IN_PEAKS {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.frip}"
+    container "${params.containers_frip}"
 
     input:
         tuple val(meta), path(dedup_bam), path(dedup_bai), path(peaks), val(peak_tool), path(chrom_sizes)
@@ -330,7 +330,7 @@ process CONCAT_FRIPS {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         path(frips)
@@ -356,7 +356,7 @@ process PLOT_FRIP {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.r}"
+    container "${params.containers_r}"
 
     input:
         path(frips)
@@ -380,7 +380,7 @@ process JACCARD_INDEX {
     label 'peaks'
     label 'process_low'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(metaA), path(peakA), val(toolA),  val(metaB), path(peakB), val(toolB), path(chrom_sizes)
@@ -411,7 +411,7 @@ process CONCAT_JACCARD {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         path(jaccards)
@@ -436,7 +436,7 @@ process PLOT_JACCARD {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.r}"
+    container "${params.containers_r}"
 
     input:
         path(jaccard)
@@ -461,7 +461,7 @@ process GET_PEAK_META {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(dedup_bam), path(dedup_bai), path(peaks), val(peak_tool), path(chrom_sizes)
@@ -484,7 +484,7 @@ process CONCAT_PEAK_META {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.base}"
+    container "${params.containers_base}"
 
     input:
         path(peak_metas)
@@ -510,7 +510,7 @@ process PLOT_PEAK_WIDTHS {
     label 'peaks'
     label 'process_single'
 
-    container "${params.containers.r}"
+    container "${params.containers_r}"
 
     input:
         path(peak_meta)
