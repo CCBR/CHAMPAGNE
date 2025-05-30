@@ -1,7 +1,7 @@
 process HOMER_MOTIFS {
     tag "${meta.id}"
     label 'peaks'
-    label 'process_medium'
+    label 'process_long'
 
     container 'nciccbr/ccbr_homer_4.11:v1'
 
