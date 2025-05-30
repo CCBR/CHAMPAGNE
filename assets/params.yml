@@ -1,5 +1,4 @@
 input: './assets/samplesheet_test_mm10.csv'
-outdir: ./output/
 genome: mm10
 run:
   gem: false

@@ -12,6 +12,7 @@ process CONSENSUS_CORCES {
     script:
     def cat_peak_file = "${meta.id}.${meta.tool}.cat.bed"
     def outfile = "${meta.id}.${meta.tool}.consensus_corces.bed"
+    meta.consensus = 'corces'
     """
     #cat ${peaks.join(' ')} > ${cat_peak_file}
     #consensus_corces.py ${cat_peak_file} ${outfile} ${chrom_sizes}

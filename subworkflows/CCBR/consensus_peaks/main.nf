@@ -33,7 +33,10 @@ workflow CONSENSUS_PEAKS {
         SORT_BED( CAT_CAT.out.file_out )
         BEDTOOLS_MERGE(SORT_BED.out.bed, ' -c 1,5,6,7,8,9 -o count,collapse,collapse,collapse,collapse,collapse ')
         CONSENSUS_UNION(BEDTOOLS_MERGE.out.bed)
-        consensus_peaks = CONSENSUS_UNION.out.bed
+        consensus_peaks = CONSENSUS_UNION.out.bed.map { meta, bed ->
+            meta.consensus = 'union'
+            [meta, bed]
+        }
 
         ch_versions = ch_versions.mix(
             CAT_CAT.out.versions,

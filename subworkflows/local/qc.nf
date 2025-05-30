@@ -83,14 +83,15 @@ workflow QC {
             QC_TABLE.out.txt,
             PRESEQ.out.c_curve
         )
-
+        ch_deeptools = Channel.empty()
         if (params.run.deeptools) {
             DEEPTOOLS( deduped_bam,
                        frag_lengths,
                        effective_genome_size,
                        gene_info
                      )
-            ch_multiqc = ch_multiqc.mix(
+
+            ch_deeptools = ch_deeptools.mix(
                 DEEPTOOLS.out.fingerprint_matrix,
                 DEEPTOOLS.out.fingerprint_metrics,
                 DEEPTOOLS.out.corr,
@@ -98,9 +99,13 @@ workflow QC {
                 DEEPTOOLS.out.profile,
                 DEEPTOOLS.out.heatmap
             )
+            ch_multiqc = ch_multiqc.mix(ch_deeptools)
         }
 
     emit:
         multiqc_input = ch_multiqc
+        fastqc_raw = FASTQC_RAW.out.zip.mix(FASTQC_RAW.out.html)
+        fastqc_trimmed = FASTQC_TRIMMED.out.zip.mix(FASTQC_TRIMMED.out.html)
+        deeptools = ch_deeptools
 
 }

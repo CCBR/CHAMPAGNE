@@ -84,7 +84,6 @@ workflow CALL_PEAKS {
         if (params.run.macs_narrow) {
             ch_macs | MACS_NARROW
             ch_peaks = ch_peaks.mix(MACS_NARROW.out.peak)
-            println 'adding macs peaks to ch_narrow_peaks'
             ch_narrow_peaks = ch_narrow_peaks.mix(MACS_NARROW.out.peak)
         }
         if (params.run.sicer) {
@@ -97,7 +96,6 @@ workflow CALL_PEAKS {
             GEM.out.peak
                 .combine(chrom_sizes) | FILTER_GEM
             ch_peaks = ch_peaks.mix(FILTER_GEM.out.peak)
-            println 'adding gem peaks to ch_narrow_peaks'
             ch_narrow_peaks = ch_narrow_peaks.mix(FILTER_GEM.out.peak)
         }
 

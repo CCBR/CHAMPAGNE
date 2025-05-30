@@ -126,10 +126,6 @@ process WRITE_GENOME_CONFIG {
     label 'process_single'
     container "${params.containers.base}"
 
-    publishDir = [
-        path: { "${params.outdir}/genome" },
-        mode: "copy"
-    ]
     input:
         path(fasta)
         path(gtf)
@@ -142,6 +138,7 @@ process WRITE_GENOME_CONFIG {
         val(meme_motifs)
         val(bioc_txdb)
         val(bioc_annot)
+
 
     output:
         path("*.config"), emit: conf
@@ -180,7 +177,7 @@ process WRITE_GENOME_CONFIG {
     pprint.pprint(genome)
     with open('${genome_name}.config', 'w') as conf_file:
         head = ["params {\\n",
-                '\\tindex_dir = "${params.outdir}/genome/"\\n',
+                '\\tindex_dir = "\${outputDir}/genome/"\\n',
                 "\\tgenomes {\\n"
                 "\\t\\t'${genome_name}' {\\n"]
         conf_file.writelines(head)
