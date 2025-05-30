@@ -142,11 +142,15 @@
                 },
                 "multiqc_config": {
                     "type": "string",
-                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/multiqc_config.yaml"
+                    "format": "file-path",
+                    "fa_icon": "fas fa-file",
+                    "default": "assets/multiqc_config.yaml"
                 },
                 "multiqc_logo": {
                     "type": "string",
-                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/ccbr_logo.png"
+                    "format": "file-path",
+                    "fa_icon": "fas fa-file",
+                    "default": "assets/ccbr_logo.png"
                 }
             }
         },
@@ -170,7 +174,9 @@
                 },
                 "gem_read_dists": {
                     "type": "string",
-                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/gem/Read_Distribution_default.txt"
+                    "format": "file-path",
+                    "fa_icon": "fas fa-file",
+                    "default": "assets/gem/Read_Distribution_default.txt"
                 },
                 "gem_fold": {
                     "type": "integer",
@@ -201,7 +207,9 @@
                 },
                 "homer_jaspar_db": {
                     "type": "string",
-                    "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt"
+                    "format": "file-path",
+                    "fa_icon": "fas fa-file",
+                    "default": "assets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt"
                 }
             }
         },
@@ -362,7 +370,8 @@
     "properties": {
         "diffbind_report": {
             "type": "string",
-            "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/diffbind_report.Rmd",
+            "format": "file-path",
+            "default": "assets/diffbind_report.Rmd",
             "fa_icon": "fas fa-file",
             "hidden": true
         }

@@ -4,8 +4,8 @@ library(assertthat)
 library(dplyr)
 library(glue)
 
-main <- function(contrasts_filename = "${contrasts}", 
-                 samplesheet_filename = "${samplesheet}",               
+main <- function(contrasts_filename = "${contrasts}",
+                 samplesheet_filename = "${samplesheet}",
                  versions_filename = "versions.yml",
                  process_name = "${task.process}") {
   write_version(versions_filename, process_name = process_name)

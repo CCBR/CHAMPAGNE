@@ -194,16 +194,10 @@ or semicolon-delimited list of input file sources/types. Only needed when \
 source of bed file is not built into the script. Default: ""',
     )
     parser.add_option(
-        "-t",
-        dest="tool",
-        default="",
-        help='Name of the peak-calling tool'
+        "-t", dest="tool", default="", help="Name of the peak-calling tool"
     )
     parser.add_option(
-        "-s",
-        dest="sample",
-        default="",
-        help='Sample name/ID of the bedfile(s)'
+        "-s", dest="sample", default="", help="Sample name/ID of the bedfile(s)"
     )
 
     (options, args) = parser.parse_args()
@@ -216,8 +210,8 @@ source of bed file is not built into the script. Default: ""',
     sample = options.sample
 
     out2 = process_files(bamfile, bedfiles, genomefile, filetypes, tool, sample)
-    #outtable = create_outfile_name(bamfile, outroot)
-    #write_table(out2, outtable)
+    # outtable = create_outfile_name(bamfile, outroot)
+    # write_table(out2, outtable)
     out2.to_csv(outroot, sep="\t", index=False)
 
 

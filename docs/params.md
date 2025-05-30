@@ -41,36 +41,36 @@ Define where the pipeline should find input data and save output data.
 
 ## QC options
 
-| Parameter                   | Description | Type      | Default                                                                                      | Required | Hidden |
-| --------------------------- | ----------- | --------- | -------------------------------------------------------------------------------------------- | -------- | ------ |
-| `fastq_screen_conf`         |             | `string`  |                                                                                              |          |        |
-| `fastq_screen_db_dir`       |             | `string`  |                                                                                              |          |        |
-| `deeptools_bin_size`        |             | `integer` | 25                                                                                           |          |        |
-| `deeptools_smooth_length`   |             | `integer` | 75                                                                                           |          |        |
-| `deeptools_normalize_using` |             | `string`  | RPGC                                                                                         |          |        |
-| `deeptools_excluded_chroms` |             | `string`  | chrM chrX chrY                                                                               |          |        |
-| `multiqc_config`            |             | `string`  | /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/multiqc_config.yaml |          |        |
-| `multiqc_logo`              |             | `string`  | /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/ccbr_logo.png       |          |        |
+| Parameter                   | Description | Type      | Default                    | Required | Hidden |
+| --------------------------- | ----------- | --------- | -------------------------- | -------- | ------ |
+| `fastq_screen_conf`         |             | `string`  |                            |          |        |
+| `fastq_screen_db_dir`       |             | `string`  |                            |          |        |
+| `deeptools_bin_size`        |             | `integer` | 25                         |          |        |
+| `deeptools_smooth_length`   |             | `integer` | 75                         |          |        |
+| `deeptools_normalize_using` |             | `string`  | RPGC                       |          |        |
+| `deeptools_excluded_chroms` |             | `string`  | chrM chrX chrY             |          |        |
+| `multiqc_config`            |             | `string`  | assets/multiqc_config.yaml |          |        |
+| `multiqc_logo`              |             | `string`  | assets/ccbr_logo.png       |          |        |
 
 ## Peak callers
 
-| Parameter           | Description | Type      | Default                                                                                                    | Required | Hidden |
-| ------------------- | ----------- | --------- | ---------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| `macs_narrow_q`     |             | `number`  | 0.01                                                                                                       |          |        |
-| `macs_broad_q`      |             | `number`  | 0.01                                                                                                       |          |        |
-| `macs_broad_cutoff` |             | `number`  | 0.01                                                                                                       |          |        |
-| `gem_read_dists`    |             | `string`  | /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/gem/Read_Distribution_default.txt |          |        |
-| `gem_fold`          |             | `integer` | 3                                                                                                          |          |        |
-| `gem_k_min`         |             | `integer` | 6                                                                                                          |          |        |
-| `gem_k_max`         |             | `integer` | 13                                                                                                         |          |        |
-| `sicer_species`     |             | `string`  |                                                                                                            |          |        |
+| Parameter           | Description | Type      | Default                                  | Required | Hidden |
+| ------------------- | ----------- | --------- | ---------------------------------------- | -------- | ------ |
+| `macs_narrow_q`     |             | `number`  | 0.01                                     |          |        |
+| `macs_broad_q`      |             | `number`  | 0.01                                     |          |        |
+| `macs_broad_cutoff` |             | `number`  | 0.01                                     |          |        |
+| `gem_read_dists`    |             | `string`  | assets/gem/Read_Distribution_default.txt |          |        |
+| `gem_fold`          |             | `integer` | 3                                        |          |        |
+| `gem_k_min`         |             | `integer` | 6                                        |          |        |
+| `gem_k_max`         |             | `integer` | 13                                       |          |        |
+| `sicer_species`     |             | `string`  |                                          |          |        |
 
 ## motifs
 
-| Parameter         | Description | Type      | Default                                                                                                                            | Required | Hidden |
-| ----------------- | ----------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| `homer_de_novo`   |             | `boolean` | True                                                                                                                               |          |        |
-| `homer_jaspar_db` |             | `string`  | /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt |          |        |
+| Parameter         | Description | Type      | Default                                                          | Required | Hidden |
+| ----------------- | ----------- | --------- | ---------------------------------------------------------------- | -------- | ------ |
+| `homer_de_novo`   |             | `boolean` | True                                                             |          |        |
+| `homer_jaspar_db` |             | `string`  | assets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt |          |        |
 
 ## run control
 
@@ -112,6 +112,6 @@ Define where the pipeline should find input data and save output data.
 
 ## Other parameters
 
-| Parameter         | Description | Type     | Default                                                                                      | Required | Hidden |
-| ----------------- | ----------- | -------- | -------------------------------------------------------------------------------------------- | -------- | ------ |
-| `diffbind_report` |             | `string` | /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/CHAMPAGNE/champ-dev-2/assets/diffbind_report.Rmd |          | True   |
+| Parameter         | Description | Type     | Default                    | Required | Hidden |
+| ----------------- | ----------- | -------- | -------------------------- | -------- | ------ |
+| `diffbind_report` |             | `string` | assets/diffbind_report.Rmd |          | True   |

@@ -1,13 +1,15 @@
 # TODO Jotting notes here
+
 ## Samplemanifest
+
 The following columns are required:
 
 - sample: sampleID; does not need to be a unique column
 - rep: replicateID of sampleID; does not need to be a unique column
 - fastq_1: absolute path to R1 of sampleID
 - fastq_2: absolute path to R1 of sampleID
-- antibody: -c sampleID for mac2; this must match a unique {sample}_{rep} format
-- control: 
+- antibody: -c sampleID for mac2; this must match a unique {sample}\_{rep} format
+- control:
 
 Example antibody / control format for a single-end project:
 
