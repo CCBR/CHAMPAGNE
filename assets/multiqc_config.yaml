@@ -123,6 +123,13 @@ custom_data:
         min: 0
         max: 2
         scale: "RdYlGn"
+  spike_sf_table:
+    section_name: "Spike-in scaling factors"
+    plot_type: "table"
+    description: "Scaling factors for spike-in controls. The scaling factor is the ratio of the number of reads in the sample to the number of reads in the spike-in control."
+    pconfig:
+      id: "spike_sf_table"
+      namespace: "Spike-in scaling factors"
   NGSQC_data:
     section_name: "NGSQC plot"
     plot_type: "linegraph"
@@ -168,6 +175,8 @@ custom_data:
 sp:
   QC_Table:
     fn: "qc_table.tsv"
+  spike_sf_table:
+    fn: "*scalingFactors.tsv"
   NGSQC_data:
     fn: "*NGSQC.txt"
   frip_samples:

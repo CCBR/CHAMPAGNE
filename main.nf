@@ -5,10 +5,12 @@ nextflow.preview.output = true
 include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools/'
 include { INPUT_CHECK              } from './subworkflows/local/input_check.nf'
 include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome.nf'
+include { ALIGN_SPIKEIN            } from './subworkflows/local/spikein/'
 include { POOL_INPUTS              } from './subworkflows/local/pool_inputs/'
 include { FILTER_BLACKLIST         } from './subworkflows/CCBR/filter_blacklist/'
 include { ALIGN_GENOME             } from "./subworkflows/local/align.nf"
 include { DEDUPLICATE              } from "./subworkflows/local/deduplicate.nf"
+include { DEEPTOOLS                } from "./subworkflows/local/deeptools"
 include { QC                       } from './subworkflows/local/qc.nf'
 include { CALL_PEAKS               } from './subworkflows/local/peaks.nf'
 include { CONSENSUS_PEAKS as CONSENSUS_UNION } from './subworkflows/CCBR/consensus_peaks/'
@@ -81,8 +83,11 @@ workflow LOG {
 
 // MAIN WORKFLOW
 workflow {
+    main:
     LOG()
     // validateParameters()
+
+    ch_multiqc = Channel.empty()
 
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
     contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
@@ -95,6 +100,15 @@ workflow {
     chrom_sizes = PREPARE_GENOME.out.chrom_sizes
     effective_genome_size = PREPARE_GENOME.out.effective_genome_size
 
+    // optional spike-in filtering & scaling factor computation
+    ch_scaling_factors = trimmed_fastqs
+        | map{ meta, fq -> meta }
+        | combine(Channel.of(1))
+    if (params.spike_genome) {
+        ALIGN_SPIKEIN(trimmed_fastqs, params.spike_genome)
+        ch_scaling_factors = ALIGN_SPIKEIN.out.scaling_factors
+        ch_multiqc = ch_multiqc.mix(ALIGN_SPIKEIN.out.multibam_sf)
+    }
     FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
     ALIGN_GENOME(FILTER_BLACKLIST.out.reads, PREPARE_GENOME.out.reference_index)
     aligned_bam = ALIGN_GENOME.out.bam
@@ -110,23 +124,38 @@ workflow {
         PHANTOM_PEAKS.out.fraglen
     )
 
-    ch_multiqc = Channel.of()
+
+    ch_deeptools = Channel.empty()
+    if (params.run_deeptools) {
+        DEEPTOOLS( deduped_bam,
+                    frag_lengths,
+                    effective_genome_size,
+                    PREPARE_GENOME.out.gene_info,
+                    ch_scaling_factors
+                    )
+
+        ch_deeptools = ch_deeptools.mix(
+            DEEPTOOLS.out.fingerprint_matrix,
+            DEEPTOOLS.out.fingerprint_metrics,
+            DEEPTOOLS.out.corr,
+            DEEPTOOLS.out.pca,
+            DEEPTOOLS.out.profile,
+            DEEPTOOLS.out.heatmap
+        )
+        ch_multiqc = ch_multiqc.mix(ch_deeptools)
+    }
 
     fastqc_raw = Channel.empty()
     fastqc_trimmed = Channel.empty()
-    ch_deeptools = Channel.empty()
     if (params.run_qc) {
         QC(raw_fastqs, CUTADAPT.out.reads, FILTER_BLACKLIST.out.n_surviving_reads,
            aligned_bam, ALIGN_GENOME.out.aligned_flagstat, ALIGN_GENOME.out.filtered_flagstat,
-           deduped_bam, DEDUPLICATE.out.flagstat,
+           DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths,
-           PREPARE_GENOME.out.gene_info,
-           effective_genome_size
            )
         ch_multiqc = ch_multiqc.mix(QC.out.multiqc_input)
         fastqc_raw = QC.out.fastqc_raw
         fastqc_trimmed = QC.out.fastqc_trimmed
-        ch_deeptools = QC.out.deeptools
     }
     ch_peaks = Channel.empty()
     ch_peaks_consensus = Channel.empty()
@@ -227,6 +256,7 @@ workflow {
         multiqc_report = MULTIQC.out
     }
 
+
     publish:
         genome = PREPARE_GENOME.out.conf
         fastqc_raw = fastqc_raw
@@ -240,7 +270,9 @@ workflow {
         peaks_consensus = ch_peaks_consensus
         diffbind = ch_diffbind
         manorm = ch_manorm
+
 }
+
 
 output {
 

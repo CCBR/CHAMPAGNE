@@ -1,0 +1,3 @@
+sample,rep,fastq_1,fastq_2,antibody,input
+Combo_RNAPOL,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/07_A_Combo_10_10_RNAPOL.fastq.gz,,RNAPOL,Combo_INPUT
+Combo_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/20_A_Combo_10_10_INPUT.fastq.gz,,,

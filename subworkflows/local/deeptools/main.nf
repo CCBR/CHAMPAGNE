@@ -15,10 +15,17 @@ workflow DEEPTOOLS {
         frag_lengths
         effective_genome_size
         gene_info
+        scaling_factors
 
     main:
 
-        deduped_bam.join(frag_lengths).combine(effective_genome_size) | BAM_COVERAGE
+        deduped_bam
+            | map{ meta, bam, bai -> [ meta.id, meta, bam, bai] }
+            | join(scaling_factors)
+            | map{ id, meta, bam, bai, sf -> [meta, bam, bai, sf] }
+            | join(frag_lengths)
+            | combine(effective_genome_size)
+            | BAM_COVERAGE
         BAM_COVERAGE.out.bigwig
             .set { bigwigs }
 

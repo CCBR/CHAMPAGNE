@@ -6,26 +6,29 @@ CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline
 
 ## Input/output options
 
-Define where the pipeline should find input data and save output data.
+The most commonly used pipeline options
 
 | Parameter          | Description                                                                                                                                                                                                                                                                                                                                                                                  | Type     | Default                    | Required | Hidden |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------- | -------- | ------ |
 | `input`            | Path to comma-separated file containing information about the samples in the experiment. <details><summary>Help</summary><small>You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.</small></details> | `string` |                            | True     |        |
-| `contrasts`        |                                                                                                                                                                                                                                                                                                                                                                                              | `string` |                            |          |        |
-| `genome`           |                                                                                                                                                                                                                                                                                                                                                                                              | `string` |                            |          |        |
-| `outputDir`        |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${launchDir}/results       |          |        |
-| `tracedir`         |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${outputDir}/pipeline_info |          |        |
+| `contrasts`        | Optional contrasts specification for differential analysis                                                                                                                                                                                                                                                                                                                                   | `string` |                            |          |        |
+| `genome`           | Reference genome (e.g. hg38, mm10). This can be a genome in conf/genomes.config, or see 'Custom genome options' to build a custom reference from a fasta & gtf file.                                                                                                                                                                                                                         | `string` |                            | True     |        |
+| `spike_genome`     | Optional spike-in genome (e.g. dmelr6.32, ecoli_k12).                                                                                                                                                                                                                                                                                                                                        | `string` |                            |          |        |
+| `outputDir`        |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${launchDir}/results       |          | True   |
+| `tracedir`         |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${outputDir}/pipeline_info |          | True   |
 | `publish_dir_mode` |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | link                       |          |        |
 
-## custom genome options
+## Custom genome options
 
-| Parameter        | Description | Type     | Default | Required | Hidden |
-| ---------------- | ----------- | -------- | ------- | -------- | ------ |
-| `genome_fasta`   |             | `string` |         |          |        |
-| `genes_gtf`      |             | `string` |         |          |        |
-| `blacklist`      |             | `string` |         |          |        |
-| `rename_contigs` |             | `string` |         |          |        |
-| `index_dir`      |             | `string` |         |          |        |
+Use these to build a custom reference genome not already listed in conf/genomes.config. For an example use-case, see conf/test.config.
+
+| Parameter        | Description                                                                                     | Type     | Default | Required | Hidden |
+| ---------------- | ----------------------------------------------------------------------------------------------- | -------- | ------- | -------- | ------ |
+| `genome_fasta`   | Genome fasta file                                                                               | `string` |         |          |        |
+| `genes_gtf`      | Genome gtf file                                                                                 | `string` |         |          |        |
+| `blacklist`      | Blacklisted sequences fasta file                                                                | `string` |         |          |        |
+| `rename_contigs` | File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example) | `string` |         |          |        |
+| `index_dir`      | Absolute path to directory containing pre-built reference genomes                               | `string` |         |          |        |
 
 ## General parameters
 
