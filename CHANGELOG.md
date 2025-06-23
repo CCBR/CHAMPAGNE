@@ -3,6 +3,7 @@
 - CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
 - Reorganized output directory structure. (#256, @kelly-sovacool)
 - Nextflow parameters are now validated at the start of the workflow. (#257, @kelly-sovacool)
+- Output BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)
 
 ### New features
 
