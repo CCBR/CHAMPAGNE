@@ -47,6 +47,10 @@ jobs:
           cat docs/params.tmp >> docs/params.md
           rm docs/params.tmp
 
+      - name: Write genomes docs
+        run: |
+          python .github/genome_docs.py
+
       - name: Format
         uses: pre-commit/action@v3.0.1
         continue-on-error: true
@@ -55,6 +59,9 @@ jobs:
         run: |
           git add docs/params.md
           git commit -m "ci: 📑 update params docs with 'nf-core pipelines schema docs'" || echo "nothing to commit"
+
+          git add docs/genomes.md
+          git commit -m "ci: 📑 update genomes docs with .github/genome_docs.py" || echo "nothing to commit"
 
           git add .
           git commit -m "ci: 🤖 format everything with pre-commit" || echo "nothing to commit"

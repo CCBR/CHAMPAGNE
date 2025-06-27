@@ -7,7 +7,6 @@ workflow MOTIFS {
         genome_fasta
         meme_motifs
     main:
-        ch_plots = Channel.empty()
         ch_homer = Channel.empty()
         ch_meme = Channel.empty()
         if (params.run_homer) {
@@ -31,7 +30,6 @@ workflow MOTIFS {
             }
         }
     emit:
-        plots = ch_plots
         homer = ch_homer
         meme = ch_meme
 }

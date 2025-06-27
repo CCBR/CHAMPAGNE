@@ -9,8 +9,8 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input"],
+            "description": "The most commonly used pipeline options",
+            "required": ["input", "genome"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -24,20 +24,24 @@
                 },
                 "contrasts": {
                     "type": "string",
-                    "fa_icon": "far fa-file"
+                    "fa_icon": "far fa-file",
+                    "description": "Optional contrasts specification for differential analysis"
                 },
                 "genome": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Reference genome (e.g. hg38, mm10). This can be a genome in conf/genomes.config, or see 'Custom genome options' to build a custom reference from a fasta & gtf file."
                 },
                 "outputDir": {
                     "type": "string",
                     "default": "${launchDir}/results",
-                    "fa_icon": "fas fa-folder"
+                    "fa_icon": "fas fa-folder",
+                    "hidden": true
                 },
                 "tracedir": {
                     "type": "string",
                     "default": "${outputDir}/pipeline_info",
-                    "fa_icon": "fas fa-folder"
+                    "fa_icon": "fas fa-folder",
+                    "hidden": true
                 },
                 "publish_dir_mode": {
                     "type": "string",
@@ -46,30 +50,35 @@
             }
         },
         "custom_genome_options": {
-            "title": "custom genome options",
+            "title": "Custom genome options",
             "type": "object",
-            "description": "",
+            "description": "Use these to build a custom reference genome not already listed in conf/genomes.config. For an example use-case, see conf/test.config.",
             "default": "",
             "properties": {
                 "genome_fasta": {
                     "type": "string",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file",
+                    "description": "Genome fasta file"
                 },
                 "genes_gtf": {
                     "type": "string",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file",
+                    "description": "Genome gtf file"
                 },
                 "blacklist": {
                     "type": "string",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file",
+                    "description": "Blacklisted sequences fasta file"
                 },
                 "rename_contigs": {
                     "type": "string",
-                    "fa_icon": "fas fa-file"
+                    "fa_icon": "fas fa-file",
+                    "description": "File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)"
                 },
                 "index_dir": {
                     "type": "string",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Absolute path to directory containing pre-built reference genomes"
                 }
             }
         },
@@ -107,6 +116,34 @@
                 }
             }
         },
+        "spike_in_options": {
+            "title": "Spike-in options",
+            "type": "object",
+            "description": "Options for experiments that use a spike-in genome",
+            "default": "",
+            "properties": {
+                "spike_genome": {
+                    "type": "string",
+                    "description": "Optional spike-in genome (e.g. dmelr6.32, ecoli_k12). If null, spike-in normalization will not be performed."
+                },
+                "spike_norm_method": {
+                    "type": "string",
+                    "default": "guenther",
+                    "enum": ["guenther", "delorenzi"],
+                    "description": "Method to compute scaling factors for spike-in normalization. \"guenther\" uses a simple fraction of the reads aligning to the spike-in genome as described in https://doi.org/10.1016/j.celrep.2014.10.018. \"delorenzi\" uses deepTools multiBamSummary with --scalingFactors, which is similar to the method described in https://doi.org/10.1101/gr.168260.113."
+                },
+                "spike_deeptools_bin_size": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "When spike_norm_method is delorenzi, this sets --binSize in deepTools multiBamSummary"
+                },
+                "spike_deeptools_min_map_quality": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "When spike_norm_method is delorenzi, this sets --minMappingQuality in deepTools multiBamSummary"
+                }
+            }
+        },
         "qc_options": {
             "title": "QC options",
             "type": "object",
@@ -129,7 +166,8 @@
                 },
                 "deeptools_normalize_using": {
                     "type": "string",
-                    "default": "RPGC"
+                    "default": "RPGC",
+                    "description": "If using a spike-in genome, recommend setting this to \"None\""
                 },
                 "deeptools_excluded_chroms": {
                     "type": "string",
@@ -211,7 +249,7 @@
         "run_control": {
             "title": "run control",
             "type": "object",
-            "description": "",
+            "description": "Toggle various steps of the pipeline on/off",
             "default": "",
             "properties": {
                 "run_qc": {
@@ -345,6 +383,9 @@
         },
         {
             "$ref": "#/$defs/general_parameters"
+        },
+        {
+            "$ref": "#/$defs/spike_in_options"
         },
         {
             "$ref": "#/$defs/qc_options"

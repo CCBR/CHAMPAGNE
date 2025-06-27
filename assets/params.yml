@@ -1,6 +1,6 @@
-input: './assets/samplesheet_test_mm10.csv'
+input: './assets/samplesheet_full_mm10.csv'
+contrasts: './assets/contrasts_full_mm10.csv'
 genome: mm10
-run:
-  gem: false
-  chipseeker: false
-  qc: true
+run_gem: false
+run_chipseeker: false
+run_qc: true

@@ -1,8 +1,7 @@
 
 process SAMTOOLS_FILTERALIGNED {
-    '''
-    Given a bam file, filter out reads that aligned.
-    '''
+    // Given a bam file, filter out reads that aligned.
+
     tag { meta.id }
     label 'process_high'
 

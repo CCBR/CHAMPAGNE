@@ -5,10 +5,12 @@ nextflow.preview.output = true
 include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools/'
 include { INPUT_CHECK              } from './subworkflows/local/input_check.nf'
 include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome.nf'
+include { ALIGN_SPIKEIN            } from './subworkflows/local/spikein/'
 include { POOL_INPUTS              } from './subworkflows/local/pool_inputs/'
 include { FILTER_BLACKLIST         } from './subworkflows/CCBR/filter_blacklist/'
 include { ALIGN_GENOME             } from "./subworkflows/local/align.nf"
 include { DEDUPLICATE              } from "./subworkflows/local/deduplicate.nf"
+include { DEEPTOOLS                } from "./subworkflows/local/deeptools"
 include { QC                       } from './subworkflows/local/qc.nf'
 include { CALL_PEAKS               } from './subworkflows/local/peaks.nf'
 include { CONSENSUS_PEAKS as CONSENSUS_UNION } from './subworkflows/CCBR/consensus_peaks/'
@@ -81,8 +83,21 @@ workflow LOG {
 
 // MAIN WORKFLOW
 workflow {
+    main:
     LOG()
     // validateParameters()
+
+    // initialize output channels
+    ch_multiqc = Channel.empty()
+    multiqc_report = channel.empty()
+    fastqc_raw = Channel.empty()
+    fastqc_trimmed = Channel.empty()
+    ch_peaks = Channel.empty()
+    ch_peaks_consensus = Channel.empty()
+    ch_annot = Channel.empty()
+    ch_motifs = Channel.empty()
+    ch_diffbind = Channel.empty()
+    ch_manorm = Channel.empty()
 
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
     contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
@@ -110,28 +125,52 @@ workflow {
         PHANTOM_PEAKS.out.fraglen
     )
 
-    ch_multiqc = Channel.of()
+    // optional spike-in normalization
+    if (params.spike_genome) {
+        println "DO THE SPIKEIN PLS"
+        ALIGN_SPIKEIN(trimmed_fastqs, params.spike_genome, frag_lengths)
+        ch_scaling_factors = ALIGN_SPIKEIN.out.scaling_factors
+        ch_multiqc = ch_multiqc.mix(ALIGN_SPIKEIN.out.sf_tsv)
+    } else {
+        ch_scaling_factors = trimmed_fastqs
+            | map{ meta, fq -> meta.id }
+            | combine(Channel.of(1))
+    }
 
-    fastqc_raw = Channel.empty()
-    fastqc_trimmed = Channel.empty()
-    ch_deeptools = Channel.empty()
+    if (params.run_deeptools) {
+        DEEPTOOLS( deduped_bam,
+                    frag_lengths,
+                    effective_genome_size,
+                    PREPARE_GENOME.out.gene_info,
+                    ch_scaling_factors
+                    )
+        ch_deeptools_bw = DEEPTOOLS.out.bigwigs
+        ch_deeptools_bw_input_norm = DEEPTOOLS.out.bigwigs_input_norm
+        ch_deeptools_stats = DEEPTOOLS.out.fingerprint_matrix
+            .mix(
+                DEEPTOOLS.out.fingerprint_metrics,
+                DEEPTOOLS.out.corr,
+                DEEPTOOLS.out.pca,
+                DEEPTOOLS.out.profile,
+                DEEPTOOLS.out.heatmap
+            )
+        ch_multiqc = ch_multiqc.mix(ch_deeptools_stats)
+    } else {
+        ch_deeptools_bw = Channel.empty()
+        ch_deeptools_bw_input_norm = Channel.empty()
+        ch_deeptools_stats = Channel.empty()
+    }
+
     if (params.run_qc) {
         QC(raw_fastqs, CUTADAPT.out.reads, FILTER_BLACKLIST.out.n_surviving_reads,
            aligned_bam, ALIGN_GENOME.out.aligned_flagstat, ALIGN_GENOME.out.filtered_flagstat,
-           deduped_bam, DEDUPLICATE.out.flagstat,
+           DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths,
-           PREPARE_GENOME.out.gene_info,
-           effective_genome_size
            )
         ch_multiqc = ch_multiqc.mix(QC.out.multiqc_input)
         fastqc_raw = QC.out.fastqc_raw
         fastqc_trimmed = QC.out.fastqc_trimmed
-        ch_deeptools = QC.out.deeptools
     }
-    ch_peaks = Channel.empty()
-    ch_peaks_consensus = Channel.empty()
-    ch_diffbind = Channel.empty()
-    ch_manorm = Channel.empty()
 
     if ([params.run_macs_broad, params.run_macs_narrow, params.run_gem, params.run_sicer].any()) {
 
@@ -144,6 +183,7 @@ workflow {
                    )
         ch_multiqc = ch_multiqc.mix(CALL_PEAKS.out.plots)
         ch_peaks = CALL_PEAKS.out.peaks
+
         // consensus peak calling with union method
         if (params.run_consensus_union) {
             ch_peaks_grouped = CALL_PEAKS.out.peaks
@@ -168,6 +208,9 @@ workflow {
             ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_UNION.out.plots)
 
             ch_peaks_consensus = ch_peaks_consensus.mix(ch_consensus_union)
+
+            ch_annot = ch_annot.mix(ANNOTATE_CONS_UNION.out.plots)
+            ch_motifs = ch_motifs.mix(MOTIFS_CONS_UNION.out.homer, MOTIFS_CONS_UNION.out.meme)
         }
         if (params.run_consensus_corces) {
             // consensus peak calling with corces method
@@ -187,7 +230,9 @@ workflow {
                     PREPARE_GENOME.out.meme_motifs)
             ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_CORCES.out.plots)
             ch_peaks_consensus.mix(CONSENSUS_CORCES.out.peaks)
-                .mix(ANNOTATE_CONS_CORCES.out.plots)
+
+            ch_annot = ch_annot.mix(ANNOTATE_CONS_CORCES.out.plots)
+            ch_motifs = ch_motifs.mix(MOTIFS_CONS_CORCES.out.homer, MOTIFS_CONS_CORCES.out.meme)
         }
 
         // run differential analysis
@@ -217,7 +262,6 @@ workflow {
     }
 
     ch_multiqc = ch_multiqc.collect()
-    multiqc_report = channel.empty()
     if (!workflow.stubRun) {
         MULTIQC(
             file(params.multiqc_config, checkIfExists: true),
@@ -227,20 +271,27 @@ workflow {
         multiqc_report = MULTIQC.out
     }
 
+
     publish:
         genome = PREPARE_GENOME.out.conf
         fastqc_raw = fastqc_raw
         fastqc_trimmed = fastqc_trimmed
         ppqt = ch_ppqt
-        deeptools = ch_deeptools
+        deeptools_bw = ch_deeptools_bw
+        deeptools_bw_input_norm = ch_deeptools_bw_input_norm
+        deeptools_stats = ch_deeptools_stats
         multiqc_report = multiqc_report
         multiqc_inputs = ch_multiqc
         align_bam = DEDUPLICATE.out.bam
         peaks = ch_peaks
         peaks_consensus = ch_peaks_consensus
+        annot = ch_annot
+        motifs = ch_motifs
         diffbind = ch_diffbind
         manorm = ch_manorm
+
 }
+
 
 output {
 
@@ -254,7 +305,13 @@ output {
     ppqt {
         path { file -> "qc/phantompeakqualtools/" }
     }
-    deeptools {
+    deeptools_bw {
+        path { bigwig -> "bigwigs/" }
+    }
+    deeptools_bw_input_norm {
+        path { bigwig -> "bigwigs/" }
+    }
+    deeptools_stats {
         path { deeptools -> "qc/deeptools/" }
     }
     multiqc_report {
@@ -271,6 +328,12 @@ output {
     }
     peaks_consensus {
         path { meta, peak -> "peaks/${meta.tool}/consensus/${meta.consensus}/" }
+    }
+    annot {
+        path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/annotations/" }
+    }
+    motifs {
+        path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/motifs/" }
     }
     diffbind {
         path { meta, report -> "peaks/${meta.tool}/diffbind/${meta.contrast}/" }

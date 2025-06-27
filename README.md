@@ -54,10 +54,42 @@ Once you've created a samplesheet with paths to your fastq files,
 run champagne with the `--input` option to specify the path to your sample sheet:
 
 ```sh
-champagne run --output /data/$USER/champagne_project --mode slurm -profile biowulf --input samplesheet.csv --genome hg38
+champagne run --output /data/$USER/champagne_project \
+    --mode slurm \
+    --input samplesheet.csv \
+    --genome hg38
 ```
 
-We currently support the hg38 and mm10 genomes.
+### Parameters
+
+You can specify workflow parameters via the command line or in a YAML file.
+
+Here's an example YAML file with some common parameters:
+
+`assets/params.yml`
+
+```YAML
+input: './assets/samplesheet_full_mm10.csv'
+contrasts: './assets/contrasts_full_mm10.csv'
+genome: mm10
+run_gem: false
+run_chipseeker: false
+run_qc: true
+```
+
+You can then use these parameters with the `-params-file` option:
+
+```sh
+champagne run --output /data/$USER/champagne_project \
+    --mode slurm \
+    -params-file assets/params.yml
+```
+
+View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/params) in the documentation.
+
+### Custom Reference Genome
+
+View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/genomes) to see which genomes are preconfigured for use with champagne on biowulf.
 If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
@@ -89,15 +121,36 @@ champagne run --output /data/$USER/champagne_project \
     -c custom_genome/genome/custom_genome.config
 ```
 
+### Spike-in Control
+
+If your experiment uses a spike-in control, you can specify the spike-in genome
+with the `--spike_genome` parameter:
+
+```sh
+champagne run --output /data/$USER/champagne_project \
+    --mode slurm \
+    --input samplesheet.csv \
+    --genome hg38 \
+    --spike_genome dmelr6.32 \
+    --deeptools_normalize_using None
+```
+
+View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/spike-in/) for more
+information on how to use & customize spike-in controls.
+
 ## Help & Contributing
 
-Come across a **bug**? Open an [issue](https://github.com/CCBR/CHAMPAGNE/issues) and include a minimal reproducible example.
+Come across a **bug**? Open an [issue](https://github.com/CCBR/CHAMPAGNE/issues)
+and include a minimal reproducible example.
 
-Have a **question**? Ask it in [discussions](https://github.com/CCBR/CHAMPAGNE/discussions).
+Have a **question**? Ask it in
+[discussions](https://github.com/CCBR/CHAMPAGNE/discussions).
 
-Want to **contribute** to this project? Check out the [contributing guidelines](.github/CONTRIBUTING.md).
+Want to **contribute** to this project? Check out the
+[contributing guidelines](.github/CONTRIBUTING.md).
 
-**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).
+**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team
+at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).
 
 ## References
 

@@ -1,3 +1,38 @@
+process MULTIBAM_SUMMARY {
+    label 'process_high'
+
+    container "${params.containers_deeptools}"
+
+    input: // TODO add fraglen
+      tuple val(metas), path(bams), path(bais), val(fraglen), path(blacklist_bed)
+
+    output:
+      path("*counts.tsv"),         emit: count
+      path("*scalingFactors.tsv"), emit: sf
+
+    script:
+    def prefix = task.ext.prefix ?: "multiBam"
+    def args = metas[0].single_end ? "--extendReads ${fraglen}" : ''
+    if (blacklist_bed.exists()) {
+      args = "${args} --blackListFileName ${blacklist_bed}"
+    }
+    if (task.ext.args) {
+        args = "${args} ${task.ext.args}"
+    }
+    """
+    multiBamSummary bins \\
+                  --bamfiles ${bams} \\
+                  --labels ${metas.collect{ it.id }.join(' ')} \\
+                  --numberOfProcessors ${task.cpus} \\
+                  --binSize ${params.spike_deeptools_bin_size} \\
+                  --minMappingQuality ${params.spike_deeptools_min_map_quality} \\
+                  --ignoreDuplicates \\
+                  ${args} \\
+                  -o multiBamSummary.npz \\
+                  --outRawCounts ${prefix}_counts.tsv \\
+                  --scalingFactors ${prefix}_scalingFactors.tsv
+    """
+}
 
 process BAM_COVERAGE {
     tag { meta.id }
@@ -8,7 +43,7 @@ process BAM_COVERAGE {
     container "${params.containers_deeptools}"
 
     input:
-        tuple val(meta), path(bam), path(bai), val(fraglen), val(effective_genome_size)
+        tuple val(meta), path(bam), path(bai), val(scaling_factor), val(fraglen), val(effective_genome_size)
 
     output:
         tuple val(meta), path("${meta.id}.bw"), emit: bigwig
@@ -19,12 +54,13 @@ process BAM_COVERAGE {
     bamCoverage \\
       --bam ${bam} \\
       -o ${meta.id}.bw \\
+      --numberOfProcessors ${task.cpus} \\
       --binSize ${params.deeptools_bin_size} \\
       --smoothLength ${params.deeptools_smooth_length} \\
       --ignoreForNormalization ${params.deeptools_excluded_chroms} \\
-      --numberOfProcessors ${task.cpus} \\
       --normalizeUsing ${params.deeptools_normalize_using} \\
       --effectiveGenomeSize ${effective_genome_size} \\
+      --scaleFactor ${scaling_factor} \\
       ${args}
     """
 

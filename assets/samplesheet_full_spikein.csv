@@ -1,0 +1,9 @@
+sample,rep,fastq_1,fastq_2,antibody,input
+Control_RNAPOL,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/01_A_Control_RNAPOL.fastq.gz,,RNAPOL,Control_INPUT
+JH10_RNAPOL,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/03_A_JH10_RNAPOL.fastq.gz,,RNAPOL,JH10_INPUT
+PTX10_RNAPOL,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/05_A_PTX10_RNAPOL.fastq.gz,,RNAPOL,PTX10_INPUT
+Combo_RNAPOL,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/07_A_Combo_10_10_RNAPOL.fastq.gz,,RNAPOL,Combo_INPUT
+Control_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/17_A_Control_INPUT.fastq.gz,,,
+JH10_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/18_A_JH10_INPUT.fastq.gz,,,
+PTX10_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/19_A_PTX10_INPUT.fastq.gz,,,
+Combo_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/ChIP_fastq_with_spikein/20_A_Combo_10_10_INPUT.fastq.gz,,,

@@ -73,6 +73,7 @@ nav:
   - Usage:
       - Getting Started: getting-started.md
       - Creating Manifests: manifests.md
+      - Parameters: params.md
       - Workflow Overview: workflow.md
   - Developer Guide:
       - How to contribute: contributing.md
