@@ -3,7 +3,6 @@
 - CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
 - Reorganized output directory structure. (#256, @kelly-sovacool)
 - Nextflow parameters are now validated at the start of the workflow. (#257, @kelly-sovacool)
-- Output BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)
 
 ### New features
 
@@ -21,6 +20,7 @@
   - Set `publish_dir_mode` to `link` by default.
   - Set `process.cache` to `deep` by default rather than lenient. (#224, @kelly-sovacool)
   - Enable the nextflow timeline & trace reports by default. (#226, @kelly-sovacool)
+  - Output BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)
 
 ### Bug fixes
 
@@ -35,6 +35,7 @@
 
 - Now using the readthedocs theme for the docs website. (#236, @kelly-sovacool)
 - Improved help message for `champagne run`. (#249, @kelly-sovacool)
+- Major improvements to fill out the documentation website. (#262, @kelly-sovacool)
 
 ## CHAMPAGNE 0.4.1
 
