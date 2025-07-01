@@ -128,21 +128,21 @@ workflow CALL_PEAKS {
         }
 
         // Create tag align w/ peaks
-        tag_all_bed.cross(ch_peaks)
+        tag_all_bed.combine(ch_peaks)
             .map{ it ->
                 it.flatten()
             }
             .map{ meta1, tagalign, meta2, peak, tool ->
-                meta1 == meta2 ? [ meta1, tagalign, peak, tool ] : null
+                meta1.id == meta2.id ? [ meta1, tagalign, peak, tool ] : null
             }
             .set{ ch_tagalign_peaks }
         // Create Channel with meta, deduped bam, peak file, peak-calling tool, and chrom sizes fasta
-        deduped_bam.cross(ch_peaks)
+        deduped_bam.combine(ch_peaks)
             .map{ it ->
                it.flatten()
             }
             .map{  meta1, bam, bai, meta2, peak, tool ->
-                meta1 == meta2 ? [ meta1, bam, bai, peak, tool ] : null
+                meta1.id == meta2.id ? [ meta1, bam, bai, peak, tool ] : null
             }
             .set{ ch_bam_peaks }
 
@@ -152,7 +152,7 @@ workflow CALL_PEAKS {
         ch_peaks
             .combine(ch_peaks) // jaccard index on all-vs-all samples & peak-calling tools
             .map{ meta1, peak1, tool1, meta2, peak2, tool2 ->
-                (meta1 != meta2 || tool1 != tool2) ? [ meta1, peak1, tool1, meta2, peak2, tool2 ] : null
+                (meta1.id != meta2.id || tool1 != tool2) ? [ meta1, peak1, tool1, meta2, peak2, tool2 ] : null
             }
             .combine(chrom_sizes) | JACCARD_INDEX
         JACCARD_INDEX.out.collect() | CONCAT_JACCARD | PLOT_JACCARD

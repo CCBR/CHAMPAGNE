@@ -16,13 +16,21 @@ workflow ANNOTATE {
             CHIPSEEKER_PEAKPLOT( ch_peaks, bioc_txdb, bioc_annot  )
 
             CHIPSEEKER_ANNOTATE( ch_peaks, bioc_txdb, bioc_annot )
-            CHIPSEEKER_ANNOTATE.out.annot.collect() | CHIPSEEKER_PLOTLIST
-            ch_plots = ch_plots.mix(
-                CHIPSEEKER_PLOTLIST.out.plots
-            )
+            CHIPSEEKER_ANNOTATE.out.annot
+                | map{ meta, annot -> [meta.consensus, meta, annot] }
+                | groupTuple()
+                | map{ consensus, metas, annots ->
+                    def meta2 = [:]
+                    meta2.consensus = consensus
+                    [ meta2, annots ]
+                }
+                | CHIPSEEKER_PLOTLIST
+            CHIPSEEKER_PLOTLIST.out.plots
+                | set{ ch_plots }
 
         }
 
     emit:
         plots = ch_plots
+        annotations = CHIPSEEKER_ANNOTATE.out.annot
 }

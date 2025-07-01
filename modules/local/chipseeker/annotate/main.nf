@@ -12,7 +12,7 @@ process CHIPSEEKER_ANNOTATE {
 
     output:
         tuple val(meta), path("*/*.annotated.txt"), path("*/*.summary.txt"), path("*/*.genelist.txt"), emit: txt
-        path("*/*.annotation.Rds"),                                                                emit: annot
+        tuple val(meta), path("*/*.annotation.Rds"),                                                   emit: annot
         path("*/*.png"),                                                                           emit: plots
 
     script:
