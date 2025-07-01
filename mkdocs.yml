@@ -79,6 +79,6 @@ nav:
       - Spike-in Normalization: guide/spike-in.md
   - Developer Guide:
       - How to contribute: devs/contributing.md
-      - Release guide: devs/release-guide.md
-      - Contributors: devs/contributors.md
+      #- Release guide: devs/release-guide.md
+      #- Contributors: devs/contributors.md
   - Changelog: changelog.md
