@@ -56,10 +56,10 @@ jobs:
 
       - name: commit & push
         run: |
-          git add docs/params.md
+          git add docs/guide/params.md
           git commit -m "ci: 📑 update params docs with 'nf-core pipelines schema docs'" || echo "nothing to commit"
 
-          git add docs/genomes.md
+          git add docs/guide/genomes.md
           git commit -m "ci: 📑 update genomes docs with .github/genome_docs.py" || echo "nothing to commit"
 
           git add .
