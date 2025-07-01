@@ -89,7 +89,7 @@ def main():
     markdown = to_markdown(genomes)
     with open("docs/_genomes_head.md", "r") as header_file:
         head = header_file.readlines()
-    with open("docs/genomes.md", "w") as md_file:
+    with open("docs/guide/genomes.md", "w") as md_file:
         md_file.writelines(head)
         for line in markdown:
             md_file.write(line + "\n")

@@ -30,6 +30,6 @@ and be sure to specify the `biowulf` and `slurm` profiles:
 
 ```sh
 module load ccbrpipeliner
-module load nextflow
+module load nextflow/25
 nextflow run CCBR/CHAMPAGNE -profile test,biowulf,slurm
 ```
