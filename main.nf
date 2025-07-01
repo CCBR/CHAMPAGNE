@@ -195,13 +195,13 @@ workflow {
                 .map{ meta, bed ->
                     def meta_split = meta.id.tokenize('.')
                     assert meta_split.size() == 2
-                    [ [ sample_basename: meta_split[0], tool: meta_split[1], consensus: 'union' ], bed ]
+                    [ [ id: meta_split[0], tool: meta_split[1], consensus: 'union' ], bed ]
                 }
                 .set{ ch_consensus_union }
-            ANNOTATE_CONS_UNION(CONSENSUS_UNION.out.peaks,
+            ANNOTATE_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.bioc_txdb,
                     PREPARE_GENOME.out.bioc_annot)
-            MOTIFS_CONS_UNION(CONSENSUS_UNION.out.peaks,
+            MOTIFS_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
             ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_UNION.out.plots)
@@ -220,7 +220,14 @@ workflow {
                     [ meta2, bed ]
                 }
                 .groupTuple()
-            CONSENSUS_CORCES(ch_narrow_peaks.combine(chrom_sizes))
+            ch_narrow_peaks.combine(chrom_sizes)
+                | CONSENSUS_CORCES
+                | map{ meta, peak ->
+                    def meta2 = meta
+                    meta2.consensus = 'corces'
+                    [ meta2, peak ]
+                }
+
             ANNOTATE_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.bioc_txdb,
                     PREPARE_GENOME.out.bioc_annot)
@@ -323,7 +330,7 @@ output {
         path { bam -> "align/bam/" }
     }
     peaks {
-        path { meta, peak, tool -> "peaks/${tool}/replicates/${meta.id}/"}
+        path { meta, peak, tool -> "peaks/${meta.tool}/replicates/"}
     }
     peaks_consensus {
         path { meta, peak -> "peaks/${meta.tool}/consensus/${meta.consensus}/" }

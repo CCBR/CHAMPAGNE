@@ -33,6 +33,7 @@ process HOMER_MOTIFS {
     stub:
     """
     mkdir ${meta.id}_homer/
-    touch ${meta.id}_homer/background.fa ${meta.id}_homer/target.fa
+    echo "EMPTY" > ${meta.id}_homer/background.fa
+     echo "EMPTY" > ${meta.id}_homer/target.fa
     """
 }

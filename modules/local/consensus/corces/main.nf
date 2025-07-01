@@ -18,4 +18,9 @@ process CONSENSUS_CORCES {
     #consensus_corces.py ${cat_peak_file} ${outfile} ${chrom_sizes}
     corces_consensus_peaks.R --width 500 --output ${outfile} ${peaks}
     """
+
+    stub:
+    """
+    touch ${meta.id}.${meta.tool}.consensus_corces.bed
+    """
 }

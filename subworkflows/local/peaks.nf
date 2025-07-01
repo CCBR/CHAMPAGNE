@@ -78,23 +78,51 @@ workflow CALL_PEAKS {
         ch_peaks = Channel.empty()
         ch_narrow_peaks = Channel.empty()
         if (params.run_macs_broad) {
-            ch_macs | MACS_BROAD
-            ch_peaks = ch_peaks.mix(MACS_BROAD.out.peak)
+            ch_macs
+                | MACS_BROAD
+            MACS_BROAD.out.peak
+                | map{ meta, peak, tool ->
+                    def meta2 = meta
+                    meta2.tool = tool
+                    [ meta2, peak, tool ]
+                }
+                | set{ ch_macs_broad}
+            ch_peaks = ch_peaks.mix(ch_macs_broad)
         }
         if (params.run_macs_narrow) {
-            ch_macs | MACS_NARROW
-            ch_peaks = ch_peaks.mix(MACS_NARROW.out.peak)
-            ch_narrow_peaks = ch_narrow_peaks.mix(MACS_NARROW.out.peak)
+            ch_macs
+                | MACS_NARROW
+            MACS_NARROW.out.peak
+                | map{ meta, peak, tool ->
+                    def meta2 = meta
+                    meta2.tool = tool
+                    [ meta2, peak, tool ]
+                }
+                | set{ ch_macs_narrow }
+            ch_peaks = ch_peaks.mix(ch_macs_narrow)
+            ch_narrow_peaks = ch_narrow_peaks.mix(ch_macs_narrow)
         }
         if (params.run_sicer) {
             ch_sicer | SICER
-            SICER.out.peak | CONVERT_SICER
+            SICER.out.peak
+                | map{ meta, peak, tool ->
+                    def meta2 = meta
+                    meta2.tool = tool
+                    [ meta2, peak, tool ]
+                }
+                | CONVERT_SICER
             ch_peaks = ch_peaks.mix(CONVERT_SICER.out.peak)
         }
         if (params.run_gem) {
             ch_gem | GEM
             GEM.out.peak
-                .combine(chrom_sizes) | FILTER_GEM
+                | map{ meta, peak, tool ->
+                    def meta2 = meta
+                    meta2.tool = tool
+                    [ meta2, peak, tool ]
+                }
+                | combine(chrom_sizes)
+                | FILTER_GEM
             ch_peaks = ch_peaks.mix(FILTER_GEM.out.peak)
             ch_narrow_peaks = ch_narrow_peaks.mix(FILTER_GEM.out.peak)
         }
