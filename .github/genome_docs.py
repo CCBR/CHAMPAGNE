@@ -37,7 +37,7 @@ class Genome:
 
     @property
     def md(self):
-        md = [f"- `{self.genome}`"]
+        md = [f"- `{self.genome}`\n"]
         for key, value in self.attributes.items():
             md.append(f"  - {key}: `{value}`")
         return md
@@ -68,14 +68,14 @@ def to_markdown(genomes):
     md = list()
 
     md += [
-        "## Reference Genomes\n",
+        "### Reference Genomes\n",
         "These genomes can be passed to the `--genome` parameter.\n",
     ]
     for gname, genome in genomes.items():
         if genome.is_reference:
             md += genome.md
     md += [
-        "\n## Spike-in Genomes\n",
+        "\n### Spike-in Genomes\n",
         "These genomes can be passed to the `--spike_genome` parameter.\n",
     ]
     for gname, genome in genomes.items():

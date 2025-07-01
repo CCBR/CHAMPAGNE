@@ -7,7 +7,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10516078.svg)](https://doi.org/10.5281/zenodo.10516078)
 [![release](https://img.shields.io/github/v/release/CCBR/CHAMPAGNE?color=blue&label=latest%20release)](https://github.com/CCBR/CHAMPAGNE/releases/latest)
 
-🚧 **This project is under active development. It is not yet ready for production use.** 🚧
+View the full documentation website: <https://ccbr.github.io/CHAMPAGNE>
 
 ## Set up
 
@@ -18,19 +18,17 @@ refer to the [docs](https://ccbr.github.io/CHAMPAGNE/).
 ### Biowulf
 
 Champagne is available on [Biowulf](https://hpc.nih.gov/) in the `ccbrpipeliner` module.
-You'll first need to start an interactive session and create a directory from where you'll run champagne.
+You'll first need to start an interactive session, then load the module:
 
 ```sh
 # start an interactive node
 sinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200
-# make a working directory for your project and go to it
-mkdir -p /data/$USER/chipseq
-cd /data/$USER/chipseq
-# load the ccbrpipeliener module
+
+# load the ccbrpipeliner module
 module load ccbrpipeliner
 ```
 
-## Usage
+## Quickstart
 
 Initialize and run champagne with test data:
 
@@ -38,17 +36,21 @@ Initialize and run champagne with test data:
 # copy the champagne config files to your project directory.
 # --output is optional and defaults to your current working directory.
 champagne init --output /data/$USER/champagne_project
+
 # preview the champagne jobs that will run with the test dataset
-champagne run --output /data/$USER/champagne_project --mode local -profile test -preview
+champagne run --output /data/$USER/champagne_project \
+  --mode local -profile test -preview
+
 # launch a champagne run on slurm with the test dataset
-champagne run --output /data/$USER/champagne_project --mode slurm -profile test,biowulf
+champagne run --output /data/$USER/champagne_project \
+  --mode slurm -profile test
 ```
 
 To run champagne on your own data, you'll need to create a sample sheet.
 Take a look at these examples:
 
 - [assets/samplesheet_test.csv](/assets/samplesheet_test.csv) - mix of single and paired end reads downloaded from github.
-- [assets/samplesheet_mm10.csv](/assets/samplesheet_test.csv) - single end reads on biowulf.
+- [assets/samplesheet_full_mm10.csv](/assets/samplesheet_full_mm10.csv) - single end reads on biowulf.
 
 Once you've created a samplesheet with paths to your fastq files,
 run champagne with the `--input` option to specify the path to your sample sheet:
@@ -85,11 +87,13 @@ champagne run --output /data/$USER/champagne_project \
     -params-file assets/params.yml
 ```
 
-View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/params) in the documentation.
+View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/guide/params)
+in the documentation.
 
 ### Custom Reference Genome
 
-View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/genomes) to see which genomes are preconfigured for use with champagne on biowulf.
+View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/guide/genomes)
+to see which genomes are pre-configured for use with champagne on biowulf.
 If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
@@ -109,7 +113,7 @@ champagne run --output /data/$USER/champagne_project \
     --blacklist blacklist.fasta
 ```
 
-The reference files and a config file for the genome will be written in `custom_genome/genome`.
+The reference files and a config file for the genome will be written in `results/genome/custom_genome/`.
 
 Then you can run champagne using your custom genome:
 
@@ -118,7 +122,7 @@ champagne run --output /data/$USER/champagne_project \
     --mode slurm -profile biowulf \
     --input samplesheet.csv \
     --genome custom_genome \
-    -c custom_genome/genome/custom_genome.config
+    -c results/genome/custom_genome/custom_genome.config
 ```
 
 ### Spike-in Control
@@ -135,8 +139,8 @@ champagne run --output /data/$USER/champagne_project \
     --deeptools_normalize_using None
 ```
 
-View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/spike-in/) for more
-information on how to use & customize spike-in controls.
+View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/guide/spike-in/)
+for more information on how to use & customize spike-in controls.
 
 ## Help & Contributing
 

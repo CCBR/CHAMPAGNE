@@ -71,12 +71,12 @@ markdown_extensions:
 nav:
   - Home: index.md
   - User Guide:
-      - Introduction: guide/intro.md
+      #- Introduction: guide/intro.md
       - Usage: guide/usage.md
+      - Output: guide/output.md
       - Parameters: guide/params.md
       - Genomes: guide/genomes.md
-      - Spike-in: guide/spike-in.md
-      - Output: guide/output.md
+      - Spike-in Normalization: guide/spike-in.md
   - Developer Guide:
       - How to contribute: devs/contributing.md
       - Release guide: devs/release-guide.md

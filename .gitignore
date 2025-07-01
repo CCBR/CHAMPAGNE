@@ -51,3 +51,6 @@ replay_pid*
 .Rhistory
 
 /submit_slurm.sh
+
+# rendered site
+/site/

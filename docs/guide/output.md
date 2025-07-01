@@ -62,15 +62,15 @@ reads (`{id}.bw`) and one with input reads removed (`{id}.inputnorm.bw`).
 These are normalized with the method set by the `deeptools_normalize_using` parameter.
 
 If using a spike-in genome, these are normalized according the spike-in
-parameters set. See the [Spike-in normalization doc](/guide/spikein.md) for more
+parameters set. See the [Spike-in normalization doc](spike-in.md) for more
 details.
 
 ## Peaks
 
 `peaks/{peak_caller}/` directories are created for each peak caller. Available
 peak callers are `macs2_narrow`, `macs2_broad`, `gem`, and `sicer`. See the [run
-parameters](/guide/params.md#run-control) and [peak caller
-parameters](/guide/params.md#peak-caller) for customization options.
+parameters](params.md#run-control) and [peak caller
+parameters](params.md#peak-caller) for customization options.
 
 `peaks/{peak_caller}/replicates/` contains called peaks for each sample.
 
@@ -106,6 +106,6 @@ for MEME AME for motif enrichment analysis. These results files are in
 ## Custom Genome
 
 If you specified a custom genome with [custom genome
-parameters](/guide/params.md#custom-genome-options), the prepared genome files
+parameters](params.md#custom-genome-options), the prepared genome files
 will be in `genome/{genome}`. These include the genome BWA index, blacklist BWA
 index, and a nextflow config file to reuse the genome in future runs.
