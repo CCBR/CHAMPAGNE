@@ -38,7 +38,6 @@ workflow ALIGN_SPIKEIN {
                 | map{ meta, bam, bai -> [1, meta, bam, bai]}
                 | groupTuple()
                 | map{ idx, metas, bams, bais -> [ metas, bams, bais ] }
-                | view
                 | combine(min_fraglen)
                 | combine(ch_spikein_blacklist_bed)
                 | MULTIBAM_SUMMARY

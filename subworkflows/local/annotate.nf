@@ -11,12 +11,16 @@ workflow ANNOTATE {
 
     main:
         ch_plots = Channel.empty()
-        if (params.run_chipseeker &&
-         bioc_txdb && bioc_annot) {
+        if (params.run_chipseeker && bioc_txdb && bioc_annot) {
             CHIPSEEKER_PEAKPLOT( ch_peaks, bioc_txdb, bioc_annot  )
+            // CHIPSEEKER_PEAKPLOT.out.plots
+            //     | map{ meta, plot -> [ plot ]}
+            //     | set{ ch_plots }
 
             CHIPSEEKER_ANNOTATE( ch_peaks, bioc_txdb, bioc_annot )
             CHIPSEEKER_ANNOTATE.out.annot
+                | set{ ch_annot }
+            ch_annot
                 | map{ meta, annot -> [meta.consensus, meta, annot] }
                 | groupTuple()
                 | map{ consensus, metas, annots ->
@@ -25,12 +29,16 @@ workflow ANNOTATE {
                     [ meta2, annots ]
                 }
                 | CHIPSEEKER_PLOTLIST
-            CHIPSEEKER_PLOTLIST.out.plots
-                | set{ ch_plots }
 
+            ch_plots = ch_plots.mix(CHIPSEEKER_PLOTLIST.out)
+                .collect()
+                .flatten()
+        } else {
+            ch_plots = Channel.empty()
+            ch_annot = Channel.empty()
         }
 
     emit:
         plots = ch_plots
-        annotations = CHIPSEEKER_ANNOTATE.out.annot
+        annot = ch_annot
 }

@@ -95,7 +95,8 @@ workflow {
     ch_peaks = Channel.empty()
     ch_peaks_consensus = Channel.empty()
     ch_annot = Channel.empty()
-    ch_motifs = Channel.empty()
+    ch_motifs_homer = Channel.empty()
+    ch_motifs_meme = Channel.empty()
     ch_diffbind = Channel.empty()
     ch_manorm = Channel.empty()
 
@@ -204,12 +205,12 @@ workflow {
             MOTIFS_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
-            ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_UNION.out.plots)
-
             ch_peaks_consensus = ch_peaks_consensus.mix(ch_consensus_union)
 
-            ch_annot = ch_annot.mix(ANNOTATE_CONS_UNION.out.plots)
-            ch_motifs = ch_motifs.mix(MOTIFS_CONS_UNION.out.homer, MOTIFS_CONS_UNION.out.meme)
+            ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_UNION.out.plots)
+            ch_annot = ch_annot.mix(ANNOTATE_CONS_UNION.out.annot)
+            ch_motifs_homer = ch_motifs_homer.mix(MOTIFS_CONS_UNION.out.homer)
+            ch_motifs_meme = ch_motifs_meme.mix(MOTIFS_CONS_UNION.out.meme)
         }
         if (params.run_consensus_corces) {
             // consensus peak calling with corces method
@@ -234,11 +235,12 @@ workflow {
             MOTIFS_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
-            ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_CORCES.out.plots)
             ch_peaks_consensus.mix(CONSENSUS_CORCES.out.peaks)
 
-            ch_annot = ch_annot.mix(ANNOTATE_CONS_CORCES.out.plots)
-            ch_motifs = ch_motifs.mix(MOTIFS_CONS_CORCES.out.homer, MOTIFS_CONS_CORCES.out.meme)
+            ch_multiqc = ch_multiqc.mix(ANNOTATE_CONS_CORCES.out.plots)
+            ch_annot = ch_annot.mix(ANNOTATE_CONS_CORCES.out.annot)
+            ch_motifs_homer = ch_motifs_homer.mix(MOTIFS_CONS_CORCES.out.homer)
+            ch_motifs_meme = ch_motifs_meme.mix(MOTIFS_CONS_CORCES.out.meme)
         }
 
         // run differential analysis
@@ -292,7 +294,8 @@ workflow {
         peaks = ch_peaks
         peaks_consensus = ch_peaks_consensus
         annot = ch_annot
-        motifs = ch_motifs
+        homer = ch_motifs_homer
+        meme = ch_motifs_meme
         diffbind = ch_diffbind
         manorm = ch_manorm
 
@@ -338,14 +341,17 @@ output {
     annot {
         path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/annotations/" }
     }
-    motifs {
-        path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/motifs/" }
+    homer {
+        path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/motifs/homer/" }
+    }
+    meme {
+        path { meta, file -> "peaks/${meta.tool}/consensus/${meta.consensus}/motifs/meme/" }
     }
     diffbind {
-        path { meta, report -> "peaks/${meta.tool}/diffbind/${meta.contrast}/" }
+        path { meta, report -> "peaks/${meta.tool}/diff/diffbind/${meta.contrast}/" }
     }
     manorm {
-        path { meta, files -> "peaks/${meta.tool}/manorm/${meta.contrast}/" }
+        path { meta, files -> "peaks/${meta.tool}/diff/manorm/${meta.contrast}/" }
     }
 
 }

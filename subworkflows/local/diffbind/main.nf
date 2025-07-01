@@ -7,7 +7,6 @@ workflow DIFFBIND {
     main:
 
         ch_bam_peaks_contrasts
-            | view
             | map{ meta, bam, bai, peak, ctrl_bam, ctrl_bai ->
                 def csv_text = [meta.id,     meta.rep,    meta.group,  bam,       meta.input, ctrl_bam,     peak,    meta.tool].join(',')
                 [ "${meta.contrast}.${meta.tool}.csv", csv_text]

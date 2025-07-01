@@ -9,7 +9,7 @@ process CHIPSEEKER_PLOTLIST {
         tuple val(meta), path(rds)
 
     output:
-        path("*.png"), emit: plots
+        path("${meta.consensus}_plot_anno_bar.png")
 
     script:
     """
