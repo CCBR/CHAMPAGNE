@@ -81,5 +81,5 @@ nav:
   - Developer Guide:
       - How to contribute: devs/contributing.md
       #- Release guide: devs/release-guide.md
-      #- Contributors: devs/contributors.md
+      - Contributors: devs/contributors.md
   - Changelog: changelog.md

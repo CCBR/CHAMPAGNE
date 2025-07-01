@@ -50,6 +50,10 @@ jobs:
         run: |
           python .github/genome_docs.py
 
+      - name: Write contributors page
+        run: |
+          python .github/contributors.py > docs/devs/contributors.md
+
       - name: Format
         uses: pre-commit/action@v3.0.1
         continue-on-error: true
