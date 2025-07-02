@@ -35,7 +35,7 @@
 
 - Now using the readthedocs theme for the docs website. (#236, @kelly-sovacool)
 - Improved help message for `champagne run`. (#249, @kelly-sovacool)
-- Major improvements to fill out the documentation website. (#262, @kelly-sovacool)
+- Major improvements to fill out the documentation website. (#262, #263, @kelly-sovacool)
 
 ## CHAMPAGNE 0.4.1
 
