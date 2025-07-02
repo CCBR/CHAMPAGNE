@@ -37,7 +37,6 @@ champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> <
 </code></pre></div> <p>View the <a href=https://ccbr.github.io/CHAMPAGNE/guide/params>full list of parameters</a> in the documentation.</p> <h3 id=custom-reference-genome>Custom Reference Genome<a class=headerlink href=#custom-reference-genome title="Permanent link">&para;</a></h3> <p>View <a href=https://ccbr.github.io/CHAMPAGNE/guide/genomes>the list of available reference genomes</a> to see which genomes are pre-configured for use with champagne on biowulf. If you'd like to use a custom genome, you'll need the following files:</p> <ul> <li>genome fasta</li> <li>genome GTF</li> <li>blacklist fasta</li> </ul> <p>Prepare your custom reference genome with:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--mode<span class=w> </span>slurm<span class=w> </span>-profile<span class=w> </span>biowulf<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>-entry<span class=w> </span>MAKE_REFERENCE<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--outdir<span class=w> </span>custom_genome<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--genome<span class=w> </span>custom_genome<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--genome_fasta<span class=w> </span>genome.fasta<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--genes_gtf<span class=w> </span>genome.gtf<span class=w> </span><span class=se>\</span>
@@ -64,5 +63,5 @@ champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> <
         });
     </script> </body> </html> <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-07-02 20:30:43.466645+00:00
+Build Date UTC : 2025-07-02 20:32:37.643734+00:00
 --> 
