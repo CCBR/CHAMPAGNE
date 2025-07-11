@@ -22,30 +22,19 @@ parameters that can be set for spike-in normalization.
 
 CHAMPAGNE implements two methods for spike-in normalization:
 
+- **delorenzi**: This method uses [`deepTools multiBamSummary
+--scalingFactors`](https://deeptools.readthedocs.io/en/develop/content/tools/multiBamSummary.html#output-optional-options)
+  to calculate the scaling factors, which is similar to the method described
+  here: [10.1101/gr.168260.113](https://doi.org/10.1101/gr.168260.113). To use
+  this method, set the `spike_norm_method` parameter to `delorenzi` (default).
+
 - **guenther**: This method is described in the supplementary material of
   [10.1016/j.celrep.2014.10.018](https://doi.org/10.1016/j.celrep.2014.10.018).
   Reads are scaled by the minimum number of reads aligning to the spike-in
   genome across all samples. To use this method, set the `spike_norm_method`
   parameter to `guenther`.
-- **delorenzi**: This method uses [`deepTools multiBamSummary
---scalingFactors`](https://deeptools.readthedocs.io/en/develop/content/tools/multiBamSummary.html#output-optional-options)
-  to calculate the scaling factors, which is similar to the method described
-  here: [10.1101/gr.168260.113](https://doi.org/10.1101/gr.168260.113). To use
-  this method, set the `spike_norm_method` parameter to `delorenzi`.
 
 ### Examples
-
-Using the guenther normalization method with _D. melanogaster_ as the spike-in genome:
-
-```sh
-champagne run \
-    --output /data/$USER/champagne_project/ \
-    --genome hg38 \
-    --input assets/samplesheet_full_spikein.csv \
-    --spike_genome dmelr6.32 \
-    --deeptools_normalize_using None \
-    --spike_norm_method guenther
-```
 
 Using the delorenzi normalization method with _E. coli_ as the spike-in genome:
 
@@ -57,4 +46,16 @@ champagne run \
     --spike_genome ecoli_k12 \
     --deeptools_normalize_using None \
     --spike_norm_method delorenzi
+```
+
+Using the guenther normalization method with _D. melanogaster_ as the spike-in genome:
+
+```sh
+champagne run \
+    --output /data/$USER/champagne_project/ \
+    --genome hg38 \
+    --input assets/samplesheet_full_spikein.csv \
+    --spike_genome dmelr6.32 \
+    --deeptools_normalize_using None \
+    --spike_norm_method guenther
 ```
