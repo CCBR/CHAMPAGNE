@@ -7,10 +7,10 @@ TODO intro paragraph
 ## Installation
 
 For [Biowulf](#biowulf) users, CHAMPAGNE is installed in the
-`ccbrpipeliner` module. There's no need to perform any other installatin steps.
+`ccbrpipeliner` module. There's no need to perform any other installation steps.
 
 If you'd like to run the pipeline in a different execution environment,
-take a look at [how to run the nextflow pipeline directly](nextflow.md).
+take a look at [how to run the nextflow pipeline directly](/nextflow.md).
 
 CHAMPAGNE depends on [Nextflow](https://www.nextflow.io/) version 25 or later
 and Singularity or Docker.
@@ -74,14 +74,14 @@ It is passed to the `input` parameter.
 
 The following columns are required:
 
-- sample: sample ID; does not need to be a unique column.
-- rep: replicate number of sample ID; does not need to be a unique column.
-- fastq_1: absolute path to R1 of sample ID.
-- fastq_2: absolute path to R2 of sample ID (optional, only for paired-end reads).
-- antibody: name of the antibody used for the sample.
-- input: the sampleID of the input control; this must match a sample in the sheet.
+- `sample`: sample ID; does not need to be a unique column.
+- `rep`: replicate number of sample ID; does not need to be a unique column.
+- `fastq_1`: absolute path to R1 of sample ID.
+- `fastq_2`: absolute path to R2 of sample ID (optional, only for paired-end reads).
+- `antibody`: name of the antibody used for the sample.
+- `input`: the sampleID of the input control; this must match a sample in the sheet.
 
-Example antibody / control format for a single-end project:
+Example for a single-end project:
 
 `samplesheet.csv`
 
@@ -93,7 +93,7 @@ inputA,1,/path/to/sample1.R1.fastq.gz,,,
 inputA,2,/path/to/sample1.R1.fastq.gz,,,
 ```
 
-Example antibody / control format for a paired-end project:
+Example for a paired-end project:
 
 `samplesheet.csv`
 
@@ -209,10 +209,9 @@ Options:
     champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml
 ```
 
-Any [nextflow
-argument](https://www.nextflow.io/docs/latest/reference/cli.html#run) can also
-be passed to champagne run, such as `-profile`, `-preview`, or `-params-file`.
-These are always prepended with a single hyphen.
+Any [nextflow argument](https://www.nextflow.io/docs/latest/reference/cli.html#run)
+can also be passed to champagne run, such as `-profile`, `-preview`, or
+`-params-file`. These are always prepended with a single hyphen.
 
 [Pipeline parameters](guide/params.md) can also be passed via the command line.
 These are always prepended with a double-hyphen.

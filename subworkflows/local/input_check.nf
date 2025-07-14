@@ -9,14 +9,13 @@ include { CHECK_CONTRASTS } from "../../modules/local/check_contrasts/"
 workflow INPUT_CHECK {
     take:
         samplesheet // file: /path/to/samplesheet.csv
-        seq_center  // string: sequencing center for read group
         contrastsheet // file: /path/to/contrast.tsv
 
     main:
         CHECK_SAMPLESHEET( samplesheet )
         samplesheet
             .splitCsv ( header:true, sep:',' )
-            .map { create_fastq_channel(it, seq_center) }
+            .map { create_fastq_channel(it) }
             .set { reads }
 
         // Run check on the contrast manifest
@@ -45,7 +44,7 @@ workflow INPUT_CHECK {
 }
 
 // Function to get list of [ meta, [ fastq_1, fastq_2 ] ]
-def create_fastq_channel(LinkedHashMap row, String seq_center) {
+def create_fastq_channel(LinkedHashMap row) {
     def meta = [:]
     meta.id              = row.rep ? "${row.sample}_${row.rep}" : row.sample
     meta.sample_basename = row.sample

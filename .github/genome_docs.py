@@ -37,9 +37,9 @@ class Genome:
 
     @property
     def md(self):
-        md = [f"- `{self.genome}`\n"]
+        md = [f"\n#### `{self.genome}`\n"]
         for key, value in self.attributes.items():
-            md.append(f"  - {key}: `{value}`")
+            md.append(f"- {key}: `{value}`")
         return md
 
 
@@ -64,19 +64,32 @@ def parse_genome_config(file_path):
     }
 
 
-def to_markdown(genomes):
-    md = list()
+MD_HEAD = """# Genomes
+
+<!--
+This file is created by concatenating _genomes_tail.md and the auto-generated genomes list.
+Do not edit guide/genomes.md manually.
+-->
+
+## Supported reference genomes
+
+These genomes are available on biowulf.
+"""
+
+
+def to_markdown(genomes, md_head=MD_HEAD):
+    md = [md_head]
 
     md += [
         "### Reference Genomes\n",
-        "These genomes can be passed to the `--genome` parameter.\n",
+        "These genomes can be passed to the `--genome` parameter.",
     ]
     for gname, genome in genomes.items():
         if genome.is_reference:
             md += genome.md
     md += [
         "\n### Spike-in Genomes\n",
-        "These genomes can be passed to the `--spike_genome` parameter.\n",
+        "These genomes can be passed to the `--spike_genome` parameter.",
     ]
     for gname, genome in genomes.items():
         if genome.is_spike:
@@ -87,12 +100,12 @@ def to_markdown(genomes):
 def main():
     genomes = parse_genome_config("conf/genomes.config")
     markdown = to_markdown(genomes)
-    with open("docs/_genomes_head.md", "r") as header_file:
-        head = header_file.readlines()
+    with open("docs/_genomes_tail.md", "r") as tail_file:
+        tail = tail_file.readlines()
     with open("docs/guide/genomes.md", "w") as md_file:
-        md_file.writelines(head)
         for line in markdown:
             md_file.write(line + "\n")
+        md_file.writelines(tail)
 
 
 if __name__ == "__main__":

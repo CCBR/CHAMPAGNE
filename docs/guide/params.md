@@ -54,26 +54,24 @@ The most commonly used pipeline options
 | `genome`           | Reference genome (e.g. hg38, mm10). This can be a genome in conf/genomes.config, or see 'Custom genome options' to build a custom reference from a fasta & gtf file.                                                                                                                                                                                                                         | `string` |                            | True     |        |
 | `outputDir`        |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${launchDir}/results       |          | True   |
 | `tracedir`         |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | ${outputDir}/pipeline_info |          | True   |
-| `publish_dir_mode` |                                                                                                                                                                                                                                                                                                                                                                                              | `string` | link                       |          |        |
+| `publish_dir_mode` | How to publish files to the results directory. This parameter sets Nextflow's workflow.output.mode configuration option.                                                                                                                                                                                                                                                                     | `string` | link                       |          |        |
 
 ## Custom genome options
 
-Use these to build a custom reference genome not already listed in conf/genomes.config. For an example use-case, see conf/test.config.
+Use these to build a custom reference genome not already listed in conf/genomes.config. For an example, see conf/test.config.
 
-| Parameter        | Description                                                                                     | Type     | Default | Required | Hidden |
-| ---------------- | ----------------------------------------------------------------------------------------------- | -------- | ------- | -------- | ------ |
-| `genome_fasta`   | Genome fasta file                                                                               | `string` |         |          |        |
-| `genes_gtf`      | Genome gtf file                                                                                 | `string` |         |          |        |
-| `blacklist`      | Blacklisted sequences fasta file                                                                | `string` |         |          |        |
-| `rename_contigs` | File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example) | `string` |         |          |        |
-| `index_dir`      | Absolute path to directory containing pre-built reference genomes                               | `string` |         |          |        |
+| Parameter        | Description                                                                                     | Type      | Default | Required | Hidden |
+| ---------------- | ----------------------------------------------------------------------------------------------- | --------- | ------- | -------- | ------ |
+| `genome_fasta`   | Genome fasta file                                                                               | `string`  |         |          |        |
+| `genes_gtf`      | Genome gtf file                                                                                 | `string`  |         |          |        |
+| `blacklist`      | Blacklisted sequences fasta file                                                                | `string`  |         |          |        |
+| `read_length`    | Read length used for counting unique kmers and computing the effective genome size.             | `integer` |         |          |        |
+| `rename_contigs` | File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example) | `string`  |         |          |        |
 
 ## General parameters
 
 | Parameter             | Description | Type      | Default | Required | Hidden |
 | --------------------- | ----------- | --------- | ------- | -------- | ------ |
-| `seq_center`          |             | `string`  |         |          |        |
-| `read_length`         |             | `integer` |         |          |        |
 | `max_memory`          |             | `string`  | 224 GB  |          |        |
 | `max_cpus`            |             | `integer` | 32      |          |        |
 | `max_time`            |             | `string`  | 72 h    |          |        |
@@ -95,8 +93,6 @@ Options for experiments that use a spike-in genome
 
 | Parameter                   | Description                                                  | Type      | Default                    | Required | Hidden |
 | --------------------------- | ------------------------------------------------------------ | --------- | -------------------------- | -------- | ------ |
-| `fastq_screen_conf`         |                                                              | `string`  |                            |          |        |
-| `fastq_screen_db_dir`       |                                                              | `string`  |                            |          |        |
 | `deeptools_bin_size`        |                                                              | `integer` | 25                         |          |        |
 | `deeptools_smooth_length`   |                                                              | `integer` | 75                         |          |        |
 | `deeptools_normalize_using` | If using a spike-in genome, recommend setting this to "None" | `string`  | RPGC                       |          |        |
@@ -144,6 +140,16 @@ Toggle various steps of the pipeline on/off
 | `run_meme`             |             | `boolean` | True    |          |        |
 | `run_consensus_union`  |             | `boolean` | True    |          |        |
 | `run_consensus_corces` |             | `boolean` | True    |          |        |
+
+## Platform options
+
+Options for the platform or HPC on which the pipeline is run. These are set by platform-specific profiles, e.g. conf/biowulf.config. If you are running the pipeline on biowulf, these will be set by CHAMPAGNE automatically.
+
+| Parameter             | Description                                                                                   | Type     | Default | Required | Hidden |
+| --------------------- | --------------------------------------------------------------------------------------------- | -------- | ------- | -------- | ------ |
+| `index_dir`           | Absolute path to directory containing pre-built reference genomes.                            | `string` |         |          |        |
+| `fastq_screen_conf`   | Path to the config file for fastq screen. See assets/fastq_screen_biowulf.conf as an example. | `string` |         |          |        |
+| `fastq_screen_db_dir` | Path to the directory containing fastq screen databases.                                      | `string` |         |          |        |
 
 ## containers
 

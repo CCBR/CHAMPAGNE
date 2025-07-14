@@ -65,7 +65,6 @@ champagne run --output /data/$USER/champagne_project \
 ### Parameters
 
 You can specify workflow parameters via the command line or in a YAML file.
-
 Here's an example YAML file with some common parameters:
 
 `assets/params.yml`
@@ -87,43 +86,15 @@ champagne run --output /data/$USER/champagne_project \
     -params-file assets/params.yml
 ```
 
-View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/guide/params)
+View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/dev/guide/params)
 in the documentation.
 
-### Custom Reference Genome
+### Reference Genomes
 
-View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/guide/genomes)
+View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes)
 to see which genomes are pre-configured for use with champagne on biowulf.
-If you'd like to use a custom genome, you'll need the following files:
-
-- genome fasta
-- genome GTF
-- blacklist fasta
-
-Prepare your custom reference genome with:
-
-```sh
-champagne run --output /data/$USER/champagne_project \
-    --mode slurm -profile biowulf \
-    -entry MAKE_REFERENCE \
-    --outdir custom_genome \
-    --genome custom_genome \
-    --genome_fasta genome.fasta \
-    --genes_gtf genome.gtf \
-    --blacklist blacklist.fasta
-```
-
-The reference files and a config file for the genome will be written in `results/genome/custom_genome/`.
-
-Then you can run champagne using your custom genome:
-
-```sh
-champagne run --output /data/$USER/champagne_project \
-    --mode slurm -profile biowulf \
-    --input samplesheet.csv \
-    --genome custom_genome \
-    -c results/genome/custom_genome/custom_genome.config
-```
+If you'd like to use a genome that's not already available, view the
+[guide on preparing a custom reference genome](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes/#custom-reference-genome).
 
 ### Spike-in Control
 
@@ -139,7 +110,7 @@ champagne run --output /data/$USER/champagne_project \
     --deeptools_normalize_using None
 ```
 
-View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/guide/spike-in/)
+View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/dev/guide/spike-in/)
 for more information on how to use & customize spike-in controls.
 
 ## Help & Contributing

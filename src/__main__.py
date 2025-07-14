@@ -65,7 +65,7 @@ EXAMPLES:
 Execute with slurm:
   champagne run --output path/to/outdir --mode slurm
 Preview the processes that will run:
-  champagne run .--output path/to/outdir --mode local -preview
+  champagne run --output path/to/outdir --mode local -preview
 Add nextflow args (anything supported by `nextflow run`):
   champagne run --output path/to/outdir --mode slurm -profile test
   champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml

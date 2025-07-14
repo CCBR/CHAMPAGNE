@@ -16,6 +16,9 @@ theme:
   name: readthedocs
   locale: en
   custom_dir: docs/overrides
+  highlightjs: true
+  hljs_languages:
+    - yaml
 
 # Plugins
 plugins:

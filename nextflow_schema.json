@@ -45,14 +45,16 @@
                 },
                 "publish_dir_mode": {
                     "type": "string",
-                    "default": "link"
+                    "default": "link",
+                    "enum": ["link", "copy", "move", "copyNoFollow", "rellink", "symlink"],
+                    "description": "How to publish files to the results directory. This parameter sets Nextflow's workflow.output.mode configuration option."
                 }
             }
         },
         "custom_genome_options": {
             "title": "Custom genome options",
             "type": "object",
-            "description": "Use these to build a custom reference genome not already listed in conf/genomes.config. For an example use-case, see conf/test.config.",
+            "description": "Use these to build a custom reference genome not already listed in conf/genomes.config. For an example, see conf/test.config.",
             "default": "",
             "properties": {
                 "genome_fasta": {
@@ -70,15 +72,14 @@
                     "fa_icon": "fas fa-file",
                     "description": "Blacklisted sequences fasta file"
                 },
+                "read_length": {
+                    "type": "integer",
+                    "description": "Read length used for counting unique kmers and computing the effective genome size."
+                },
                 "rename_contigs": {
                     "type": "string",
                     "fa_icon": "fas fa-file",
                     "description": "File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)"
-                },
-                "index_dir": {
-                    "type": "string",
-                    "fa_icon": "fas fa-folder-open",
-                    "description": "Absolute path to directory containing pre-built reference genomes"
                 }
             }
         },
@@ -88,12 +89,6 @@
             "description": "",
             "default": "",
             "properties": {
-                "seq_center": {
-                    "type": "string"
-                },
-                "read_length": {
-                    "type": "integer"
-                },
                 "max_memory": {
                     "type": "string",
                     "default": "224 GB"
@@ -150,12 +145,6 @@
             "description": "",
             "default": "",
             "properties": {
-                "fastq_screen_conf": {
-                    "type": "string"
-                },
-                "fastq_screen_db_dir": {
-                    "type": "string"
-                },
                 "deeptools_bin_size": {
                     "type": "integer",
                     "default": 25
@@ -305,6 +294,28 @@
                 "run_consensus_corces": {
                     "type": "boolean",
                     "default": true
+                }
+            }
+        },
+        "platform_options": {
+            "title": "Platform options",
+            "type": "object",
+            "description": "Options for the platform or HPC on which the pipeline is run. These are set by platform-specific profiles, e.g. conf/biowulf.config. If you are running the pipeline on biowulf, these will be set by CHAMPAGNE automatically.",
+            "default": "",
+            "properties": {
+                "index_dir": {
+                    "type": "string",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Absolute path to directory containing pre-built reference genomes."
+                },
+                "fastq_screen_conf": {
+                    "type": "string",
+                    "description": "Path to the config file for fastq screen. See assets/fastq_screen_biowulf.conf as an example."
+                },
+                "fastq_screen_db_dir": {
+                    "type": "string",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Path to the directory containing fastq screen databases."
                 }
             }
         },
