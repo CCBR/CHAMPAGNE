@@ -78,7 +78,6 @@ Prepare your custom reference genome with:
 champagne run --output /data/$USER/champagne_project \
     --mode slurm -profile biowulf \
     -entry MAKE_REFERENCE \
-    --outdir custom_genome \
     --genome custom_genome \
     --genome_fasta genome.fasta \
     --genes_gtf genome.gtf \

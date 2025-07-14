@@ -18,7 +18,7 @@ repos:
       - id: check-json
   # spell check
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.4
+    rev: v2.4.1
     hooks:
       - id: codespell
         # https://github.com/codespell-project/codespell/issues/1498

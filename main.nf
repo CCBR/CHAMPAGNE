@@ -47,7 +47,7 @@ workflow debug {
 
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
     contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
-    raw_fastqs = INPUT_CHECK(sample_sheet, params.seq_center, contrast_sheet).reads
+    raw_fastqs = INPUT_CHECK(sample_sheet, contrast_sheet).reads
 
 }
 
