@@ -28,8 +28,9 @@
 - Fix a file name clash during input pooling. (#224, @kelly-sovacool)
 - Fix bug in MEME AME process that caused it not to run on all samples. (#234, @kelly-sovacool)
   - Also correct the motif rank calculation. (#234, @kopardev)
-- fix: ensure inputs are pooled correctly for paired end reads. (#250, @kelly-sovacool)
-- fix chipseeker filename collision. (#252, @kelly-sovacool)
+- Ensure inputs are pooled correctly for paired end reads. (#250, @kelly-sovacool)
+- Fix chipseeker filename collision. (#252, @kelly-sovacool)
+- Allow fraction-in-peaks plot to run when there is only 1 sample. (#265, @kelly-sovacool)
 
 ### Documentation
 
