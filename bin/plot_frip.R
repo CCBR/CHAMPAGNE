@@ -31,7 +31,7 @@ sample_frip_plot <- frip_dat %>%
   facet_wrap(peak_type ~ metric, scales = "free_x", strip.position = "bottom") +
   geom_jitter(alpha = 0.8, height = 0.1) +
   geom_hline(
-    yintercept = seq(1.5, length(unique(frip_dat %>% pull(bedsample))) - 0.5, 1),
+    yintercept = seq(1.5, max(length(unique(frip_dat %>% pull(bedsample))) - 0.5, 1.5), 1),
     lwd = 0.5, color = "grey92"
   ) +
   guides(color = guide_legend(
