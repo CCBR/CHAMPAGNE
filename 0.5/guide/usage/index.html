@@ -1,0 +1,123 @@
+<!DOCTYPE html><html class=writer-html5 lang=en> <head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=author content="CCR Collaborative Bioinformatics Resource"><link rel="shortcut icon" href=../../img/favicon.ico><title>Usage - CHAMPAGNE</title><link rel=stylesheet href=../../css/theme.css><link rel=stylesheet href=../../css/theme_extra.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css><link href=../../css/custom.css rel=stylesheet><link href=../../css/version-select.css rel=stylesheet><script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "guide/usage.md";
+        var mkdocs_page_url = null;
+      </script><!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]--><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js></script><script>hljs.highlightAll();</script></head> <body class=wy-body-for-nav role=document> <div class=wy-grid-for-nav> <nav data-toggle=wy-nav-shift class="wy-nav-side stickynav"> <div class=wy-side-scroll> <div class=wy-side-nav-search> <a href=../.. class="icon icon-home"> CHAMPAGNE </a><div role=search> <form id=rtd-search-form class=wy-form action=../../search.html method=get> <input type=text name=q placeholder="Search docs" aria-label="Search docs" title="Type search term here"> </form> </div> </div> <div class="wy-menu wy-menu-vertical" data-spy=affix role=navigation aria-label="Navigation menu"> <ul> <li class=toctree-l1><a class="reference internal" href=../..>Home</a> </li> </ul> <p class=caption><span class=caption-text>User Guide</span></p> <ul class=current> <li class="toctree-l1 current"><a class="reference internal current" href=#>Usage</a> <ul class=current> <li class=toctree-l2><a class="reference internal" href=#installation>Installation</a> <ul> <li class=toctree-l3><a class="reference internal" href=#biowulf>Biowulf</a> </li> </ul> </li> <li class=toctree-l2><a class="reference internal" href=#help>Help</a> </li> <li class=toctree-l2><a class="reference internal" href=#initialize>Initialize</a> </li> <li class=toctree-l2><a class="reference internal" href=#prepare-input-files>Prepare input files</a> <ul> <li class=toctree-l3><a class="reference internal" href=#sample-manifest>Sample manifest</a> </li> <li class=toctree-l3><a class="reference internal" href=#contrasts-optional>Contrasts (optional)</a> </li> <li class=toctree-l3><a class="reference internal" href=#parameters-file-optional>Parameters file (optional)</a> </li> </ul> </li> <li class=toctree-l2><a class="reference internal" href=#run>Run</a> <ul> <li class=toctree-l3><a class="reference internal" href=#preview>Preview</a> </li> <li class=toctree-l3><a class="reference internal" href=#stub-run>Stub run</a> </li> <li class=toctree-l3><a class="reference internal" href=#run-with-slurm>Run with slurm</a> </li> </ul> </li> </ul> </li> <li class=toctree-l1><a href=../output/ class="reference internal">Output</a> </li> <li class=toctree-l1><a href=../params/ class="reference internal">Parameters</a> </li> <li class=toctree-l1><a href=../genomes/ class="reference internal">Genomes</a> </li> <li class=toctree-l1><a href=../spike-in/ class="reference internal">Spike-in Normalization</a> </li> <li class=toctree-l1><a href=../troubleshooting/ class="reference internal">Troubleshooting</a> </li> </ul> <p class=caption><span class=caption-text>Developer Guide</span></p> <ul> <li class=toctree-l1><a href=../../devs/contributing/ class="reference internal">How to contribute</a> </li> <li class=toctree-l1><a href=../../devs/contributors/ class="reference internal">Contributors</a> </li> </ul> <ul> <li class=toctree-l1><a href=../../changelog/ class="reference internal">Changelog</a> </li> </ul> </div> </div> </nav> <section data-toggle=wy-nav-shift class=wy-nav-content-wrap> <nav class=wy-nav-top role=navigation aria-label="Mobile navigation menu"> <i data-toggle=wy-nav-top class="fa fa-bars"></i> <a href=../..>CHAMPAGNE</a> </nav> <div class=wy-nav-content> <div class=rst-content><div role=navigation aria-label="breadcrumbs navigation"> <ul class=wy-breadcrumbs> <li><a href=../.. class="icon icon-home" aria-label=Docs></a></li> <li class=breadcrumb-item>User Guide</li> <li class="breadcrumb-item active">Usage</li> <li class=wy-breadcrumbs-aside> <a href=https://github.com/CCBR/CHAMPAGNE/edit/main/guide/usage.md>Edit on CCBR/CHAMPAGNE</a> </li> </ul> <hr> </div> <div role=main class=document itemscope=itemscope itemtype=http://schema.org/Article> <div class=section itemprop=articleBody> <h1 id=getting-started-with-champagne>Getting Started with CHAMPAGNE<a class=headerlink href=#getting-started-with-champagne title="Permanent link">&para;</a></h1> <!--
+TODO intro paragraph
+--> <h2 id=installation>Installation<a class=headerlink href=#installation title="Permanent link">&para;</a></h2> <p>For <a href=#biowulf>Biowulf</a> users, CHAMPAGNE is installed in the <code>ccbrpipeliner</code> module. There's no need to perform any other installation steps.</p> <p>If you'd like to run the pipeline in a different execution environment, take a look at <a href=/nextflow.md>how to run the nextflow pipeline directly</a>.</p> <p>CHAMPAGNE depends on <a href=https://www.nextflow.io/ >Nextflow</a> version 25 or later and Singularity or Docker.</p> <h3 id=biowulf>Biowulf<a class=headerlink href=#biowulf title="Permanent link">&para;</a></h3> <p>Champagne is available on <a href=https://hpc.nih.gov/ >Biowulf</a> in the <code>ccbrpipeliner</code> module. You'll first need to start an interactive session, then load the module:</p> <div class=highlight><pre><span></span><code><span class=c1># start an interactive node</span>
+sinteractive<span class=w> </span>--mem<span class=o>=</span>2g<span class=w> </span>--cpus-per-task<span class=o>=</span><span class=m>2</span><span class=w> </span>--gres<span class=o>=</span>lscratch:200
+
+<span class=c1># load the ccbrpipeliner module</span>
+module<span class=w> </span>load<span class=w> </span>ccbrpipeliner
+</code></pre></div> <h2 id=help>Help<a class=headerlink href=#help title="Permanent link">&para;</a></h2> <p>Run <code>champagne --help</code> to see the available commands and options.</p> <div class=highlight><pre><span></span><code>Usage: champagne [OPTIONS] COMMAND [ARGS]...
+
+  CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline
+
+  docs: https://ccbr.github.io/CHAMPAGNE
+
+  For more options, run: champagne [command] --help
+
+Options:
+  -v, --version  Show the version and exit.
+  --citation     Print the citation in bibtex format and exit.
+  -h, --help     Show this message and exit.
+
+Commands:
+  run   Run the workflow
+  init  Initialize the launch directory
+</code></pre></div> <h2 id=initialize>Initialize<a class=headerlink href=#initialize title="Permanent link">&para;</a></h2> <p>Initialize your project directory:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>init<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project
+</code></pre></div> <p>Or if you do not use <code>--output</code>, your current working directory will be used as default:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>init
+</code></pre></div> <h2 id=prepare-input-files>Prepare input files<a class=headerlink href=#prepare-input-files title="Permanent link">&para;</a></h2> <h3 id=sample-manifest>Sample manifest<a class=headerlink href=#sample-manifest title="Permanent link">&para;</a></h3> <p>This file is a CSV file that contains information about the samples to be processed. It is passed to the <code>input</code> parameter.</p> <p>The following columns are required:</p> <ul> <li><code>sample</code>: sample ID; does not need to be a unique column.</li> <li><code>rep</code>: replicate number of sample ID; does not need to be a unique column.</li> <li><code>fastq_1</code>: absolute path to R1 of sample ID.</li> <li><code>fastq_2</code>: absolute path to R2 of sample ID (optional, only for paired-end reads).</li> <li><code>antibody</code>: name of the antibody used for the sample.</li> <li><code>input</code>: the sampleID of the input control; this must match a sample in the sheet.</li> </ul> <p>Example for a single-end project:</p> <p><code>samplesheet.csv</code></p> <div class=highlight><pre><span></span><code>sample,rep,fastq_1,fastq_2,antibody,control
+sampleA,1,/path/to/sample_1.R1.fastq.gz,,Ab,inputA
+sampleA,2,/path/to/sample_2.R1.fastq.gz,,Ab,inputA
+inputA,1,/path/to/sample1.R1.fastq.gz,,,
+inputA,2,/path/to/sample1.R1.fastq.gz,,,
+</code></pre></div> <p>Example for a paired-end project:</p> <p><code>samplesheet.csv</code></p> <div class=highlight><pre><span></span><code>sample,rep,fastq_1,fastq_2,antibody,control
+sample1,1,/path/to/sample_1.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1
+sample1,2,/path/to/sample_2.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1
+input1,1,/path/to/input_1.R1.fastq.gz,/path/to/input_1.R2.fastq.gz,,
+input1,2,/path/to/input_2.R1.fastq.gz,/path/to/input_2.R2.fastq.gz,,
+</code></pre></div> <p>For more examples, view the sample sheet files in the <a href=https://github.com/CCBR/CHAMPAGNE/tree/main/assets><code>assets/</code> directory on GitHub</a>.</p> <h3 id=contrasts-optional>Contrasts (optional)<a class=headerlink href=#contrasts-optional title="Permanent link">&para;</a></h3> <p>Contrasts are specified as a TSV file and is passed to the <code>contrasts</code> parameter. Each row is a unique contrast for differential analysis.</p> <p>Columns:</p> <ul> <li><code>contrast_name</code>: name of the contrast. Must be unique and contain no spaces.</li> <li><code>group1</code>: comma-separated list of sample IDs in group 1.</li> <li><code>group2</code>: comma-separated list of sample IDs in group 2.</li> </ul> <p>The following is an example contrast file with two contrasts</p> <p><code>assets/contrasts_full_mm10.tsv</code></p> <div class=highlight><pre><span></span><code>contrast_name   group1  group2
+antibody    CTCF_ChIP_macrophage_p20,CTCF_ChIP_MEF_p20  CTCF_ChIP_macrophage_p3
+celltype_macrophage_vs_fibroblast   CTCF_ChIP_macrophage_p20,CTCF_ChIP_macrophage_p3    CTCF_ChIP_MEF_p20
+</code></pre></div> <p>The sample sheet for this dataset contains all of the sample IDs specified in the contrasts file.</p> <p><code>assets/samplesheet_full_mm10.csv</code></p> <div class=highlight><pre><span></span><code>sample,rep,fastq_1,fastq_2,antibody,input
+CTCF_ChIP_macrophage_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081748_1.fastq.gz,,CTCF,WCE_p20
+CTCF_ChIP_macrophage_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081749_1.fastq.gz,,CTCF,WCE_p20
+CTCF_ChIP_macrophage_p3,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081750_1.fastq.gz,,CTCF,WCE_p3
+CTCF_ChIP_macrophage_p3,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081751_1.fastq.gz,,CTCF,WCE_p3
+CTCF_ChIP_MEF_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081752_1.fastq.gz,,CTCF,WCE_p20
+CTCF_ChIP_MEF_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081753_1.fastq.gz,,CTCF,WCE_p20
+WCE_p3,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081772_1.fastq.gz,,,
+WCE_p20,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081773_1.fastq.gz,,,
+</code></pre></div> <h3 id=parameters-file-optional>Parameters file (optional)<a class=headerlink href=#parameters-file-optional title="Permanent link">&para;</a></h3> <p>you can create a YAML file with the parameters you want to set. This is useful for managing multiple parameters or for sharing configurations with others. Here's an example YAML file with some common parameters:</p> <p><code>assets/params.yml</code></p> <div class=highlight><pre><span></span><code><span class=nt>input</span><span class=p>:</span><span class=w> </span><span class=s>&#39;./assets/samplesheet_full_mm10.csv&#39;</span>
+<span class=nt>contrasts</span><span class=p>:</span><span class=w> </span><span class=s>&#39;./assets/contrasts_full_mm10.csv&#39;</span>
+<span class=nt>genome</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">mm10</span>
+<span class=nt>run_gem</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class=nt>run_chipseeker</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class=nt>run_qc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div> <p>You will then pass this file to the <code>-params-file</code> option when running the pipeline:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
+<span class=w>    </span>-params-file<span class=w> </span>assets/params.yml
+</code></pre></div> <h2 id=run>Run<a class=headerlink href=#run title="Permanent link">&para;</a></h2> <p><code>champagne run</code> is the main command to run the pipeline. Here's the output of <code>champagne run --help</code>:</p> <div class=highlight><pre><span></span><code>Usage: champagne run [OPTIONS] [NEXTFLOW_ARGS]...
+
+  Run the workflow
+
+  Note: you must first run `champagne init --output &lt;output_dir&gt;` to
+  initialize the output directory.
+
+  docs: https://ccbr.github.io/CHAMPAGNE
+
+Options:
+  --output DIRECTORY  Output directory path for champagne init &amp; run.
+                      Equivalent to nextflow launchDir. Defaults to your
+                      current working directory.
+  --mode TEXT         Run mode (slurm, local)  [default: slurm]
+  -F, --forceall      Force all processes to run (i.e. do not use nextflow
+                      -resume)
+  -h, --help          Show this message and exit.
+
+  Nextflow options:
+    -profile &lt;profile&gt;    Nextflow profile to use (e.g. test)
+    -params-file &lt;file&gt;   Nextflow params file to use (e.g. assets/params.yml)
+    -preview              Preview the processes that will run without executing them
+
+  EXAMPLES:
+  Execute with slurm:
+    champagne run --output path/to/outdir --mode slurm
+  Preview the processes that will run:
+    champagne run .--output path/to/outdir --mode local -preview
+  Add nextflow args (anything supported by `nextflow run`):
+    champagne run --output path/to/outdir --mode slurm -profile test
+    champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml
+</code></pre></div> <p>Any <a href=https://www.nextflow.io/docs/latest/reference/cli.html#run>nextflow argument</a> can also be passed to champagne run, such as <code>-profile</code>, <code>-preview</code>, or <code>-params-file</code>. These are always prepended with a single hyphen.</p> <p><a href=guide/params.md>Pipeline parameters</a> can also be passed via the command line. These are always prepended with a double-hyphen.</p> <h3 id=preview>Preview<a class=headerlink href=#preview title="Permanent link">&para;</a></h3> <p>Run a local preview:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--input<span class=w> </span>assets/samplesheet_test_mm10.csv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--contrasts<span class=w> </span>assets/contrasts_test_mm10.tsv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--genome<span class=w> </span>mm10<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--mode<span class=w> </span><span class=nb>local</span><span class=w> </span><span class=se>\</span>
+<span class=w>  </span>-preview
+</code></pre></div> <h3 id=stub-run>Stub run<a class=headerlink href=#stub-run title="Permanent link">&para;</a></h3> <p>Launch a local stub run to view processes that will run, output blank files, and download containers:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--input<span class=w> </span>assets/samplesheet_test_mm10.csv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--contrasts<span class=w> </span>assets/contrasts_test_mm10.tsv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--genome<span class=w> </span>mm10<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--mode<span class=w> </span><span class=nb>local</span><span class=w> </span><span class=se>\</span>
+<span class=w>  </span>-stub
+</code></pre></div> <h3 id=run-with-slurm>Run with slurm<a class=headerlink href=#run-with-slurm title="Permanent link">&para;</a></h3> <p>Launch a pipeline run with slurm:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--input<span class=w> </span>assets/samplesheet_test_mm10.csv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--contrasts<span class=w> </span>assets/contrasts_test_mm10.tsv<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--genome<span class=w> </span>mm10<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--mode<span class=w> </span>slurm
+</code></pre></div> </div> </div><script async src="https://www.googletagmanager.com/gtag/js?id=G-D3SL9V30KL"></script> <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-D3SL9V30KL'); // Replace with your tracking ID
+</script> </div> </div> </section> </div> <div class=rst-versions role=note aria-label=Versions> <span class=rst-current-version data-toggle=rst-current-version> <span> <a href=https://github.com/CCBR/CHAMPAGNE class="fa fa-code-fork" style="color: #fcfcfc"> CCBR/CHAMPAGNE</a> </span> <span><a href=../.. style="color: #fcfcfc">&laquo; Previous</a></span> <span><a href=../output/ style="color: #fcfcfc">Next &raquo;</a></span> </span> </div> <script src=../../js/jquery-3.6.0.min.js></script> <script>var base_url = "../..";</script> <script src=../../js/theme_extra.js></script> <script src=../../js/theme.js></script> <script src=../../js/custom.js></script> <script src=../../search/main.js></script> <script src=../../js/version-select.js></script> <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script> </body> </html> 
