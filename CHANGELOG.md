@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+## CHAMPAGNE 0.5.0
+
 - CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
 - Reorganized output directory structure. (#256, @kelly-sovacool)
 - Nextflow parameters are now validated at the start of the workflow. (#257, @kelly-sovacool)
@@ -11,6 +13,7 @@
 - New consensus peak method from Corces _et al._ ([doi:10.1126/science.aav1898](https://www.science.org/doi/10.1126/science.aav1898)). (#225, #246, @kelly-sovacool)
 - Normalization with a spike-in genome is now supported. (#259, @kelly-sovacool)
   - Set `params.spike_genome` to `dmelr6.32` or `ecoli_k12`
+  - The normalization method can be set with `params.spike_norm_method` to `delorenzi` (default) or `guenther`. (#267, @kelly-sovacool)
 - CLI improvements
   - Use `nextflow run -resume` by default, or turn it off with `champagne run --forceall`. (#224, @kelly-sovacool)
   - Add `--output` argument for `champagne init` and `champagne run`. (#232, #233, @kelly-sovacool)

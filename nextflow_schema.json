@@ -123,9 +123,9 @@
                 },
                 "spike_norm_method": {
                     "type": "string",
-                    "default": "guenther",
-                    "enum": ["guenther", "delorenzi"],
-                    "description": "Method to compute scaling factors for spike-in normalization. \"guenther\" uses a simple fraction of the reads aligning to the spike-in genome as described in https://doi.org/10.1016/j.celrep.2014.10.018. \"delorenzi\" uses deepTools multiBamSummary with --scalingFactors, which is similar to the method described in https://doi.org/10.1101/gr.168260.113."
+                    "default": "delorenzi",
+                    "enum": ["delorenzi", "guenther"],
+                    "description": "Method to compute scaling factors for spike-in normalization. \"guenther\" uses a simple fraction of the reads aligning to the spike-in genome as described in <https://doi.org/10.1016/j.celrep.2014.10.018>. \"delorenzi\" uses deepTools multiBamSummary with --scalingFactors, which is similar to the method described in <https://doi.org/10.1101/gr.168260.113>."
                 },
                 "spike_deeptools_bin_size": {
                     "type": "integer",
