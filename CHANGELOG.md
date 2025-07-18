@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- Minor documentation improvements. (#273, @kelly-sovacool)
+
 ## CHAMPAGNE 0.5.0
 
 - CHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)
