@@ -44,3 +44,7 @@ div.admonition.warning {
     margin: 10px 0;
     border-radius: 5px;
 }
+
+.wy-nav-content {
+    max-width: 90% !important;
+}
