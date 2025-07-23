@@ -21,7 +21,7 @@ champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> <
 <span class=c1># launch a champagne run on slurm with the test dataset</span>
 champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--mode<span class=w> </span>slurm<span class=w> </span>-profile<span class=w> </span><span class=nb>test</span>
-</code></pre></div> <p>To run champagne on your own data, you'll need to create a sample sheet. Take a look at these examples:</p> <ul> <li><a href=/assets/samplesheet_test.csv>assets/samplesheet_test.csv</a> - mix of single and paired end reads downloaded from github.</li> <li><a href=/assets/samplesheet_full_mm10.csv>assets/samplesheet_full_mm10.csv</a> - single end reads on biowulf.</li> </ul> <p>Once you've created a samplesheet with paths to your fastq files, run champagne with the <code>--input</code> option to specify the path to your sample sheet:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
+</code></pre></div> <p>To run champagne on your own data, you'll need to create a sample sheet. Take a look at these examples:</p> <ul> <li><a href=https://github.com/CCBR/CHAMPAGNE/blob/main/assets/samplesheet_test.csv>assets/samplesheet_test.csv</a> - mix of single and paired end reads downloaded from github.</li> <li><a href=https://github.com/CCBR/CHAMPAGNE/blob/main/assets/samplesheet_full_mm10.csv>assets/samplesheet_full_mm10.csv</a> - single end reads on biowulf.</li> </ul> <p>Once you've created a samplesheet with paths to your fastq files, run champagne with the <code>--input</code> option to specify the path to your sample sheet:</p> <div class=highlight><pre><span></span><code>champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/champagne_project<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--mode<span class=w> </span>slurm<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--input<span class=w> </span>samplesheet.csv<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--genome<span class=w> </span>hg38
@@ -51,5 +51,5 @@ champagne<span class=w> </span>run<span class=w> </span>--output<span class=w> <
         });
     </script> </body> </html> <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-07-18 16:26:34.411988+00:00
+Build Date UTC : 2025-07-23 19:13:47.881438+00:00
 --> 
