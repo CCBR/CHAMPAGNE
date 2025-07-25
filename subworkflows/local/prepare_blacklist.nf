@@ -1,6 +1,7 @@
 
 include { BEDTOOLS_GETFASTA          } from '../../modules/nf-core/bedtools/getfasta/main'
 include { BWA_INDEX as BWA_INDEX_BL } from "../../modules/CCBR/bwa/index"
+include { RENAME_FASTA_CONTIGS as RENAME_FASTA_CONTIGS_BL } from "../../modules/local/prepare_genome.nf"
 
 workflow PREPARE_BLACKLIST {
     take:

@@ -126,16 +126,29 @@ workflow {
         PHANTOM_PEAKS.out.fraglen
     )
 
+    trimmed_fastqs
+        | branch{ meta, fq ->
+            input: meta.is_input
+            sample: !meta.is_input
+
+        }
+        | set{ fastq_branch }
     // optional spike-in normalization
     if (params.spike_genome) {
-        ALIGN_SPIKEIN(trimmed_fastqs, params.spike_genome, frag_lengths)
+        ALIGN_SPIKEIN(fastq_branch.sample, params.spike_genome, frag_lengths)
         ch_scaling_factors = ALIGN_SPIKEIN.out.scaling_factors
+        fastq_branch.input
+            | map{ meta, fq -> meta.id }
+            | combine(Channel.of(1))
+            | mix(ch_scaling_factors)
+            | set{ ch_scaling_factors}
         ch_multiqc = ch_multiqc.mix(ALIGN_SPIKEIN.out.sf_tsv)
     } else {
         ch_scaling_factors = trimmed_fastqs
             | map{ meta, fq -> meta.id }
             | combine(Channel.of(1))
     }
+
 
     if (params.run_deeptools) {
         DEEPTOOLS( deduped_bam,

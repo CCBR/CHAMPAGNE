@@ -43,7 +43,7 @@ process BAM_COVERAGE {
     container "${params.containers_deeptools}"
 
     input:
-        tuple val(meta), path(bam), path(bai), val(scaling_factor), val(fraglen), val(effective_genome_size)
+        tuple val(meta), path(bam), path(bai), val(norm_method), val(scaling_factor), val(fraglen), val(effective_genome_size)
 
     output:
         tuple val(meta), path("${meta.id}.bw"), emit: bigwig
@@ -58,7 +58,7 @@ process BAM_COVERAGE {
       --binSize ${params.deeptools_bin_size} \\
       --smoothLength ${params.deeptools_smooth_length} \\
       --ignoreForNormalization ${params.deeptools_excluded_chroms} \\
-      --normalizeUsing ${params.deeptools_normalize_using} \\
+      --normalizeUsing ${norm_method} \\
       --effectiveGenomeSize ${effective_genome_size} \\
       --scaleFactor ${scaling_factor} \\
       ${args}

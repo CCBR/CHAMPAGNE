@@ -20,9 +20,12 @@ workflow DEEPTOOLS {
     main:
 
         deduped_bam
-            | map{ meta, bam, bai -> [ meta.id, meta, bam, bai] }
+            | map{ meta, bam, bai ->
+                def norm_method = meta.is_input ? params.deeptools_normalize_input : params.deeptools_normalize_samples
+                [ meta.id, meta, bam, bai, norm_method ]
+            }
             | join(scaling_factors)
-            | map{ id, meta, bam, bai, sf -> [meta, bam, bai, sf] }
+            | map{ id, meta, bam, bai, norm_method, sf -> [meta, bam, bai, norm_method, sf] }
             | join(frag_lengths)
             | combine(effective_genome_size)
             | BAM_COVERAGE

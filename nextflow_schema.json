@@ -10,7 +10,10 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "The most commonly used pipeline options",
-            "required": ["input", "genome"],
+            "required": [
+                "input",
+                "genome"
+            ],
             "properties": {
                 "input": {
                     "type": "string",
@@ -46,7 +49,14 @@
                 "publish_dir_mode": {
                     "type": "string",
                     "default": "link",
-                    "enum": ["link", "copy", "move", "copyNoFollow", "rellink", "symlink"],
+                    "enum": [
+                        "link",
+                        "copy",
+                        "move",
+                        "copyNoFollow",
+                        "rellink",
+                        "symlink"
+                    ],
                     "description": "How to publish files to the results directory. This parameter sets Nextflow's workflow.output.mode configuration option."
                 }
             }
@@ -124,7 +134,10 @@
                 "spike_norm_method": {
                     "type": "string",
                     "default": "delorenzi",
-                    "enum": ["delorenzi", "guenther"],
+                    "enum": [
+                        "delorenzi",
+                        "guenther"
+                    ],
                     "description": "Method to compute scaling factors for spike-in normalization. \"guenther\" uses a simple fraction of the reads aligning to the spike-in genome as described in <https://doi.org/10.1016/j.celrep.2014.10.018>. \"delorenzi\" uses deepTools multiBamSummary with --scalingFactors, which is similar to the method described in <https://doi.org/10.1101/gr.168260.113>."
                 },
                 "spike_deeptools_bin_size": {
@@ -145,6 +158,22 @@
             "description": "",
             "default": "",
             "properties": {
+                "deeptools_normalize_using": {
+                    "type": "string",
+                    "default": "RPGC",
+                    "description": "This parameter has been renamed to \"deeptools_normalize_samples\". It is kept for backward compatibility.",
+                    "hidden": true
+                },
+                "deeptools_normalize_samples": {
+                    "type": "string",
+                    "default": "RPGC",
+                    "description": "This normalization method is applied to the samples only, not the inputs. If using a spike-in genome, recommend setting this to \"None\""
+                },
+                "deeptools_normalize_input": {
+                    "type": "string",
+                    "default": "RPGC",
+                    "description": "Normalization method applied to inputs only. This way you can disable additional normalization for samples such as when using spike-in normalization, but still normalize the inputs."
+                },
                 "deeptools_bin_size": {
                     "type": "integer",
                     "default": 25
@@ -152,11 +181,6 @@
                 "deeptools_smooth_length": {
                     "type": "integer",
                     "default": 75
-                },
-                "deeptools_normalize_using": {
-                    "type": "string",
-                    "default": "RPGC",
-                    "description": "If using a spike-in genome, recommend setting this to \"None\""
                 },
                 "deeptools_excluded_chroms": {
                     "type": "string",
@@ -410,7 +434,9 @@
         {
             "$ref": "#/$defs/run_control"
         },
-        { "$ref": "#/$defs/platform_options" },
+        {
+            "$ref": "#/$defs/platform_options"
+        },
         {
             "$ref": "#/$defs/containers"
         }

@@ -20,9 +20,9 @@ workflow ALIGN_SPIKEIN {
         BWA_MEM( ch_fastq, ch_spikein_index )
         SAMTOOLS_COUNT( BWA_MEM.out.bam )
         SAMTOOLS_COUNT.out.count
-            | map{ meta, count -> [1, meta, count]}
+            | map{ meta, count -> [meta.antibody, meta, count]}
             | groupTuple()
-            | map{ idx, metas, counts -> [ metas, counts ] }
+            | map{ ab, metas, counts -> [ metas, counts ] }
             | set{ ch_spike_counts }
 
         if (params.spike_norm_method == 'guenther') {
@@ -35,9 +35,9 @@ workflow ALIGN_SPIKEIN {
                 | min()
                 | set{ min_fraglen }
             BWA_MEM.out.bam
-                | map{ meta, bam, bai -> [1, meta, bam, bai]}
+                | map{ meta, bam, bai -> [meta.antibody, meta, bam, bai]}
                 | groupTuple()
-                | map{ idx, metas, bams, bais -> [ metas, bams, bais ] }
+                | map{ ab, metas, bams, bais -> [ metas, bams, bais ] }
                 | combine(min_fraglen)
                 | combine(ch_spikein_blacklist_bed)
                 | MULTIBAM_SUMMARY
