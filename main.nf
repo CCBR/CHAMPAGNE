@@ -85,7 +85,7 @@ workflow LOG {
 workflow {
     main:
     LOG()
-    // validateParameters()
+    validateParameters()
 
     // initialize output channels
     ch_multiqc = Channel.empty()
