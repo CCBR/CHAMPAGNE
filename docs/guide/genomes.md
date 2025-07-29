@@ -33,7 +33,7 @@ These genomes can be passed to the `--genome` parameter.
 - species: `Homo sapiens`
 - fasta: `${params.index_dir}/hg19_basic/hg19.fa`
 - genes_gtf: `${params.index_dir}/hg19_basic/genes.gtf`
-- blacklist_index: `${params.index_dir}/hg19_basic/indexes/hg19.blacklist.*`
+- blacklist_index: `${params.index_dir}/hg19_basic/indexes/blacklist/hg19.blacklist.*`
 - reference_index: `${params.index_dir}/hg19_basic/bwa_index/hg19.*`
 - chromosomes_dir: `${params.index_dir}/hg19_basic/Chromosomes`
 - chrom_sizes: `${params.index_dir}/hg19_basic/Chromosomes/chrom.sizes`

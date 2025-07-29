@@ -91,14 +91,16 @@ Options for experiments that use a spike-in genome
 
 ## QC options
 
-| Parameter                   | Description                                                  | Type      | Default                    | Required | Hidden |
-| --------------------------- | ------------------------------------------------------------ | --------- | -------------------------- | -------- | ------ |
-| `deeptools_bin_size`        |                                                              | `integer` | 25                         |          |        |
-| `deeptools_smooth_length`   |                                                              | `integer` | 75                         |          |        |
-| `deeptools_normalize_using` | If using a spike-in genome, recommend setting this to "None" | `string`  | RPGC                       |          |        |
-| `deeptools_excluded_chroms` |                                                              | `string`  | chrM chrX chrY             |          |        |
-| `multiqc_config`            |                                                              | `string`  | assets/multiqc_config.yaml |          |        |
-| `multiqc_logo`              |                                                              | `string`  | assets/ccbr_logo.png       |          |        |
+| Parameter                     | Description                                                                                                                                                                           | Type      | Default                    | Required | Hidden |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | -------------------------- | -------- | ------ |
+| `deeptools_normalize_using`   | This parameter has been renamed to "deeptools_normalize_samples". It is kept for backward compatibility.                                                                              | `string`  | RPGC                       |          | True   |
+| `deeptools_normalize_samples` | This normalization method is applied to the samples only, not the inputs. If using a spike-in genome, recommend setting this to "None"                                                | `string`  | RPGC                       |          |        |
+| `deeptools_normalize_input`   | Normalization method applied to inputs only. This way you can disable additional normalization for samples such as when using spike-in normalization, but still normalize the inputs. | `string`  | RPGC                       |          |        |
+| `deeptools_bin_size`          |                                                                                                                                                                                       | `integer` | 25                         |          |        |
+| `deeptools_smooth_length`     |                                                                                                                                                                                       | `integer` | 75                         |          |        |
+| `deeptools_excluded_chroms`   |                                                                                                                                                                                       | `string`  | chrM chrX chrY             |          |        |
+| `multiqc_config`              |                                                                                                                                                                                       | `string`  | assets/multiqc_config.yaml |          |        |
+| `multiqc_logo`                |                                                                                                                                                                                       | `string`  | assets/ccbr_logo.png       |          |        |
 
 ## Peak callers
 

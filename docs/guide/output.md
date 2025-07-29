@@ -87,7 +87,7 @@ each sample.
 `bigwigs/` contains the bigwig files for each sample; one before removing input
 reads (`{id}.bw`) and one with input reads removed (`{id}.inputnorm.bw`).
 
-These are normalized with the method set by the `deeptools_normalize_using` parameter.
+These are normalized with the method set by the `deeptools_normalize_samples` parameter.
 
 If using a spike-in genome, these are normalized according the spike-in
 parameters set. See the [Spike-in normalization doc](spike-in.md) for more

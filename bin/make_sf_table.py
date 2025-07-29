@@ -6,18 +6,19 @@ Usage:
     python make_sf_table.py scaling_factors.tsv <ids> <counts> [<outfilename>]
 
 Example:
-    python make_sf_table.py "id1,id2,id3" "100,200,300" spike_sf.tsv
+    python make_sf_table.py scaling_factors_1.tsv,scaling_factors_2.tsv id1,id2,id3 100,200,300 spike_sf.tsv
 """
 import sys
 
 
-def main(infilename, ids, counts, outfilename="spike_sf.tsv"):
+def main(infilenames, ids, counts, outfilename="spike_sf.tsv"):
     data = dict()
-    with open(infilename, "r") as infile:
-        header = next(infile)
-        for line in infile:
-            sample, scaling_factor = line.strip().split("\t")
-            data[sample] = [scaling_factor]
+    for infilename in infilenames.split(","):
+        with open(infilename, "r") as infile:
+            header = next(infile)
+            for line in infile:
+                sample, scaling_factor = line.strip().split("\t")
+                data[sample] = [scaling_factor]
 
     for sample, count in zip(ids.split(","), counts.split(",")):
         data[sample].append(count)

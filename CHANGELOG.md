@@ -2,6 +2,10 @@
 
 - Minor documentation improvements. (#273, @kelly-sovacool)
 - Set `--blacklist` to a custom bed or fasta file to override the default blacklist used by a built-in `--genome`. (#277, @kelly-sovacool)
+- Fix spike-in normalization: (#279, @kelly-sovacool)
+    - Do not include inputs in the scale factor calculation.
+    - Group samples by antibody for scale factor calculation.
+    - Create separate parameters for controlling the deeptools normalization method for samples and inputs.
 
 ## CHAMPAGNE 0.5.0
 

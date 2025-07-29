@@ -5,15 +5,20 @@ The data are normalized based on the number of reads aligning to the spike-in
 genome to account for differences in sequencing depth or other technical
 variations between samples.
 
+Samples are grouped by antibody when calculating the scaling factors.
+Inputs are excluded from this calculation.
+
 ### Spike-in options
 
 You must set the `spike_genome` parameter to the name of a [supported genome](genomes.md#spike-in-genomes)
 (e.g. `dmelr6.32`, `ecoli_k12`) that is different from the `genome` used for the
 main analysis.
 When using spike-in normalizations, we recommend setting
-`deeptools_normalize_using` to `None` so that additional normalization isn't
+`deeptools_normalize_samples` to `None` so that additional normalization isn't
 performed (see [this
 discussion](https://www.github.com/deeptools/deepTools/issues/1073#issuecomment-859326520)).
+You can separately set the normalization method for input samples with the
+`deeptools_normalize_input` parameter.
 
 View the [spike-in options](params.md#spike-in-options) for a full list of
 parameters that can be set for spike-in normalization.
@@ -44,7 +49,7 @@ champagne run \
     --genome hg38 \
     --input assets/samplesheet_full_spikein.csv \
     --spike_genome ecoli_k12 \
-    --deeptools_normalize_using None \
+    --deeptools_normalize_samples None \
     --spike_norm_method delorenzi
 ```
 
@@ -56,6 +61,6 @@ champagne run \
     --genome hg38 \
     --input assets/samplesheet_full_spikein.csv \
     --spike_genome dmelr6.32 \
-    --deeptools_normalize_using None \
+    --deeptools_normalize_samples None \
     --spike_norm_method guenther
 ```

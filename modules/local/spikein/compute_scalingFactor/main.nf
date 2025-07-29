@@ -9,7 +9,7 @@ process COMPUTE_SCALINGFACTOR {
         tuple val(metas), val(counts)
 
     output:
-        path("scaling_factors.tsv")
+        path("*scaling-factors.tsv")
 
     when:
         task.ext.when == null || task.ext.when
@@ -17,7 +17,8 @@ process COMPUTE_SCALINGFACTOR {
     script:
     ids = metas.collect{ it.id }.join(',')
     counts_joined = counts.join(',')
+    outfile = "${metas[0].antibody}_scaling-factors.tsv"
     """
-    compute_scaling_factors.py ${ids} ${counts_joined}
+    compute_scaling_factors.py ${ids} ${counts_joined} ${outfile}
     """
 }
