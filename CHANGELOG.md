@@ -2,6 +2,7 @@
 
 - Calculate spike-in scaling factors on deduplicated reads after aligning to the spike-in genome. (#289, @kelly-sovacool)
 - Improve the spike-in scaling factor table to include the antibody used for each sample in the MultiQC report. (#290, @kelly-sovacool)
+- Include an example MultiQC report in the documentation. (#291, @kelly-sovacool)
 
 ## CHAMPAGNE 0.5.1
 
