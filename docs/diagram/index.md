@@ -20,7 +20,7 @@ flowchart TB
   QC --> FASTQC["FASTQC"]:::tool
   FASTQC --> QC_results["Data quality and presence of adapter read through"]:::output
   %%QC --> Phantom["Phantompeakqualtools"]:::tool
-  QC --> Deeptools["Deeptools"]:::tool
+  %%QC --> Deeptools["Deeptools"]:::tool
 
   %% Blacklist filtering
   Trimmed --> Blacklist["Align to blacklist regions and discard reads that align"]:::process
@@ -34,10 +34,6 @@ flowchart TB
   %% Phantompeakqualtools and alignment
   Align --> Ppqt["Phanetompeakqualtools"]:::tool
   Ppqt --> Scc["Calculates and plots strand correlation"]:::output
-
-  %% Fingerprint plot and alignment
-  Align --> plotFingerprint["Deeptools plotFingerprint"]:::tool
-  plotFingerprint --> Fingerprintplot["Fingerprint plot"]:::output  
 
   %% Spike-in normalization (optional)
   Align --> Spike["optional: spike-in normalization"]:::note
@@ -53,7 +49,7 @@ flowchart TB
   Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::process
   Bigwig --> PCA["PCA plot"]:::output
-  Heatmap --> Correlation["Plot sample correlation"]:::output
+  Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
   NormBigwigs --> MACS2narrow["macs2 narrow"]:::tool
