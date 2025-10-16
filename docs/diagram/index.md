@@ -6,7 +6,7 @@ flowchart TB
 
   %% Input
   %%Raw["Raw Fastqs"]:::input -->|Adapter trimming| Trimmed["Trimmed Fastqs"]:::input
-  Raw["Raw Fastqs"]:::input --> Cleanup["Adapter trim with Cutadapt"]:::process
+  Raw["Raw Fastqs"]:::input --> Cleanup["Cutadapt to remove adapters"]:::tool
   Cleanup --> Trimmed["Trimmed Fastqs"]:::input
   %%Adapter trimming --> Trimmed["Trimmed Fastqs"]:::input
   Raw -.-> QCnote["QC with PPQT, Deeptools, Preseq, FASTQC, FastqScreen"]:::note
@@ -16,16 +16,28 @@ flowchart TB
   %% Quality Control
   Trimmed --> QC["Quality check"]:::process
   QC --> FastqScreen["FastqScreen"]:::tool
+  FastqScreen --> Contaminants["Potential contamination of genome from other species"]:::output
   QC --> FASTQC["FASTQC"]:::tool
-  QC --> Phantom["Phantompeakqualtools"]:::tool
+  FASTQC --> QC_results["Data quality and presence of adapter read through"]:::output
+  %%QC --> Phantom["Phantompeakqualtools"]:::tool
   QC --> Deeptools["Deeptools"]:::tool
 
   %% Blacklist filtering
   Trimmed --> Blacklist["Align to blacklist regions and discard reads that align"]:::process
 
   %% Preseq and alignment
-  Preseq["Preseq"]:::tool --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
-  Blacklist --> Align
+  %%Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process --> Preseq["Preseq"]:::tool
+  Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
+  Align --> Preseq["Preseq"]:::tool
+  Preseq --> Cc["Estimates and plots library complexity curve"]:::output
+
+  %% Phantompeakqualtools and alignment
+  Align --> Ppqt["Phanetompeakqualtools"]:::tool
+  Ppqt --> Scc["Calculates and plots strand correlation"]:::output
+
+  %% Fingerprint plot and alignment
+  Align --> plotFingerprint["Deeptools plotFingerprint"]:::tool
+  plotFingerprint --> Fingerprintplot["Fingerprint plot"]:::output  
 
   %% Spike-in normalization (optional)
   Align --> Spike["optional: spike-in normalization"]:::note
