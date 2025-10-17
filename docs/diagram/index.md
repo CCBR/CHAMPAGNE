@@ -4,6 +4,8 @@
 
 flowchart TB
 
+%%{init: {'flowchart': {'nodeSpacing': 80, 'rankSpacing': 50}}}%%
+
   %% Input
   %%Raw["Raw Fastqs"]:::input -->|Adapter trimming| Trimmed["Trimmed Fastqs"]:::input
   Raw["Raw Fastqs"]:::input --> Trimming["Adapter removal"]:::process
@@ -32,12 +34,12 @@ flowchart TB
   %%Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process --> Preseq["Preseq"]:::tool
   Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
   %%Align --> Preseq["Preseq"]:::tool
-  Align --> |Preseq| Cc["Estimates and plots library complexity curve"]:::output
+  Align ----> |Preseq| Cc["Estimates and plots library complexity curve"]:::output
   Cc ---> MultiQC
 
   %% Phantompeakqualtools and alignment
   %%Align --> Ppqt["Phanetompeakqualtools"]:::tool
-  Align --> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
+  Align ----> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
   Scc --> MultiQC
 
   %% Spike-in normalization (optional)
