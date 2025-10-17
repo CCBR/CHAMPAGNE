@@ -42,20 +42,21 @@ flowchart TB
 
   %% Deeptools steps
   Align --> Deeptools2["Deeptools"]:::tool
-  Deeptools2 --> Matrix["Compute matrix"]:::process
+  %%Deeptools2 --> Matrix["Compute matrix"]:::process
   Deeptools2 --> BAMcov["BAM Coverage"]:::process
   Deeptools2 --> Fingerprint["plotFingerprint"]:::process
   Fingerprint --> Fingerprintplot["Finger print plot"]:::output
 
-  Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
+  %%Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::output
   BAMcov --> PCA["PCA plot"]:::output
-  Matrix --> Correlation["Plot sample correlation"]:::output
+  %%Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
   NormBigwigs --> MACS2narrow["macs2 narrow"]:::tool
   NormBigwigs --> MACS2broad["macs2 broad"]:::tool
   NormBigwigs --> SICER["sicer"]:::tool
+  NormBigwigs --> GEM["GEM"]:::tool
 
   MACS2narrow --> Consensus["consensus peak calling"]:::process
   MACS2broad --> Consensus
@@ -126,7 +127,6 @@ Heatmap --> Correlation["Plot sample correlation"]:::output
 NormBigwigs --> MACS2narrow["macs2 narrow"]:::tool
 NormBigwigs --> MACS2broad["macs2 broad"]:::tool
 NormBigwigs --> SICER["sicer"]:::tool
-
 
 MACS2narrow --> Consensus["consensus peak calling"]:::process
 MACS2broad --> Consensus
