@@ -4,8 +4,6 @@
 
 flowchart TB
 
-%%{init: {'flowchart': {'nodeSpacing': 80, 'rankSpacing': 50}}}%%
-
   %% Input
   %%Raw["Raw Fastqs"]:::input -->|Adapter trimming| Trimmed["Trimmed Fastqs"]:::input
   Raw["Raw Fastqs"]:::input --> Trimming["Adapter removal"]:::process
@@ -48,11 +46,11 @@ flowchart TB
   InputNorm --> NormBigwigs["Normalized Bigwigs"]:::data
 
   %% Deeptools steps
-  Align --> Deeptools2["Deeptools"]:::tool
-  %%Deeptools2 --> Matrix["Compute matrix"]:::process
+  %%Align --> Deeptools["Deeptools"]:::tool
+  Align --> |Deeptools| Matrix["Compute matrix"]:::process
   Deeptools2 --> BAMcov["BAM Coverage"]:::process
   Deeptools2 --> Fingerprint["plotFingerprint"]:::process
-  Fingerprint --> Fingerprintplot["Finger print plot"]:::output
+  Align --> |Deeptools plotFingerPrint| Fingerprintplot["Finger print plot"]:::output
 
   %%Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::output
