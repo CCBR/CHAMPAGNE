@@ -47,8 +47,8 @@ flowchart TB
   Deeptools2 --> Fingerprint["fingerprintPlot"]:::process
 
   Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
-  BAMcov --> Bigwig["BigWig summary"]:::process
-  Bigwig --> PCA["PCA plot"]:::output
+  BAMcov --> Bigwig["BigWig summary"]:::output
+  BAMcov --> PCA["PCA plot"]:::output
   Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
