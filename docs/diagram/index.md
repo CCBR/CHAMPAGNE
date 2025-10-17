@@ -16,7 +16,9 @@ flowchart TB
   %% Quality Control
   Trimmed --> QC["Quality check"]:::process
   QC --> FastqScreen["FastqScreen"]:::tool
+  MultiQC["multiqc report"]:::output
   FastqScreen --> Contaminants["Potential contamination of genome from other species"]:::output
+  Contaminants -----> MultiQC
   QC --> FASTQC["FASTQC"]:::tool
   FASTQC --> QC_results["Data quality and presence of adapter read through"]:::output
   %%QC --> Phantom["Phantompeakqualtools"]:::tool
@@ -53,18 +55,21 @@ flowchart TB
   %%Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
-  NormBigwigs --> MACS2narrow["macs2 narrow"]:::tool
-  NormBigwigs --> MACS2broad["macs2 broad"]:::tool
-  NormBigwigs --> SICER["sicer"]:::tool
+  NormBigwigs --> MACS2narrow["MACS2 narrow"]:::tool
+  NormBigwigs --> MACS2broad["MACS2 broad"]:::tool
+  NormBigwigs --> SICER["SICER"]:::tool
   NormBigwigs --> GEM["GEM"]:::tool
-
+  
   MACS2narrow --> Consensus["consensus peak calling"]:::process
   MACS2broad --> Consensus
+  GEM --> Consensus
+  SICER --> Consensus
+ 
   SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
 
   Consensus --> Annotate["Annotate peaks, find motifs"]:::process
-  Annotate --> MultiQC["multiqc report"]:::output
-  Diffbind --> MultiQC
+  %%Annotate --> MultiQC["multiqc report"]:::output
+  %%Diffbind --> MultiQC
 
   %% Styles
   classDef input fill:#fdecea,stroke:#e57373,stroke-width:1px;
@@ -134,8 +139,8 @@ SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::proce
 
 
 Consensus --> Annotate["Annotate peaks, find motifs"]:::process
-Annotate --> MultiQC["multiqc report"]:::output
-Diffbind --> MultiQC
+%Annotate --> MultiQC["multiqc report"]:::output
+%Diffbind --> MultiQC
 
 
 %% Styles
