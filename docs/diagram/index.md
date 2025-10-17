@@ -6,8 +6,8 @@ flowchart TB
 
   %% Input
   %%Raw["Raw Fastqs"]:::input -->|Adapter trimming| Trimmed["Trimmed Fastqs"]:::input
-  Raw["Raw Fastqs"]:::input --> Cleanup["Cutadapt to remove adapters"]:::tool
-  Cleanup --> Trimmed["Trimmed Fastqs"]:::input
+  Raw["Raw Fastqs"]:::input -->  |Cutadapt| Trimming["Adapter removal"]:::process
+  Trimming --> Trimmed["Trimmed Fastqs"]:::input
   %%Adapter trimming --> Trimmed["Trimmed Fastqs"]:::input
   Raw -.-> QCnote["QC with PPQT, Deeptools, Preseq, FASTQC, FastqScreen"]:::note
   %%Trimmed --> Cutadapt["cutadapt"]:::process
