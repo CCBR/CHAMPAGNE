@@ -18,10 +18,10 @@ flowchart TB
   QC --> FastqScreen["FastqScreen"]:::tool
   MultiQC["multiqc report"]:::output
   FastqScreen --> Contaminants["Potential contamination of genome from other species"]:::output
-  Contaminants ---> MultiQC
+  Contaminants --> MultiQC
   QC --> FASTQC["FASTQC"]:::tool
   FASTQC --> QC_results["Data quality and presence of adapter read through"]:::output
-  QC_results ---> MultiQC
+  QC_results --> MultiQC
   %%QC --> Phantom["Phantompeakqualtools"]:::tool
   %%QC --> Deeptools["Deeptools"]:::tool
 
@@ -70,8 +70,8 @@ flowchart TB
   SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
 
   Consensus --> Annotate["Annotate peaks, find motifs"]:::process
-  Annotate --> MultiQC["multiqc report"]:::output
-  Diffbind --> MultiQC
+  %%Annotate --> MultiQC["multiqc report"]:::output
+  %%Diffbind --> MultiQC
 
   %% Styles
   classDef input fill:#fdecea,stroke:#e57373,stroke-width:1px;
