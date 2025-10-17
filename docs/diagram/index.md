@@ -44,7 +44,8 @@ flowchart TB
   Align --> Deeptools2["Deeptools"]:::tool
   Deeptools2 --> Matrix["Compute matrix"]:::process
   Deeptools2 --> BAMcov["BAM Coverage"]:::process
-  Deeptools2 --> Fingerprint["fingerprintPlot"]:::process
+  Deeptools2 --> Fingerprint["plotFingerprint"]:::process
+  Fingerprint --> Fingerprintplot["Finger print plot"]:::output
 
   Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::output
