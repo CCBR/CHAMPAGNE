@@ -5,40 +5,27 @@
 flowchart TB
 
   %% Input
-  %%Raw["Raw Fastqs"]:::input -->|Adapter trimming| Trimmed["Trimmed Fastqs"]:::input
   Raw["Raw Fastqs"]:::input --> Trimming["Adapter removal"]:::process
   Trimming --> |Cutadapt| Trimmed["Trimmed Fastqs"]:::input
-  %%Adapter trimming --> Trimmed["Trimmed Fastqs"]:::input
   Raw -.-> QCnote["QC with PPQT, Deeptools, Preseq, FASTQC, FastqScreen"]:::note
-  %%Trimmed --> Cutadapt["cutadapt"]:::process
-  %%Cutadapt --> Trimmed
-
-  subgraph one
-
+  
   %% Quality Control
   Trimmed --> QC["Quality check"]:::process
-  %%QC --> FastqScreen["FastqScreen"]:::tool
   MultiQC["multiqc report"]:::output
   QC --> |FastqScreen| Contaminants["Potential contamination of genome from other species"]:::output
   Contaminants --> MultiQC
-  %%QC --> FASTQC["FASTQC"]:::tool
   QC --> |FASTQC| QC_results["Data quality and presence of adapter read through"]:::output
   QC_results --> MultiQC
-  %%QC --> Phantom["Phantompeakqualtools"]:::tool
-  %%QC --> Deeptools["Deeptools"]:::tool
 
   %% Blacklist filtering
   Trimmed --> Blacklist["Align to blacklist regions and discard reads that align"]:::process
 
   %% Preseq and alignment
-  %%Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process --> Preseq["Preseq"]:::tool
   Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
-  %%Align --> Preseq["Preseq"]:::tool
   Align ----> |Preseq| Cc["Estimates and plots library complexity curve"]:::output
   Cc ---> MultiQC
 
   %% Phantompeakqualtools and alignment
-  %%Align --> Ppqt["Phanetompeakqualtools"]:::tool
   Align --> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
   Scc --> MultiQC
 
@@ -48,7 +35,6 @@ flowchart TB
   InputNorm --> NormBigwigs["Normalized Bigwigs"]:::data
 
   %% Deeptools steps
-  %%Align --> Deeptools["Deeptools"]:::tool
   Align --> |Deeptools| Matrix["Compute matrix"]:::process
   Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
   Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
@@ -61,7 +47,6 @@ flowchart TB
   BAMcov --> Bigwig["BigWig summary"]:::output
   BAMcov --> PCA["PCA plot"]:::output
   PCA --> MultiQC
-  %%Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
   NormBigwigs --> MACS2narrow["MACS2 narrow"]:::tool
