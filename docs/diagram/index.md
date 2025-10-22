@@ -5,7 +5,7 @@
 %%{init: {
   "themeVariables": {
      "background": "transparent",
-     "fontSize": "30px" },
+     "fontSize": "35px" },
   "flowchart": {
     "nodeSpacing": 80,
     "rankSpacing": 80,
@@ -50,12 +50,13 @@ flowchart TB
   Matrix --> |Deeptools| Profile["plotProfile"]:::process
   Profile --> TSSplot["TSS plot"]:::output
   Profile --> Heatmap["Heatmap"]:::output
+  TSSplot --> MultiQC
+  Heatmap --> MultiQC
   Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
   fingerprint --> fingerprintplot["Finger print plot"]:::output
   fingerprintplot --> MultiQC
   Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
-  BAMcov --> Bigwig["BigWig summary"]:::output
-  BAMcov --> PCA["PCA plot"]:::output
+  BAMcov --> PCA["PCA plot"]:::output & Bigwig["BigWig summary"]:::output
   PCA --> MultiQC
 
   %% Peak calling
