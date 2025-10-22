@@ -47,14 +47,13 @@ flowchart TB
 
   %% Deeptools steps
   Align --> |Deeptools| Matrix["Compute matrix"]:::process
-  Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
-  Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
-  fingerprint --> fingerprintplot["Finger print plot"]:::output
-  fingerprintplot --> MultiQC
-
   Matrix --> |Deeptools| Profile["plotProfile"]:::process
   Profile --> TSSplot["TSS plot"]:::output
   Profile --> Heatmap["Heatmap"]:::output
+  Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
+  fingerprint --> fingerprintplot["Finger print plot"]:::output
+  fingerprintplot --> MultiQC
+  Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
   BAMcov --> Bigwig["BigWig summary"]:::output
   BAMcov --> PCA["PCA plot"]:::output
   PCA --> MultiQC
