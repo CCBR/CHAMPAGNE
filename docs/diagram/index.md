@@ -13,6 +13,8 @@ flowchart TB
   %%Trimmed --> Cutadapt["cutadapt"]:::process
   %%Cutadapt --> Trimmed
 
+  subgraph one
+
   %% Quality Control
   Trimmed --> QC["Quality check"]:::process
   %%QC --> FastqScreen["FastqScreen"]:::tool
@@ -37,7 +39,7 @@ flowchart TB
 
   %% Phantompeakqualtools and alignment
   %%Align --> Ppqt["Phanetompeakqualtools"]:::tool
-  Align ----> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
+  Align --> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
   Scc --> MultiQC
 
   %% Spike-in normalization (optional)
@@ -49,15 +51,16 @@ flowchart TB
   %%Align --> Deeptools["Deeptools"]:::tool
   Align --> |Deeptools| Matrix["Compute matrix"]:::process
   Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
-  %%Deeptools2 --> BAMcov["BAM Coverage"]:::process
-  %%Deeptools2 --> Fingerprint["plotFingerprint"]:::process
-  Align --> |Deeptools plotFingerPrint| Fingerprintplot["Finger print plot"]:::output
+  Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
+  fingerprint --> fingerprintplot["Finger print plot"]:::output
+  fingerprintplot --> MultiQC
 
   Matrix --> |Deeptools| Profile["plotProfile"]:::process
   Profile --> TSSplot["TSS plot"]:::output
   Profile --> Heatmap["Heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::output
   BAMcov --> PCA["PCA plot"]:::output
+  PCA --> MultiQC
   %%Matrix --> Correlation["Plot sample correlation"]:::output
 
   %% Peak calling
