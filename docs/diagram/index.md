@@ -48,11 +48,14 @@ flowchart TB
   %% Deeptools steps
   %%Align --> Deeptools["Deeptools"]:::tool
   Align --> |Deeptools| Matrix["Compute matrix"]:::process
-  Deeptools2 --> BAMcov["BAM Coverage"]:::process
-  Deeptools2 --> Fingerprint["plotFingerprint"]:::process
+  Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
+  %%Deeptools2 --> BAMcov["BAM Coverage"]:::process
+  %%Deeptools2 --> Fingerprint["plotFingerprint"]:::process
   Align --> |Deeptools plotFingerPrint| Fingerprintplot["Finger print plot"]:::output
 
-  %%Matrix --> Heatmap["TSS profile plot and heatmap"]:::output
+  Matrix --> |Deeptools| Profile["plotProfile"]:::process
+  Profile --> TSSplot["TSS plot"]:::output
+  Profile --> Heatmap["Heatmap"]:::output
   BAMcov --> Bigwig["BigWig summary"]:::output
   BAMcov --> PCA["PCA plot"]:::output
   %%Matrix --> Correlation["Plot sample correlation"]:::output
