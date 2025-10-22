@@ -2,6 +2,17 @@
 
 ```mermaid
 
+%%{init: {
+  "themeVariables": {
+     "background": "transparent",
+     "fontSize": "30px" },
+  "flowchart": {
+    "nodeSpacing": 80,
+    "rankSpacing": 80,
+    "padding": 35,
+    "htmlLabels": true
+}}}%%
+
 flowchart TB
 
   %% Input
