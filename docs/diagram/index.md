@@ -20,8 +20,7 @@ flowchart TB
   Trimming --> Trimmed["Trimmed Fastqs"]:::input
    
   %% Quality Control
-  %%Trimmed --> QC["Quality check"]:::process
-  MultiQC["multiqc report"]:::output
+   MultiQC["multiqc report"]:::output
   Trimmed --> Contaminants["FastqScreen: Potential contamination of genome from other species"]:::output
   Contaminants --> MultiQC
   Trimmed --> QC_results["FASTQC: Data quality and presence of adapter read through"]:::output
@@ -32,11 +31,11 @@ flowchart TB
 
   %% Preseq and alignment
   Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
-  Align ----> Cc["Preseq: Estimates and plots library complexity curve"]:::output
+  Align --> Cc["Preseq: Estimates and plots library complexity curve"]:::output
   Cc ---> MultiQC
 
   %% Phantompeakqualtools and alignment
-  Align --> |Phanetompeakqualtools| Scc["Calculates and plots strand correlation"]:::output
+  Align --> Scc["Phanetompeakqualtools: Calculates and plots strand correlation"]:::output
   Scc --> MultiQC
 
   %% Spike-in normalization (optional)
