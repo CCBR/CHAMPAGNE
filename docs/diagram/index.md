@@ -20,7 +20,7 @@ flowchart TB
   Trimming --> Trimmed["Trimmed Fastqs"]:::input
    
   %% Quality Control
-   MultiQC["multiqc report"]:::output
+  MultiQC["multiqc report"]:::output
   Trimmed --> Contaminants["FastqScreen: Potential contamination of genome from other species"]:::output
   Contaminants --> MultiQC
   Trimmed --> QC_results["FASTQC: Data quality and presence of adapter read through"]:::output
@@ -46,7 +46,7 @@ flowchart TB
   %% Deeptools steps
   Align --> Deeptools["Deeptools"]:::tool
   Deeptools --> Matrix["Compute matrix"]:::process
-  Matrix --> Profile["Deeptools: plotProfile"]:::process
+  Matrix --> Profile["plotProfile"]:::process
   Profile --> TSSplot["TSS plot"]:::output
   Profile --> Heatmap["Heatmap"]:::output
   TSSplot --> MultiQC
@@ -59,14 +59,23 @@ flowchart TB
   PCA --> MultiQC
 
   %% Peak calling
-  NormBigwigs --> MACS2narrow["MACS2 narrow"]:::tool
-  NormBigwigs --> MACS2broad["MACS2 broad"]:::tool
-  NormBigwigs --> SICER["SICER"]:::tool
-  NormBigwigs --> GEM["GEM"]:::tool
-  MACS2narrow --> Consensus["consensus peak calling"]:::process
-  MACS2broad --> Consensus
-  GEM --> Consensus
-  SICER --> Consensus
+  NormBigwigs --> Peakcalling["Identify peaks"]:::process
+  Peakcalling --> MACS2narrow["MACS2 narrow: identify narrow peaks"]:::process
+  Peakcalling --> GEM["GEM: identify narrow peaks"]:::process
+  Peakcalling --> MACS2broad["MACS2 broad: identity broad peaks"]:::process
+  Peakcalling --> SICER["SICER: identify broad peaks"]:::process
+  %%NormBigwigs --> MACS2narrow["MACS2 narrow"]:::tool
+  %%NormBigwigs --> MACS2broad["MACS2 broad"]:::tool
+  %%NormBigwigs --> SICER["SICER"]:::tool
+  %%NormBigwigs --> GEM["GEM"]:::tool
+  MACS2narrow --> Narrow["Narrow peaks"]:::output
+  GEM --> Narrow["Narrow peaks"]:::output
+  MACS2broad --> Broad["Broad peaks"]:::output
+  SICER --> Broad["Broad peaks"]:::output
+  Narrow --> Consensus["consensus peak calling"]:::process
+  Broad --> Consensus
+  %%GEM --> Consensus
+  %%SICER --> Consensus
   Consensus --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
   Consensus --> Annotate["Annotate peaks, find motifs"]:::process
 
