@@ -44,16 +44,16 @@ flowchart TB
   InputNorm --> NormBigwigs["Normalized Bigwigs"]:::data
 
   %% Deeptools steps
-  Align --> |Deeptools| Matrix["Compute matrix"]:::process
-  Matrix --> |Deeptools| Profile["plotProfile"]:::process
+  Align --> Matrix["Deeptools: Compute matrix"]:::process
+  Matrix --> Profile["Deeptools: plotProfile"]:::process
   Profile --> TSSplot["TSS plot"]:::output
   Profile --> Heatmap["Heatmap"]:::output
   TSSplot --> MultiQC
   Heatmap --> MultiQC
-  Align --> |Deeptools| fingerprint["plotFingerprint"]:::process
-  fingerprint --> fingerprintplot["Finger print plot"]:::output
+  Align --> fingerprint["Deeptools: plotFingerprint"]:::process
+  fingerprint --> fingerprintplot["Deeptools: Finger print plot"]:::output
   fingerprintplot --> MultiQC
-  Align --> |Deeptools| BAMcov["BAM Coverage"]:::process
+  Align --> BAMcov["BAM Coverage"]:::process
   BAMcov --> PCA["PCA plot"]:::output & Bigwig["BigWig summary"]:::output
   PCA --> MultiQC
 
