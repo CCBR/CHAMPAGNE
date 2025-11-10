@@ -41,7 +41,7 @@ flowchart TB
   %% Spike-in normalization (optional)
   Align --> Spike["optional: spike-in normalization"]:::note
   Spike --> InputNorm["input normalization"]:::note
-  InputNorm --> NormBigwigs["Normalized Bigwigs"]:::data
+  InputNorm --> NormBigwigs["Normalized Bigwigs"]:::output
 
   %% Deeptools steps
   Align --> Deeptools["Deeptools"]:::tool
@@ -63,17 +63,12 @@ flowchart TB
   NormBigwigs --> MACS2broad["MACS2 broad"]:::tool
   NormBigwigs --> SICER["SICER"]:::tool
   NormBigwigs --> GEM["GEM"]:::tool
-  
   MACS2narrow --> Consensus["consensus peak calling"]:::process
   MACS2broad --> Consensus
   GEM --> Consensus
   SICER --> Consensus
- 
   SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
-
   Consensus --> Annotate["Annotate peaks, find motifs"]:::process
-  %%Annotate --> MultiQC["multiqc report"]:::output
-  %%Diffbind --> MultiQC
 
   %% Styles
   classDef input fill:#fdecea,stroke:#e57373,stroke-width:1px;
