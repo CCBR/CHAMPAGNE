@@ -67,7 +67,7 @@ flowchart TB
   MACS2broad --> Consensus
   GEM --> Consensus
   SICER --> Consensus
-  SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
+  Consensus --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
   Consensus --> Annotate["Annotate peaks, find motifs"]:::process
 
   %% Styles
@@ -131,12 +131,10 @@ Heatmap --> Correlation["Plot sample correlation"]:::output
 NormBigwigs --> MACS2narrow["macs2 narrow"]:::tool
 NormBigwigs --> MACS2broad["macs2 broad"]:::tool
 NormBigwigs --> SICER["sicer"]:::tool
-
 MACS2narrow --> Consensus["consensus peak calling"]:::process
 MACS2broad --> Consensus
-SICER --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
-
-
+SICER --> Consensus
+Consensus --> Diffbind["Differential peak calling using DiffBind or MAnorm"]:::process
 Consensus --> Annotate["Annotate peaks, find motifs"]:::process
 %Annotate --> MultiQC["multiqc report"]:::output
 %Diffbind --> MultiQC
