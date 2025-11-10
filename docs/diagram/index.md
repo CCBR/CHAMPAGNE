@@ -18,8 +18,7 @@ flowchart TB
   %% Input
   Raw["Raw Fastqs"]:::input --> Trimming["Adapter removal"]:::process
   Trimming --> |Cutadapt| Trimmed["Trimmed Fastqs"]:::input
-  Raw -.-> QCnote["QC with PPQT, Deeptools, Preseq, FASTQC, FastqScreen"]:::note
-  
+   
   %% Quality Control
   Trimmed --> QC["Quality check"]:::process
   MultiQC["multiqc report"]:::output
