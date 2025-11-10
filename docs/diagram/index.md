@@ -16,15 +16,15 @@
 flowchart TB
 
   %% Input
-  Raw["Raw Fastqs"]:::input --> Trimming["Adapter removal"]:::process
-  Trimming --> |Cutadapt| Trimmed["Trimmed Fastqs"]:::input
+  Raw["Raw Fastqs"]:::input --> Trimming["Cutadapt: Adapter removal"]:::process
+  Trimming --> Trimmed["Trimmed Fastqs"]:::input
    
   %% Quality Control
-  Trimmed --> QC["Quality check"]:::process
+  %%Trimmed --> QC["Quality check"]:::process
   MultiQC["multiqc report"]:::output
-  QC --> |FastqScreen| Contaminants["Potential contamination of genome from other species"]:::output
+  Trimmed --> Contaminants["FastqScreen: Potential contamination of genome from other species"]:::output
   Contaminants --> MultiQC
-  QC --> |FASTQC| QC_results["Data quality and presence of adapter read through"]:::output
+  Trimmed --> QC_results["FASTQC: Data quality and presence of adapter read through"]:::output
   QC_results --> MultiQC
 
   %% Blacklist filtering
@@ -32,7 +32,7 @@ flowchart TB
 
   %% Preseq and alignment
   Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
-  Align ----> |Preseq| Cc["Estimates and plots library complexity curve"]:::output
+  Align ----> Cc["Preseq: Estimates and plots library complexity curve"]:::output
   Cc ---> MultiQC
 
   %% Phantompeakqualtools and alignment
