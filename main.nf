@@ -305,7 +305,8 @@ workflow {
         deeptools_stats = ch_deeptools_stats
         multiqc_report = multiqc_report
         multiqc_inputs = ch_multiqc
-        align_bam = DEDUPLICATE.out.bam
+        dedup_bam = DEDUPLICATE.out.bam
+        dedup_tagalign = DEDUPLICATE.out.tag_align
         peaks = ch_peaks
         peaks_consensus = ch_peaks_consensus
         annot = ch_annot
@@ -344,8 +345,11 @@ output {
     multiqc_inputs {
         path { inputs -> "qc/multiqc/inputs/" }
     }
-    align_bam {
+    dedup_bam {
         path { bam -> "align/bam/" }
+    }
+    dedup_tagalign {
+        path { tagalign -> "align/tagalign/" }
     }
     peaks {
         path { meta, peak, tool -> "peaks/${meta.tool}/replicates/"}
