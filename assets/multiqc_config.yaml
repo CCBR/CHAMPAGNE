@@ -201,5 +201,5 @@ sp:
   jaccard_pca_tools:
     fn: "jaccard_pca_tool*.png"
   deeptools_corr_heatmap:
-    fn: "*_heatmap.png"
+    fn: "*.*_heatmap.png"
 ignore_images: false
