@@ -151,9 +151,9 @@ process PLOT_CORRELATION {
     """
     plotCorrelation \\
       -in ${array} \\
-      -o ${array.baseName}.spearman_${plottype}.png \\
-      --outFileCorMatrix ${array.baseName}.spearman_${plottype}.tab \\
-      -c 'spearman' \\
+      -o ${array.baseName}.${params.deeptools_corr_method}_${plottype}.png \\
+      --outFileCorMatrix ${array.baseName}.${params.deeptools_corr_method}_${plottype}.tab \\
+      -c '${params.deeptools_corr_method}' \\
       -p '${plottype}' \\
       --skipZeros \\
       --removeOutliers ${args}
@@ -161,7 +161,7 @@ process PLOT_CORRELATION {
 
     stub:
     """
-    touch ${array.baseName}.spearman_${plottype}.png ${array.baseName}.spearman_${plottype}.tab
+    touch ${array.baseName}.${params.deeptools_corr_method}_${plottype}.png ${array.baseName}.${params.deeptools_corr_method}_${plottype}.tab
     """
 }
 

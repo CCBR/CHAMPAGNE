@@ -182,6 +182,12 @@
                     "type": "integer",
                     "default": 75
                 },
+                "deeptools_corr_method": {
+                    "type": "string",
+                    "default": "spearman",
+                    "description": "Correlation method for deeptools plotCorrelation heatmap and scatterplot",
+                    "enum": ["spearman", "pearson"]
+                },
                 "deeptools_excluded_chroms": {
                     "type": "string",
                     "default": "chrM chrX chrY"
