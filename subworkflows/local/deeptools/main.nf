@@ -36,7 +36,7 @@ workflow DEEPTOOLS {
             .map{ meta, bigwig -> bigwig }
             .collect() | BIGWIG_SUM
         bw_array = BIGWIG_SUM.out.array
-        bw_array.combine(Channel.of('heatmap', 'scatterplot')) | PLOT_CORRELATION
+        bw_array.combine(Channel.of('heatmap', 'scatterplot')).combine(Channel.value(params.deeptools_corr_method)) | PLOT_CORRELATION
         bw_array | PLOT_PCA
 
         // Create channel: [ meta, ip_bw, input_bw ]

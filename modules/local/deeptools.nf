@@ -139,7 +139,7 @@ process PLOT_CORRELATION {
     container "${params.containers_deeptools}"
 
     input:
-        tuple path(array), val(plottype)
+        tuple path(array), val(plottype), val(deeptools_corr_method)
 
     output:
         path("*.png"), emit: png
@@ -151,9 +151,9 @@ process PLOT_CORRELATION {
     """
     plotCorrelation \\
       -in ${array} \\
-      -o ${array.baseName}.${params.deeptools_corr_method}_${plottype}.png \\
-      --outFileCorMatrix ${array.baseName}.${params.deeptools_corr_method}_${plottype}.tab \\
-      -c '${params.deeptools_corr_method}' \\
+      -o ${array.baseName}.${deeptools_corr_method}_${plottype}.png \\
+      --outFileCorMatrix ${array.baseName}.${deeptools_corr_method}_${plottype}.tab \\
+      -c '${deeptools_corr_method}' \\
       -p '${plottype}' \\
       --skipZeros \\
       --removeOutliers ${args}
@@ -161,7 +161,7 @@ process PLOT_CORRELATION {
 
     stub:
     """
-    touch ${array.baseName}.${params.deeptools_corr_method}_${plottype}.png ${array.baseName}.${params.deeptools_corr_method}_${plottype}.tab
+    touch ${array.baseName}.${deeptools_corr_method}_${plottype}.png ${array.baseName}.${deeptools_corr_method}_${plottype}.tab
     """
 }
 
