@@ -1,3 +1,5 @@
+# CHAMPAGNE Workflow Diagram
+
 ```mermaid
 flowchart LR
 
