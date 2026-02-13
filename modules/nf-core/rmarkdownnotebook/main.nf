@@ -2,7 +2,7 @@ include { dump_params_yml; indent_code_block } from "./parametrize"
 
 process RMARKDOWNNOTEBOOK {
     tag { meta.id }
-    label 'process_low'
+    label 'process_medium'
 
     container 'nciccbr/ccbr_diffbind:v1'
 

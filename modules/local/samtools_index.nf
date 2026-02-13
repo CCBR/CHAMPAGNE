@@ -2,7 +2,7 @@ process SAMTOOLS_INDEX { // TODO create/use flagstat & idxstat module in nf-modu
     tag { meta.id }
     label 'process_high'
 
-    container = "${params.containers_base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(bam)
