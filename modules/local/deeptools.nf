@@ -157,7 +157,7 @@ process PLOT_CORRELATION {
       -p '${plottype}' \\
       --skipZeros \\
       --removeOutliers ${args} \\
-      --plotTitle '${deeptools_corr_method} Correlation (${plottype})'
+      --plotTitle '${deeptools_corr_method} correlation ${plottype}'
     """
 
     stub:
