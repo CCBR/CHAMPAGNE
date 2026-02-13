@@ -31,6 +31,6 @@ flowchart LR
 
   %% Styles - FNL branding theme
   classDef input fill:#ffffff,stroke:#528230,stroke-width:2px;
-  classDef process fill:#dceef7,stroke:#296b7f,stroke-width:2px;
-  classDef output fill:#ecba4c,stroke:#19424e,stroke-width:2px;
+  classDef process fill:#dceef7,stroke:#19424e,stroke-width:2px;
+  classDef output fill:#ecba4c,stroke:none;
 ```
