@@ -89,16 +89,16 @@ flowchart LR
     Consensus --> Annotate["Annotate peaks & find motifs"]:::process
   end
 
-  %% Styles - Modern sleek theme
-  classDef input fill:#fde8d8,stroke:#d97706,stroke-width:2px;
-  classDef process fill:#f1f8e9,stroke:#558b2f,stroke-width:2px;
-  classDef tool fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-  classDef output fill:#fdf2f8,stroke:#6a1b9a,stroke-width:2px;
+  %% Styles - FNL branding theme
+  classDef input fill:#ffffff,stroke:#528230,stroke-width:2px;
+  classDef process fill:#dceef7,stroke:#296b7f,stroke-width:2px;
+  classDef tool fill:#b1ee85,stroke:#528230,stroke-width:2px;
+  classDef output fill:#ecba4c,stroke:#19424e,stroke-width:2px;
 
   %% Subgraph styling
-  style INPUT fill:#ecf0f5,stroke:none;
-  style QC fill:#ecf0f5,stroke:none;
-  style DEEPTOOLS fill:#ecf0f5,stroke:none;
-  style PEAK fill:#ecf0f5,stroke:none;
-  style DOWNSTREAM fill:#ecf0f5,stroke:none;
+  style INPUT fill:#f9f9f9,stroke:none;
+  style QC fill:#f9f9f9,stroke:none;
+  style DEEPTOOLS fill:#f9f9f9,stroke:none;
+  style PEAK fill:#f9f9f9,stroke:none;
+  style DOWNSTREAM fill:#f9f9f9,stroke:none;
 ```

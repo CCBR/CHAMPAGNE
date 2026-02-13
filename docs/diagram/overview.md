@@ -29,8 +29,8 @@ flowchart LR
   Peaks --> Consensus["Consensus Peaks"]:::output
   Consensus --> Downstream["Annotation & Analysis<br/>(DiffBind, Motifs)"]:::process
 
-  %% Styles
-  classDef input fill:#f0f4f8,stroke:#4b5563,stroke-width:2px;
-  classDef process fill:#d1e7f7,stroke:#0f6fb6,stroke-width:2px;
-  classDef output fill:#d1fae5,stroke:#059669,stroke-width:2px;
+  %% Styles - FNL branding theme
+  classDef input fill:#ffffff,stroke:#528230,stroke-width:2px;
+  classDef process fill:#dceef7,stroke:#296b7f,stroke-width:2px;
+  classDef output fill:#ecba4c,stroke:#19424e,stroke-width:2px;
 ```
