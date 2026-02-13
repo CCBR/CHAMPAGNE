@@ -29,8 +29,8 @@ flowchart LR
   Peaks --> Consensus["Consensus Peaks"]:::output
   Consensus --> Downstream["Annotation & Analysis<br/>(DiffBind, Motifs)"]:::process
 
-  %% Styles - Tech minimalist sleek theme
+  %% Styles
   classDef input fill:#f0f4f8,stroke:#4b5563,stroke-width:2px;
   classDef process fill:#d1e7f7,stroke:#0f6fb6,stroke-width:2px;
-  classDef output fill:#f8d7da,stroke:#bd4655,stroke-width:2px;
+  classDef output fill:#d1fae5,stroke:#059669,stroke-width:2px;
 ```
