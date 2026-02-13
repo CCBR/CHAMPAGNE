@@ -3,7 +3,7 @@ process CALC_GENOME_FRAC {
     label 'peaks'
     label 'process_single'
 
-    container = "${params.containers_base}"
+    container "${params.containers_base}"
 
     input:
         path(chrom_sizes)
@@ -31,7 +31,7 @@ process MACS_BROAD {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers_macs2}"
+    container "${params.containers_macs2}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), val(fraglen), val(genome_frac), val(effective_genome_size)
@@ -71,7 +71,7 @@ process MACS_NARROW {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers_macs2}"
+    container "${params.containers_macs2}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), val(fraglen), val(genome_frac), val(effective_genome_size)
@@ -108,7 +108,7 @@ process SICER {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers_sicer}"
+    container "${params.containers_sicer}"
 
     input:
         tuple val(meta), path(chip), path(input), val(fraglen), val(genome_frac)
@@ -145,7 +145,7 @@ process CONVERT_SICER { // https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d5838
     label 'peaks'
     label 'process_single'
 
-    container = "${params.containers_base}"
+    container "${params.containers_base}"
 
     input:
         tuple val(meta), path(sicer_peaks), val(peak_tool)
@@ -219,7 +219,7 @@ process GEM {
     label 'peaks'
     label 'process_high'
 
-    container = "${params.containers_gem}"
+    container "${params.containers_gem}"
 
     input:
         tuple val(meta), path(chip), path(input), val(format), path(read_dists), path(chrom_sizes), path(chrom_dir), val(effective_genome_size)

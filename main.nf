@@ -1,5 +1,4 @@
 nextflow.enable.dsl = 2
-nextflow.preview.output = true
 
 // SUBWORKFLOWS
 include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools/'
