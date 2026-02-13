@@ -20,7 +20,7 @@ flowchart LR
 
   BAMs --> Assessment["Quality Assessment<br/>(Preseq, PhantomPeak)"]:::process
   BAMs --> Deeptools["Coverage Analysis<br/>(deepTools)"]:::process
-  BAMs --> Norm["Normalization<br/>(optional)"]:::process
+  BAMs --> Norm["Spike-in Normalization<br/>(optional)"]:::process
 
   Assessment --> Reports["MultiQC Report"]:::output
   Deeptools --> Reports
@@ -30,8 +30,8 @@ flowchart LR
   Consensus --> Downstream["Annotation & Analysis<br/>(DiffBind, Motifs)"]:::process
   Downstream --> Final["Final Results"]:::output
 
-  %% Styles - Modern sleek theme
-  classDef input fill:#fde8d8,stroke:#d97706,stroke-width:2px;
-  classDef process fill:#f1f8e9,stroke:#558b2f,stroke-width:2px;
-  classDef output fill:#fdf2f8,stroke:#6a1b9a,stroke-width:2px;
+  %% Styles - Modern minimal sleek theme
+  classDef input fill:#f1f5f9,stroke:#64748b,stroke-width:2px;
+  classDef process fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+  classDef output fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
 ```
