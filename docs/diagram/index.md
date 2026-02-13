@@ -13,24 +13,21 @@ flowchart LR
 }}}%%
 
   %% Input
-
   subgraph INPUT["Input"]
     Raw["Raw Fastqs"]:::input
-    Samplesheet:::input
-    Contrasts:::input
-    Check["Check inputs"]:::process
-    Raw --> Check
-    Samplesheet --> Check
-    Contrasts --> Check
+    Raw --> Check["Check inputs"]:::process
+    Samplesheet["Sample Sheet"]:::input --> Check
+    Contrasts:::input --> Check
+    Check --> valid_raw["Valid Raw Fastqs"]:::input
   end
 
 
   %% Quality Control
   subgraph QC["Quality Control"]
-    Raw --> Trimming["Cutadapt: Adapter removal & quality trimming"]:::process
+    valid_raw --> Trimming["Cutadapt: Adapter removal & quality trimming"]:::tool
     Trimming --> Trimmed["Trimmed Fastqs"]:::output
-    Trimmed --> fqscreen["FastqScreen"]:::process
-    Raw --> fqc["FASTQC"]:::process
+    Trimmed --> fqscreen["FastqScreen"]:::tool
+    valid_raw --> fqc["FASTQC"]:::tool
     Trimmed --> fqc
   end
   fqc --> MultiQC["multiqc report"]:::output
@@ -42,36 +39,34 @@ flowchart LR
   Align --> BAMs["Deduplicated BAM & tagalign files"]:::output
 
   %% Library & Complexity Assessment
-  BAMs --> preseq["Preseq - library complexity curve"]:::process
-  BAMs --> ppqt["PhantomPeakQualtools"]:::process
+  BAMs --> preseq["Preseq - library complexity curve"]:::tool
+  BAMs --> ppqt["PhantomPeakQualtools"]:::tool
   preseq ---> MultiQC
   ppqt --> MultiQC
 
   %% Normalization
-      BAMs --> Spike["Spike-in normalization (optional)"]:::process
-    Spike --> InputNorm["input normalization"]:::process
-    InputNorm --> NormBigwigs["Normalized Bigwigs"]:::output
-
+  BAMs --> Spike["Spike-in normalization (optional)"]:::process
+  Spike --> NormBigwigs["Normalized Bigwigs"]:::output
 
   %% deepTools Analysis
   subgraph DEEPTOOLS["deepTools Analysis"]
-    BAMs --> BAMcov["BAM Coverage"]:::process
+    BAMs --> BAMcov["BAM Coverage"]:::tool
     BAMcov --> Bigwig["BigWig files"]:::output
-    Bigwig --> Normalize["Normalize Input"]:::process
-    Bigwig --> Correlation["Plot Correlation"]:::process
-    Bigwig --> PCA["PCA plot"]:::output
-    Normalize --> CorrelationNorm["Plot Correlation (normalized)"]:::process
-    Bigwig --> Matrix["Compute Matrix"]:::process
-    Matrix --> Profile["plotProfile"]:::output
-    Matrix --> Heatmap["plotHeatmap"]:::output
-    BAMs --> Fingerprint["plotFingerprint"]:::process
-    Fingerprint --> FingerprintPlot["Fingerprint plot"]:::output
+    Bigwig --> Normalize["Normalize Input"]:::tool
+    Bigwig --> Correlation["Plot Correlation"]:::tool
+    Bigwig --> PCA["Plot PCA"]:::tool
+    Normalize --> CorrelationNorm["Plot Correlation (normalized)"]:::tool
+    Bigwig --> Matrix["Compute Matrix"]:::tool
+    Matrix --> Profile["Plot Profile"]:::tool
+    Matrix --> Heatmap["Plot Heatmap"]:::tool
+    BAMs --> Fingerprint["Plot Fingerprint"]:::tool
+
   end
 
   PCA --> MultiQC
   Profile --> MultiQC
   Heatmap --> MultiQC
-  FingerprintPlot --> MultiQC
+  Fingerprint --> MultiQC
   Correlation --> MultiQC
   CorrelationNorm --> MultiQC
 
@@ -95,7 +90,7 @@ flowchart LR
   end
 
   %% Styles - Modern sleek theme
-  classDef input fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+  classDef input fill:#fde8d8,stroke:#d97706,stroke-width:2px;
   classDef process fill:#f1f8e9,stroke:#558b2f,stroke-width:2px;
   classDef tool fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
   classDef output fill:#fdf2f8,stroke:#6a1b9a,stroke-width:2px;
