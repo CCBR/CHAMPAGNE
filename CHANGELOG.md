@@ -1,5 +1,8 @@
 ## CHAMPAGNE development version
 
+- Add configurable correlation method parameter for deeptools plotCorrelation. (#307, @kelly-sovacool)
+    - Users can now set `--deeptools_corr_method` to `pearson` or `spearman` (default).
+
 ## CHAMPAGNE 0.5.3
 
 - CHAMPAGNE now requires nextflow version 25.10.0 or later. (#303, @kelly-sovacool)
