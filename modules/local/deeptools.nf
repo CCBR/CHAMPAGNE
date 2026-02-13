@@ -151,12 +151,13 @@ process PLOT_CORRELATION {
     """
     plotCorrelation \\
       -in ${array} \\
-      -o ${array.baseName}.${deeptools_corr_method}_${plottype}.png \\
+      -o ${array.baseName}.${deeptools_corr_method}_${plottype}_deeptools.png \\
       --outFileCorMatrix ${array.baseName}.${deeptools_corr_method}_${plottype}.tab \\
       -c '${deeptools_corr_method}' \\
       -p '${plottype}' \\
       --skipZeros \\
-      --removeOutliers ${args}
+      --removeOutliers ${args} \\
+      --plotTitle '${deeptools_corr_method} Correlation (${plottype})'
     """
 
     stub:
