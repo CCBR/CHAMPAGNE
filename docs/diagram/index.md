@@ -13,70 +13,97 @@ flowchart LR
 }}}%%
 
   %% Input
-  Raw["Raw Fastqs"]:::input --> Trimming["Cutadapt: Adapter removal & quality trimming"]:::process
-  Trimming --> Trimmed["Trimmed Fastqs"]:::input
+
+  subgraph INPUT["Input"]
+    Raw["Raw Fastqs"]:::input
+    Samplesheet:::input
+    Contrasts:::input
+    Check["Check inputs"]:::process
+    Raw --> Check
+    Samplesheet --> Check
+    Contrasts --> Check
+  end
+
 
   %% Quality Control
-  MultiQC["multiqc report"]:::output
-  Trimmed --> fqscreen["FastqScreen"]:::process
-  Raw --> QC_results
-  Trimmed --> QC_results["FASTQC"]:::process
-  QC_results --> MultiQC
+  subgraph QC["Quality Control"]
+    Raw --> Trimming["Cutadapt: Adapter removal & quality trimming"]:::process
+    Trimming --> Trimmed["Trimmed Fastqs"]:::output
+    Trimmed --> fqscreen["FastqScreen"]:::process
+    Raw --> fqc["FASTQC"]:::process
+    Trimmed --> fqc
+  end
+  fqc --> MultiQC["multiqc report"]:::output
   fqscreen --> MultiQC
 
-  %% Blacklist filtering
-  Trimmed --> Blacklist["Align to blacklist regions and discard reads that align"]:::process
+  %% Alignment
+  Trimmed --> Blacklist["Align to blacklist regions and discard reads"]:::process
+  Blacklist --> Align["Align to reference genome, deduplicate, filter"]:::process
+  Align --> BAMs["Deduplicated BAM & tagalign files"]:::output
 
-  %% Preseq and alignment
-  Blacklist --> Align["Align to reference genome, deduplicate, filter out low quality alignments"]:::process
-  Align --> Cc["Preseq - library complexity curve"]:::process
-  Cc ---> MultiQC
+  %% Library & Complexity Assessment
+  BAMs --> preseq["Preseq - library complexity curve"]:::process
+  BAMs --> ppqt["PhantomPeakQualtools"]:::process
+  preseq ---> MultiQC
+  ppqt --> MultiQC
 
-  Align --> Scc["PhantomPeakQualtools"]:::process
-  Scc --> MultiQC
+  %% Normalization
+      BAMs --> Spike["Spike-in normalization (optional)"]:::process
+    Spike --> InputNorm["input normalization"]:::process
+    InputNorm --> NormBigwigs["Normalized Bigwigs"]:::output
 
-  %% Spike-in normalization (optional)
-  Align --> Spike["Spike-in normalization (optional)"]:::process
-  Spike --> InputNorm["input normalization"]:::process
-  InputNorm --> NormBigwigs["Normalized Bigwigs"]:::output
 
-  %% Deeptools steps
-  Align --> Deeptools["Deeptools"]:::tool
-  Deeptools --> Matrix["Compute matrix"]:::process
-  Matrix --> Profile["plotProfile"]:::process
-  Profile --> TSSplot["TSS plot"]:::output
-  Profile --> Heatmap["Heatmap"]:::output
-  TSSplot --> MultiQC
-  Heatmap --> MultiQC
-  Deeptools --> fingerprint["plotFingerprint"]:::process
-  fingerprint --> fingerprintplot["Finger print plot"]:::output
-  fingerprintplot --> MultiQC
-  Deeptools --> BAMcov["BAM Coverage"]:::process
-  BAMcov --> PCA["PCA plot"]:::output & Bigwig["BigWig summary"]:::output
+  %% deepTools Analysis
+  subgraph DEEPTOOLS["deepTools Analysis"]
+    BAMs --> BAMcov["BAM Coverage"]:::process
+    BAMcov --> Bigwig["BigWig files"]:::output
+    Bigwig --> Normalize["Normalize Input"]:::process
+    Bigwig --> Correlation["Plot Correlation"]:::process
+    Bigwig --> PCA["PCA plot"]:::output
+    Normalize --> CorrelationNorm["Plot Correlation (normalized)"]:::process
+    Bigwig --> Matrix["Compute Matrix"]:::process
+    Matrix --> Profile["plotProfile"]:::output
+    Matrix --> Heatmap["plotHeatmap"]:::output
+    BAMs --> Fingerprint["plotFingerprint"]:::process
+    Fingerprint --> FingerprintPlot["Fingerprint plot"]:::output
+  end
+
   PCA --> MultiQC
+  Profile --> MultiQC
+  Heatmap --> MultiQC
+  FingerprintPlot --> MultiQC
+  Correlation --> MultiQC
+  CorrelationNorm --> MultiQC
 
-  %% Peak calling
-  NormBigwigs --> Peakcalling["Identify peaks"]:::process
-  Peakcalling --> MACS2narrow["MACS2 narrow peaks"]:::tool
-  Peakcalling --> GEM["GEM narrow peaks"]:::tool
-  Peakcalling --> MACS2broad["MACS2 broad peaks"]:::tool
-  Peakcalling --> SICER["SICER broad peaks"]:::tool
-  MACS2narrow --> Consensus:::process
-  GEM --> Consensus
-  MACS2broad --> Consensus
-  SICER --> Consensus
-  Consensus --> Diffbind["Differential peak calling (DiffBind or MAnorm)"]:::process
-  Consensus --> Annotate["Annotate peaks & find motifs"]:::process
+  %% Peak Calling
+  subgraph PEAK["Peak Calling"]
+    NormBigwigs --> Peakcalling["Identify peaks"]:::process
+    Peakcalling --> MACS2narrow["MACS2 narrow peaks"]:::tool
+    Peakcalling --> GEM["GEM narrow peaks"]:::tool
+    Peakcalling --> MACS2broad["MACS2 broad peaks"]:::tool
+    Peakcalling --> SICER["SICER broad peaks"]:::tool
+    MACS2narrow --> Consensus["Consensus peaks"]:::process
+    GEM --> Consensus
+    MACS2broad --> Consensus
+    SICER --> Consensus
+  end
+
+  %% Downstream Analysis
+  subgraph DOWNSTREAM["Annotation & Analysis"]
+    Consensus --> Diffbind["Differential peak calling (DiffBind or MAnorm)"]:::process
+    Consensus --> Annotate["Annotate peaks & find motifs"]:::process
+  end
 
   %% Styles - Modern sleek theme
-  classDef input fill:#fff8e1,stroke:#d97706,stroke-width:1px;
-  classDef process fill:#f1f8e9,stroke:#558b2f,stroke-width:1px;
-  classDef tool fill:#e1f5fe,stroke:#01579b,stroke-width:1px;
-  classDef output fill:#fdf2f8,stroke:#6a1b9a,stroke-width:1px;
-```
+  classDef input fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+  classDef process fill:#f1f8e9,stroke:#558b2f,stroke-width:2px;
+  classDef tool fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+  classDef output fill:#fdf2f8,stroke:#6a1b9a,stroke-width:2px;
 
-classDef input fill: #fff8e1
-classDef process fill: #f1f8e9
-classDef tool fill: #e1f5fe
-classDef note fill: #fff8e1
-classDef output fill: #fdf2f8
+  %% Subgraph styling
+  style INPUT fill:#ecf0f5,stroke:none;
+  style QC fill:#ecf0f5,stroke:none;
+  style DEEPTOOLS fill:#ecf0f5,stroke:none;
+  style PEAK fill:#ecf0f5,stroke:none;
+  style DOWNSTREAM fill:#ecf0f5,stroke:none;
+```
