@@ -28,10 +28,9 @@ flowchart LR
   Bigwigs --> Peaks["Peak Calling<br/>(MACS2, GEM, SICER)"]:::process
   Peaks --> Consensus["Consensus Peaks"]:::output
   Consensus --> Downstream["Annotation & Analysis<br/>(DiffBind, Motifs)"]:::process
-  Downstream --> Final["Final Results"]:::output
 
-  %% Styles - Modern minimal sleek theme
-  classDef input fill:#f1f5f9,stroke:#64748b,stroke-width:2px;
-  classDef process fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
-  classDef output fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
+  %% Styles - Tech minimalist sleek theme
+  classDef input fill:#f0f4f8,stroke:#4b5563,stroke-width:2px;
+  classDef process fill:#d1e7f7,stroke:#0f6fb6,stroke-width:2px;
+  classDef output fill:#f8d7da,stroke:#bd4655,stroke-width:2px;
 ```
