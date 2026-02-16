@@ -1,6 +1,6 @@
 # CHAMPAGNE Workflow Overview
 
-![](/diagram/workflow.svg)
+![Workflow Diagram](../diagram/workflow.svg)
 
 CHAMPAGNE is a comprehensive ChIP-seq analysis pipeline that integrates multiple preprocessing, quality control, peak calling, annotation, and downstream analysis steps. Below is a detailed breakdown of each workflow stage.
 
