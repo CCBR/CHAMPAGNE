@@ -3,7 +3,7 @@ flowchart LR
 %%{init: {
   "themeVariables": {
      "background": "transparent",
-     "fontSize": "35px" },
+     "fontSize": "45px" },
   "flowchart": {
     "nodeSpacing": 80,
     "rankSpacing": 80,
@@ -12,7 +12,7 @@ flowchart LR
 }}}%%
 
   %% Input
-  subgraph INPUT["Input"]
+  subgraph INPUT["Input Check"]
     Raw["Raw Fastqs"]:::input
     Raw --> Check["Check inputs"]:::process
     Samplesheet["Sample Sheet"]:::input --> Check
@@ -33,7 +33,7 @@ flowchart LR
   fqscreen --> MultiQC
 
   %% Alignment
-  Trimmed --> Blacklist["Align to blacklist regions and discard reads"]:::process
+  Trimmed --> Blacklist["Align to blacklist regions; discard reads"]:::process
   Blacklist --> Align["Align to reference genome, deduplicate, filter"]:::process
   Align --> BAMs["Deduplicated BAM & tagalign files"]:::output
 
@@ -48,7 +48,7 @@ flowchart LR
   Spike --> NormBigwigs["Normalized Bigwigs"]:::output
 
   %% deepTools Analysis
-  subgraph DEEPTOOLS["deepTools Analysis"]
+  subgraph DEEPTOOLS["deepTools"]
     BAMs --> BAMcov["BAM Coverage"]:::tool
     BAMcov --> Bigwig["BigWig files"]:::output
     Bigwig --> Normalize["Normalize Input"]:::tool
@@ -70,12 +70,12 @@ flowchart LR
   CorrelationNorm --> MultiQC
 
   %% Peak Calling
-  subgraph PEAK["Peak Calling"]
+  subgraph PEAK["<span style='white-space:nowrap'>Call&nbsp;Peaks</span>"]
     NormBigwigs --> Peakcalling["Identify peaks"]:::process
-    Peakcalling --> MACS2narrow["MACS2 narrow peaks"]:::tool
-    Peakcalling --> GEM["GEM narrow peaks"]:::tool
-    Peakcalling --> MACS2broad["MACS2 broad peaks"]:::tool
-    Peakcalling --> SICER["SICER broad peaks"]:::tool
+    Peakcalling --> MACS2broad["MACS2 broad"]:::tool
+    Peakcalling --> MACS2narrow["MACS2 narrow"]:::tool
+    Peakcalling --> GEM["GEM"]:::tool
+    Peakcalling --> SICER["SICER"]:::tool
     MACS2narrow --> Consensus["Consensus peaks"]:::process
     GEM --> Consensus
     MACS2broad --> Consensus
@@ -84,7 +84,7 @@ flowchart LR
 
   %% Downstream Analysis
   subgraph DOWNSTREAM["Annotation & Analysis"]
-    Consensus --> Diffbind["Differential peak calling (DiffBind or MAnorm)"]:::process
+    Consensus --> Diffbind["Differential peaks (DiffBind or MAnorm)"]:::process
     Consensus --> Annotate["Annotate peaks & find motifs"]:::process
   end
 
@@ -95,8 +95,8 @@ flowchart LR
   classDef output fill:#ecba4c,stroke:none;
 
   %% Subgraph styling
-  style INPUT fill:#f9f9f9,stroke:none;
-  style QC fill:#f9f9f9,stroke:none;
-  style DEEPTOOLS fill:#f9f9f9,stroke:none;
-  style PEAK fill:#f9f9f9,stroke:none;
-  style DOWNSTREAM fill:#f9f9f9,stroke:none;
+  style INPUT fill:#e6e6e6,stroke:none;
+  style QC fill:#e6e6e6,stroke:none;
+  style DEEPTOOLS fill:#e6e6e6,stroke:none;
+  style PEAK fill:#e6e6e6,stroke:none;
+  style DOWNSTREAM fill:#e6e6e6,stroke:none;
