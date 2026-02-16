@@ -12,7 +12,7 @@ flowchart LR
 }}}%%
 
   %% Input
-  subgraph INPUT["Input Check"]
+  subgraph INPUT["<span style='white-space:nowrap'>Input Check</span>"]
     Raw["Raw Fastqs"]:::input
     Raw --> Check["Check inputs"]:::process
     Samplesheet["Sample Sheet"]:::input --> Check
@@ -22,36 +22,40 @@ flowchart LR
 
 
   %% Quality Control
-  subgraph QC["Quality Control"]
+  subgraph QC["<span style='white-space:nowrap'>Quality Control</span>"]
     valid_raw --> Trimming["Cutadapt: Adapter removal & quality trimming"]:::tool
     Trimming --> Trimmed["Trimmed Fastqs"]:::output
     Trimmed --> fqscreen["FastqScreen"]:::tool
     valid_raw --> fqc["FASTQC"]:::tool
     Trimmed --> fqc
   end
-  fqc --> MultiQC["multiqc report"]:::output
-  fqscreen --> MultiQC
+
+%% make sure MultiQC is outside any subgraph
+fqc --> MultiQC["multiqc report"]:::output
+fqscreen --> MultiQC
+
+%% Library & Complexity Assessment
+BAMs --> preseq["Preseq - library complexity curve"]:::tool
+BAMs --> ppqt["PhantomPeakQualtools"]:::tool
+preseq ---> MultiQC
+ppqt --> MultiQC
 
   %% Alignment
-  Trimmed --> Blacklist["Align to blacklist regions; discard reads"]:::process
-  Blacklist --> Align["Align to reference genome, deduplicate, filter"]:::process
-  Align --> BAMs["Deduplicated BAM & tagalign files"]:::output
+  subgraph ALIGNMENT["Alignment"]
+    Trimmed --> Blacklist["Align to blacklist regions; discard reads"]:::process
+    Blacklist --> Align["Align to reference genome, deduplicate, filter"]:::process
+    Align --> BAMs["Deduplicated BAM & tagalign files"]:::output
+    %% Normalization
+    BAMs --> Spike["Spike-in normalization (optional)"]:::process
+    Spike --> Scale["Scaling factors"]:::output
+  end
 
-  %% Library & Complexity Assessment
-  BAMs --> preseq["Preseq - library complexity curve"]:::tool
-  BAMs --> ppqt["PhantomPeakQualtools"]:::tool
-  preseq ---> MultiQC
-  ppqt --> MultiQC
-
-  %% Normalization
-  BAMs --> Spike["Spike-in normalization (optional)"]:::process
-  Spike --> NormBigwigs["Normalized Bigwigs"]:::output
 
   %% deepTools Analysis
   subgraph DEEPTOOLS["deepTools"]
     BAMs --> BAMcov["BAM Coverage"]:::tool
     BAMcov --> Bigwig["BigWig files"]:::output
-    Bigwig --> Normalize["Normalize Input"]:::tool
+    Bigwig --> Normalize["Normalize Input (ChIP/Input)"]:::tool
     Bigwig --> Correlation["Plot Correlation"]:::tool
     Bigwig --> PCA["Plot PCA"]:::tool
     Normalize --> CorrelationNorm["Plot Correlation (normalized)"]:::tool
@@ -62,6 +66,8 @@ flowchart LR
 
   end
 
+  Scale -.-> BAMcov
+
   PCA --> MultiQC
   Profile --> MultiQC
   Heatmap --> MultiQC
@@ -70,8 +76,8 @@ flowchart LR
   CorrelationNorm --> MultiQC
 
   %% Peak Calling
-  subgraph PEAK["<span style='white-space:nowrap'>Call&nbsp;Peaks</span>"]
-    NormBigwigs --> Peakcalling["Identify peaks"]:::process
+  subgraph PEAK["<span style='white-space:nowrap'>Call Peaks</span>"]
+    BAMs --> Peakcalling["Identify peaks"]:::process
     Peakcalling --> MACS2broad["MACS2 broad"]:::tool
     Peakcalling --> MACS2narrow["MACS2 narrow"]:::tool
     Peakcalling --> GEM["GEM"]:::tool
@@ -82,10 +88,15 @@ flowchart LR
     SICER --> Consensus
   end
 
-  %% Downstream Analysis
-  subgraph DOWNSTREAM["Annotation & Analysis"]
-    Consensus --> Diffbind["Differential peaks (DiffBind or MAnorm)"]:::process
-    Consensus --> Annotate["Annotate peaks & find motifs"]:::process
+  subgraph DIFFERENTIAL["<span style='white-space:nowrap'>Differential Analysis</span>"]
+    Consensus --> RepCheck["Check replicates"]:::process
+    RepCheck --> Diffbind["<span style='white-space:nowrap'>DiffBind<br>(>=2 reps)</span>"]:::tool
+    RepCheck --> Manorm["<span style='white-space:nowrap'>MAnorm<br>(1 rep)</span>"]:::tool
+  end
+
+  subgraph ANNOTATION["<span style='white-space:nowrap'>Annotation &amp; Motifs</span>"]
+    Consensus --> Annotate["<span style='white-space:nowrap'>Annotate peaks<br>(ChIPseeker)</span>"]:::tool
+    Consensus --> Motifs["<span style='white-space:nowrap'>Find motifs<br>(HOMER, MEME-AME)</span>"]:::tool
   end
 
   %% Styles - FNL branding theme
@@ -97,6 +108,8 @@ flowchart LR
   %% Subgraph styling
   style INPUT fill:#e6e6e6,stroke:none;
   style QC fill:#e6e6e6,stroke:none;
+  style ALIGNMENT fill:#e6e6e6,stroke:none;
   style DEEPTOOLS fill:#e6e6e6,stroke:none;
   style PEAK fill:#e6e6e6,stroke:none;
-  style DOWNSTREAM fill:#e6e6e6,stroke:none;
+  style DIFFERENTIAL fill:#e6e6e6,stroke:none;
+  style ANNOTATION fill:#e6e6e6,stroke:none;
