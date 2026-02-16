@@ -74,7 +74,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - User Guide:
-      #- Introduction: guide/intro.md
+      - Introduction: guide/intro.md
       - Usage: guide/usage.md
       - Output: guide/output.md
       - Parameters: guide/params.md
