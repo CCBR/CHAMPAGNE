@@ -11,7 +11,7 @@ View the full documentation website: <https://ccbr.github.io/CHAMPAGNE>
 
 <a href="https://ccbr.github.io/CHAMPAGNE/latest/diagram/">
 <figure>
-  <img src="./docs/diagram/overview.svg" alt="CHAMPAGNE workflow overview diagram">
+  <img src="https://raw.githubusercontent.com/CCBR/CHAMPAGNE/refs/heads/main/docs/diagram/overview.svg" alt="CHAMPAGNE workflow overview diagram">
   <figcaption>
     <strong>CHAMPAGNE Workflow Overview.</strong>
     View a detailed version of the workflow diagram on the website.
