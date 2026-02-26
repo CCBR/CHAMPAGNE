@@ -45,14 +45,14 @@ Initialize and run champagne with test data:
 ```sh
 # copy the champagne config files to your project directory.
 # --output is optional and defaults to your current working directory.
-champagne init --output /data/$USER/champagne_project
+champagne init --output path/to/champagne_project/
 
 # preview the champagne jobs that will run with the test dataset
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
   --mode local -profile test -preview
 
 # launch a champagne run on slurm with the test dataset
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
   --mode slurm -profile test
 ```
 
@@ -66,7 +66,7 @@ Once you've created a samplesheet with paths to your fastq files,
 run champagne with the `--input` option to specify the path to your sample sheet:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm \
     --input samplesheet.csv \
     --genome hg38
@@ -91,7 +91,7 @@ run_qc: true
 You can then use these parameters with the `-params-file` option:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm \
     -params-file assets/params.yml
 ```
@@ -112,7 +112,7 @@ If your experiment uses a spike-in control, you can specify the spike-in genome
 with the `--spike_genome` parameter:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm \
     --input samplesheet.csv \
     --genome hg38 \

@@ -4,10 +4,10 @@ If you'd like to override the default blacklist used by one of the built-in geno
 you can provide a custom blacklist bed file or fasta file:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm \
     --genome hg38 \
-    --blacklist /path/to/blacklist.bed
+    --blacklist path/to/blacklist.bed
 ```
 
 If you're providing a custom blacklist bed file, make sure its regions refer to
@@ -26,7 +26,7 @@ If you'd like to use a custom genome, you'll need the following files:
 Prepare your custom reference genome with:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm \
     -entry MAKE_REFERENCE \
     --genome custom_genome \
@@ -40,7 +40,7 @@ The reference files and a config file for the genome will be written in `results
 Then you can run champagne using your custom genome:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     --mode slurm -profile biowulf \
     --input samplesheet.csv \
     --genome custom_genome \

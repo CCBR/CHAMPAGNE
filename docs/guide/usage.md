@@ -56,7 +56,7 @@ Commands:
 Initialize your project directory:
 
 ```sh
-champagne init --output /data/$USER/champagne_project
+champagne init --output path/to/champagne_project/
 ```
 
 Or if you do not use `--output`, your current working directory will be used as default:
@@ -87,10 +87,10 @@ Example for a single-end project:
 
 ```
 sample,rep,fastq_1,fastq_2,antibody,control
-sampleA,1,/path/to/sample_1.R1.fastq.gz,,Ab,inputA
-sampleA,2,/path/to/sample_2.R1.fastq.gz,,Ab,inputA
-inputA,1,/path/to/sample1.R1.fastq.gz,,,
-inputA,2,/path/to/sample1.R1.fastq.gz,,,
+sampleA,1,path/to/sample_1.R1.fastq.gz,,Ab,inputA
+sampleA,2,path/to/sample_2.R1.fastq.gz,,Ab,inputA
+inputA,1,path/to/sample1.R1.fastq.gz,,,
+inputA,2,path/to/sample1.R1.fastq.gz,,,
 ```
 
 Example for a paired-end project:
@@ -99,10 +99,10 @@ Example for a paired-end project:
 
 ```
 sample,rep,fastq_1,fastq_2,antibody,control
-sample1,1,/path/to/sample_1.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1
-sample1,2,/path/to/sample_2.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1
-input1,1,/path/to/input_1.R1.fastq.gz,/path/to/input_1.R2.fastq.gz,,
-input1,2,/path/to/input_2.R1.fastq.gz,/path/to/input_2.R2.fastq.gz,,
+sample1,1,path/to/sample_1.R1.fastq.gz,path/to/sample_1.R2.fastq.gz,Ab,input1
+sample1,2,path/to/sample_2.R1.fastq.gz,path/to/sample_1.R2.fastq.gz,Ab,input1
+input1,1,path/to/input_1.R1.fastq.gz,path/to/input_1.R2.fastq.gz,,
+input1,2,path/to/input_2.R1.fastq.gz,path/to/input_2.R2.fastq.gz,,
 ```
 
 For more examples, view the sample sheet files in the [`assets/` directory on
@@ -166,7 +166,7 @@ run_qc: true
 You will then pass this file to the `-params-file` option when running the pipeline:
 
 ```sh
-champagne run --output /data/$USER/champagne_project \
+champagne run --output path/to/champagne_project/ \
     -params-file assets/params.yml
 ```
 
@@ -222,7 +222,7 @@ Run a local preview:
 
 ```sh
 champagne run \
-  --output /data/$USER/champagne_project \
+  --output path/to/champagne_project/ \
   --input assets/samplesheet_test_mm10.csv \
   --contrasts assets/contrasts_test_mm10.tsv \
   --genome mm10 \
@@ -237,7 +237,7 @@ download containers:
 
 ```sh
 champagne run \
-  --output /data/$USER/champagne_project \
+  --output path/to/champagne_project/ \
   --input assets/samplesheet_test_mm10.csv \
   --contrasts assets/contrasts_test_mm10.tsv \
   --genome mm10 \
@@ -251,7 +251,7 @@ Launch a pipeline run with slurm:
 
 ```sh
 champagne run \
-  --output /data/$USER/champagne_project \
+  --output path/to/champagne_project/ \
   --input assets/samplesheet_test_mm10.csv \
   --contrasts assets/contrasts_test_mm10.tsv \
   --genome mm10 \
