@@ -6,7 +6,7 @@ After running the pipeline, the output directory will also contain `results/`,
 `log/`, `work/`, and `submit_slurm.sh` (if using `--mode slurm`).
 
 ```
-/data/$USER/champagne_project
+path/to/champagne_project/
 ├── assets/
 ├── conf/
 ├── log/
@@ -30,7 +30,7 @@ After running the pipeline, the output directory will also contain `results/`,
 
 Workflow output files will be written to the `results/` directory by default in your pipeline run output directory.
 
-For example, if you ran champagne with `champagne run --output /data/$USER/champagne_project`, the results files will be in `/data/$USER/champagne_project/results/`.
+For example, if you ran champagne with `champagne run --output path/to/champagne_project/`, the results files will be in `path/to/champagne_project//results/`.
 
 All paths listed below are relative to the `results/` directory.
 

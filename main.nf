@@ -43,10 +43,14 @@ workflow version {
 }
 
 workflow debug {
+    println "CCBR_PIPELINER_DIR: ${env('CCBR_PIPELINER_DIR')}"
+    println "GENOME FASTA: ${params.genomes[ params.genome ].fasta}"
+    println "INDEX DIR: ${params.index_dir}"
+    file("${params.genomes[ params.genome ].fasta}", checkIfExists: true)
 
-    sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
-    contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
-    raw_fastqs = INPUT_CHECK(sample_sheet, contrast_sheet).reads
+    // sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
+    // contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
+    // raw_fastqs = INPUT_CHECK(sample_sheet, contrast_sheet).reads
 
 }
 

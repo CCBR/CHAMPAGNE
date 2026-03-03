@@ -45,7 +45,7 @@ Using the delorenzi normalization method with _E. coli_ as the spike-in genome:
 
 ```sh
 champagne run \
-    --output /data/$USER/champagne_project/ \
+    --output path/to/champagne_project// \
     --genome hg38 \
     --input assets/samplesheet_full_spikein.csv \
     --spike_genome ecoli_k12 \
@@ -57,7 +57,7 @@ Using the guenther normalization method with _D. melanogaster_ as the spike-in g
 
 ```sh
 champagne run \
-    --output /data/$USER/champagne_project/ \
+    --output path/to/champagne_project// \
     --genome hg38 \
     --input assets/samplesheet_full_spikein.csv \
     --spike_genome dmelr6.32 \
