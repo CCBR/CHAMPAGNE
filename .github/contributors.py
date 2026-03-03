@@ -7,6 +7,7 @@ CONTRIB_MD = ["# Contributors\n"]
 
 
 def get_contrib_html(contrib):
+    user_html = None
     user_login = contrib["login"]
     try:
         user_info = get_user_info(user_login)
@@ -15,15 +16,20 @@ def get_contrib_html(contrib):
             f"Skipping contributor '{user_login}': {exc}",
             RuntimeWarning,
         )
-        return None
-    user_name = user_info["name"] if user_info["name"] else user_login
-    avatar_url = contrib["avatar_url"]
-    profile_url = contrib["html_url"]
-    return (
-        f"<a href='{profile_url}' title='{user_name}' style='display: inline-block; text-align: center;'>"
-        f"<img src='{avatar_url}' alt='{user_name}' style='border-radius: 50%; width: 30%;'>"
-        f"<br>{user_name}</a>"
-    )
+        user_html = None
+    else:
+        user_name = user_info["name"] if user_info["name"] else user_login
+        avatar_url = contrib["avatar_url"]
+        profile_url = contrib["html_url"]
+        if profile_url.startswith("https://github.com/apps/"):
+            user_html = None
+        else:
+            user_html = (
+                f"<a href='{profile_url}' title='{user_name}' style='display: inline-block; text-align: center;'>"
+                f"<img src='{avatar_url}' alt='{user_name}' style='border-radius: 50%; width: 30%;'>"
+                f"<br>{user_name}</a>"
+            )
+    return user_html
 
 
 def main(contribs_md=CONTRIB_MD, repo="CHAMPAGNE", org="CCBR", ncol=3):
