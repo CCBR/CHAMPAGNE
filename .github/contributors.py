@@ -33,22 +33,20 @@ def get_contrib_html(contrib):
 
 
 def main(contribs_md=CONTRIB_MD, repo="CHAMPAGNE", org="CCBR", ncol=3):
-    contribs_str = "|" + " |" * ncol + "\n|" + "---|" * ncol + "\n| "
-    nmod = ncol - 1
+    header = "|" + " |" * ncol + "\n|" + "---|" * ncol
+    contribs_str = header
     contribs = get_repo_contributors(repo, org)
-    added = 0
+    row_cells = []
     for contrib in contribs:
         contrib_html = get_contrib_html(contrib)
         if not contrib_html:
             continue
-        if added % nmod == 0 and added > 0:
-            contrib_html += " |\n"
-            if added < len(contribs) - 1:
-                contrib_html += "| "
-        else:
-            contrib_html += " | "
-        contribs_str += contrib_html
-        added += 1
+        row_cells.append(contrib_html)
+        if len(row_cells) == ncol:
+            contribs_str += "\n| " + " | ".join(row_cells) + " |"
+            row_cells = []
+    if row_cells:
+        contribs_str += "\n| " + " | ".join(row_cells) + " |"
     contribs_md.append(contribs_str)
 
     contribs_md.append(
