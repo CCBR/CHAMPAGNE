@@ -54,6 +54,29 @@ jobs:
         run: |
           python .github/contributors.py > docs/devs/contributors.md
 
+      # mermaid diagrams
+      - name: Setup mermaid-cli
+        uses: AnimMouse/setup-mermaid-cli@v1
+      - name: Get all changed mermaid files
+        id: changed-mermaid-files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        with:
+          # Avoid using single or double quotes for multiline patterns
+          files: |
+            **.mermaid
+            **.mmd
+      - name: Render Mermaid diagram SVG
+        if: steps.changed-mermaid-files.outputs.any_changed == 'true'
+        env:
+          MMD_FILES: ${{ steps.changed-mermaid-files.outputs.all_changed_files }}
+        run: |
+          for input in ${MMD_FILES}; do
+            output="${input%.mermaid}.svg"
+            mmdc -i "$input" -o "$output"
+            git add "$output"
+          done
+          git commit -m "ci: 🧜‍♀️ update mermaid diagram SVGs" || echo "nothing to commit"
+
       - name: Format
         uses: pre-commit/action@v3.0.1
         continue-on-error: true
@@ -65,6 +88,9 @@ jobs:
 
           git add docs/guide/genomes.md
           git commit -m "ci: 📑 update genomes docs with .github/genome_docs.py" || echo "nothing to commit"
+
+          git add docs/devs/contributors.md
+          git commit -m "ci: 📑 update contributors page with .github/contributors.py" || echo "nothing to commit"
 
           git add .
           git commit -m "ci: 🤖 format everything with pre-commit" || echo "nothing to commit"

@@ -6,6 +6,7 @@ exclude: |
       ^docs/.*.html|
       ^_extensions/|
       ^nextflow_schema.json|
+      ^.*.svg |
       ^.github/CONTRIBUTING.md
    )
 repos:
