@@ -76,8 +76,8 @@ The following columns are required:
 
 - `sample`: sample ID; does not need to be a unique column.
 - `rep`: replicate number of sample ID; does not need to be a unique column.
-- `fastq_1`: absolute path to R1 of sample ID.
-- `fastq_2`: absolute path to R2 of sample ID (optional, only for paired-end reads).
+- `fastq_1`: absolute path to R1 of sample ID. Files can be in compressed (`.fastq.gz`, `.fq.gz`) or uncompressed (`.fastq`, `.fq`) format.
+- `fastq_2`: absolute path to R2 of sample ID (optional, only for paired-end reads). Files can be in compressed (`.fastq.gz`, `.fq.gz`) or uncompressed (`.fastq`, `.fq`) format.
 - `antibody`: name of the antibody used for the sample.
 - `input`: the sampleID of the input control; this must match a sample in the sheet.
 
