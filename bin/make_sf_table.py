@@ -8,6 +8,7 @@ Usage:
 Example:
     python make_sf_table.py scaling_factors_1.tsv,scaling_factors_2.tsv id1,id2,id3 ab1,ab2 100,200,300 spike_sf.tsv
 """
+
 from collections import defaultdict
 import sys
 

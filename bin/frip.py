@@ -113,7 +113,7 @@ def process_files(bamfile, bedfiles, genome, filetypes, bedtool=None, bedsample=
         ]
     ]
     nreads = count_reads_in_bam(bamfile)
-    (bamsample, condition) = clip_bamfile_name(bamfile)
+    bamsample, condition = clip_bamfile_name(bamfile)
     for i in range(len(bedfileL)):
         bed = bedfileL[i]
         if len(filetypesL) > 1:
@@ -121,7 +121,7 @@ def process_files(bamfile, bedfiles, genome, filetypes, bedtool=None, bedsample=
         else:
             filetype = filetypesL[0]
         if not bedtool and not bedsample:
-            (bedtool, bedsample) = clip_bedfile_name(bed, filetype)
+            bedtool, bedsample = clip_bedfile_name(bed, filetype)
         noverlaps = count_reads_in_bed(bamfile, bed, genome)
         frip = calculate_frip(nreads, noverlaps)
         nbases = measure_bedfile_coverage(bed, genome) / 1000000
@@ -134,7 +134,7 @@ def process_files(bamfile, bedfiles, genome, filetypes, bedtool=None, bedsample=
 
 def create_outfile_name(bamfile, outroot):
     """uses outroot to create the output file name"""
-    (bamsample, condition) = clip_bamfile_name(bamfile)
+    bamsample, condition = clip_bamfile_name(bamfile)
     outtable = bamsample + "." + condition + "." + "FRiP_table.txt"
     if outroot != "":
         outtable = outroot + "." + outtable
@@ -200,7 +200,7 @@ source of bed file is not built into the script. Default: ""',
         "-s", dest="sample", default="", help="Sample name/ID of the bedfile(s)"
     )
 
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
     bedfiles = options.peakfiles
     bamfile = options.bamfile
     genomefile = options.genomefile

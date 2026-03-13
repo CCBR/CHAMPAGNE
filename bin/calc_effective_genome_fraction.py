@@ -65,9 +65,7 @@ chr21	46709983
 chr22	50818468
 chr_X	156040895
 chr_Y	57227415
-chr_M	16569""".split(
-        "\n"
-    )
+chr_M	16569""".split("\n")
     effective_genome_size = 2700000000
 
     assert calc_egf(effective_genome_size, chrom_sizes) == 0.9391299376153861

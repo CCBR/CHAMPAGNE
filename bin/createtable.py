@@ -11,9 +11,10 @@ About: This program takes standard input from the concatenation of each *qc.metr
        structure is then converted into a pandas dataframe.
        Example Usage:
        --------------
-	   cat sample1.qcmetrics sample2.qcmetrics sampleNth.qcmetrics | ./createQCTable > ChIPseq_QC_Table.txt
+           cat sample1.qcmetrics sample2.qcmetrics sampleNth.qcmetrics | ./createQCTable > ChIPseq_QC_Table.txt
 Python version: 3+
 """
+
 import pandas as pd
 import sys
 
