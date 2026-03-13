@@ -3,6 +3,7 @@
 """
 adapted from: https://github.com/nf-core/chipseq/blob/51eba00b32885c4d0bec60db3cb0a45eb61e34c5/bin/check_samplesheet.py
 """
+
 import collections
 import os
 import errno

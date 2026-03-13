@@ -12,29 +12,29 @@ About: This program takes in a parsed data from Samtools flagstat, atac_nrf.py, 
 
        Example Usage:
        --------------
-	1.) Find total number of reads
+        1.) Find total number of reads
           # grep 'in total' H3k4me3_gran_1.sorted.bam.flagstat | awk '{print $1,$3}' | ./filterMetrics H3k4me3_gran_1 tnreads
 
-	2.) Find total number of mapped reads
-	  # grep 'mapped (' H3k4me3_gran_1.sorted.bam.flagstat | awk '{print $1,$3}' | ./filterMetrics H3k4me3_gran_1 mnreads
+        2.) Find total number of mapped reads
+          # grep 'mapped (' H3k4me3_gran_1.sorted.bam.flagstat | awk '{print $1,$3}' | ./filterMetrics H3k4me3_gran_1 mnreads
 
-	3.) Find total number of uniquely mapped reads
-	  # grep 'mapped (' H3k4me3_gran_1.sorted.Q5DD.bam.flagstat | awk '{print $1,$3}' | ./filterMetrics H3k4me3_gran_1 unreads
+        3.) Find total number of uniquely mapped reads
+          # grep 'mapped (' H3k4me3_gran_1.sorted.Q5DD.bam.flagstat | awk '{print $1,$3}' | ./filterMetrics H3k4me3_gran_1 unreads
 
-	4.) Find NRF, PCB1, PCB2
-	  # cat H3k4me3_gran_1.nrf | ./filterMetrics H3k4me3_gran_1 nrf
+        4.) Find NRF, PCB1, PCB2
+          # cat H3k4me3_gran_1.nrf | ./filterMetrics H3k4me3_gran_1 nrf
 
-	7.) Find FRiP (in the second half of ChIP-seq pipeline)
-	  # TO-DO
+        7.) Find FRiP (in the second half of ChIP-seq pipeline)
+          # TO-DO
 
-	8.) Find NGSQC statistics (detla RCIs)
-	  # grep '<' NGSQC_report.txt | awk '{print $(NF)}' | xargs | ./filterMetrics H3k4me3_gran_1 ngsqc
+        8.) Find NGSQC statistics (detla RCIs)
+          # grep '<' NGSQC_report.txt | awk '{print $(NF)}' | xargs | ./filterMetrics H3k4me3_gran_1 ngsqc
 
-	9.) Find NSC, RSC, Qtag
-	  # awk '{print $(NF-2),$(NF-1),$(NF)}' H3k4me3_gran_1.sorted.Q5DD.ppqt | ./filterMetrics H3k4me3_gran_1 ppqt
+        9.) Find NSC, RSC, Qtag
+          # awk '{print $(NF-2),$(NF-1),$(NF)}' H3k4me3_gran_1.sorted.Q5DD.ppqt | ./filterMetrics H3k4me3_gran_1 ppqt
 
-	10.) Find the Fragment Length
-	  # awk -F '\t' '{print $3}' H3k4me3_gran_1.sorted.Q5DD.ppqt | sed -e 's/,/ /g' | ../Scripts/filterMetrics H3k4me3_gran_1 fragLen
+        10.) Find the Fragment Length
+          # awk -F '\t' '{print $3}' H3k4me3_gran_1.sorted.Q5DD.ppqt | sed -e 's/,/ /g' | ../Scripts/filterMetrics H3k4me3_gran_1 fragLen
 
 Python version(s):	2.7 or 3.X
 

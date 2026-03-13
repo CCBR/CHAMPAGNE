@@ -13,7 +13,7 @@ main <- function(contrasts_filename = "${contrasts}",
   assert_that(all(colnames(contrasts_df) == c("contrast_name", "group1", "group2")))
 
   samples_df <- readr::read_csv(samplesheet_filename)
-  sample_names  <- samples_df %>% dplyr::pull(sample)
+  sample_names <- samples_df %>% dplyr::pull(sample)
   # check individual contrasts
   purrr::pmap(contrasts_df, check_contrast, sample_names = sample_names)
 
@@ -32,13 +32,16 @@ check_contrast <- function(contrast_name, group1, group2, sample_names) {
   group2_samples <- unlist(strsplit(group2, ","))
   # Ensure each group has at least 1 sample
   assert_that(length(group1_samples) > 0,
-              msg = glue("group1 must have at least one sample for {contrast_name}"))
+    msg = glue("group1 must have at least one sample for {contrast_name}")
+  )
   assert_that(length(group2_samples) > 0,
-              msg = glue("group2 must have at least one sample for {contrast_name}"))
+    msg = glue("group2 must have at least one sample for {contrast_name}")
+  )
   # Ensure every sample is in the sample sheet
-  extra_samples <- setdiff(c(group1_samples,group2_samples), sample_names)
+  extra_samples <- setdiff(c(group1_samples, group2_samples), sample_names)
   assert_that(length(extra_samples) == 0,
-              msg = glue("All samples in {contrast_name} must be in the sample sheet. Extra samples found: {paste(extra_samples, collapse = ',')}"))
+    msg = glue("All samples in {contrast_name} must be in the sample sheet. Extra samples found: {paste(extra_samples, collapse = ',')}")
+  )
   # Ensure each sample is in only one group
   assert_that(
     length(intersect(group1_samples, group2_samples)) == 0,
