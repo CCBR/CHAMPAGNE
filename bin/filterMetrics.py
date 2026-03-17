@@ -8,7 +8,7 @@ Email:		kuhnsa@nih.gov
 About: This program takes in a parsed data from Samtools flagstat, atac_nrf.py, ngsqc,
        PhantomPeakQuailty tools, or atac_frip.py and parses it further to append it to
        a nested dictionary (which is store a json object). The program is designed to
-       work with standarad input (grep 'pattern' filename.txt | filerMetrics sampleName filterType).
+       work with standard input (grep 'pattern' filename.txt | filerMetrics sampleName filterType).
 
        Example Usage:
        --------------
@@ -105,13 +105,13 @@ def filteredData(sample, ftype):
 
 
 def main():
-    # Grab Arguements
-    arguements = sys.argv[1:]
+    # Grab Arguments
+    arguments = sys.argv[1:]
     # Sample Name
-    samplename = arguements[0]
+    samplename = arguments[0]
 
     # Filter Type (extremely important: determines the type of filtering to complete)
-    filter = arguements[1]
+    filter = arguments[1]
     filteredData(samplename, filter)
 
 

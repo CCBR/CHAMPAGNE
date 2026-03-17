@@ -80,6 +80,7 @@ These genomes can be passed to the `--spike_genome` parameter.
 - blacklist_bed: `NO_FILE`
 - effective_genome_size: `4641652`
 - chrom_sizes: `${params.index_dir}/ecoli_k12/Chromosomes/chrom.sizes`
+
 ### Custom blacklist
 
 If you'd like to override the default blacklist used by one of the built-in genomes,
