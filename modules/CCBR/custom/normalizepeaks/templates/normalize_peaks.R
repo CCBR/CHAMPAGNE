@@ -6,9 +6,11 @@ library(stringr)
 library(readr)
 library(tidyr)
 
-main <- function(version_file = "versions.yml",
-                 peak_file = "${peak}",
-                 out_file = "${outfile}") {
+main <- function(
+  version_file = "versions.yml",
+  peak_file = "${peak}",
+  out_file = "${outfile}"
+) {
   write_version(version_file)
   peak_dat <- read_peaks(peak_file) %>%
     mutate(peakID = glue("{chrom}:{start}-{end}")) %>%
@@ -47,7 +49,9 @@ normalize <- function(peak_dat, norm_method = corces) {
     peak_dat %>%
       mutate(
         pvalue_norm = norm_method(pvalue),
-        qvalue_norm = 10^(-pvalue_norm) %>% p.adjust(method = "BH") %>% -log10(.)
+        qvalue_norm = 10^(-pvalue_norm) %>%
+          p.adjust(method = "BH") %>%
+          -log10(.)
       ) %>%
       select(-c(pvalue, qvalue)) %>%
       rename(pvalue = pvalue_norm, qvalue = qvalue_norm)

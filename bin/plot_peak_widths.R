@@ -7,7 +7,9 @@ library(scales)
 set.seed(20230926)
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
-  stop("Error: not enough positional arguments.\n  Example usage:\n   Rscript plot_peak_widths.R path/to/peak_widths.tsv")
+  stop(
+    "Error: not enough positional arguments.\n  Example usage:\n   Rscript plot_peak_widths.R path/to/peak_widths.tsv"
+  )
 }
 tsv_filename <- args[1]
 peak_dat <- read_tsv(tsv_filename) %>%
@@ -25,7 +27,14 @@ if (length(tools) > 1) {
 sample_ids <- peak_dat %>%
   pull(sample_id) %>%
   unique()
-fill_colors <- viridisLite::viridis(n = length(sample_ids), alpha = 0.7, begin = 0, end = 1, direction = 1, option = "D")
+fill_colors <- viridisLite::viridis(
+  n = length(sample_ids),
+  alpha = 0.7,
+  begin = 0,
+  end = 1,
+  direction = 1,
+  option = "D"
+)
 names(fill_colors) <- sample_ids
 
 plot_hist <- function(peak_dat) {
@@ -42,10 +51,12 @@ plot_hist <- function(peak_dat) {
       values = fill_colors,
       breaks = names(fill_colors)
     ) +
-    guides(fill = guide_legend(
-      label.position = "bottom",
-      title.position = "top"
-    )) +
+    guides(
+      fill = guide_legend(
+        label.position = "bottom",
+        title.position = "top"
+      )
+    ) +
     facet_wrap(~tool, ncol = 1) + # , scales = 'free') +
     scale_x_log10(
       breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -59,6 +70,10 @@ hist_plot <- peak_dat %>%
   plot_hist()
 
 ggsave(
-  filename = "peak_widths_histogram.png", plot = hist_plot,
-  device = "png", dpi = 300, height = 4, width = 6
+  filename = "peak_widths_histogram.png",
+  plot = hist_plot,
+  device = "png",
+  dpi = 300,
+  height = 4,
+  width = 6
 )

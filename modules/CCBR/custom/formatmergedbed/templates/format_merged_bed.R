@@ -6,15 +6,18 @@ library(stringr)
 library(readr)
 library(tidyr)
 
-main <- function(version_file = "versions.yml",
-                 merged_file = "${merged_bed}",
-                 out_file = "${outfile}",
-                 n_cores = as.integer("${task.cpus}"),
-                 min_count = 1) {
+main <- function(
+  version_file = "versions.yml",
+  merged_file = "${merged_bed}",
+  out_file = "${outfile}",
+  n_cores = as.integer("${task.cpus}"),
+  min_count = 1
+) {
   doFuture::registerDoFuture()
   future::plan(future::multicore, workers = n_cores)
   write_version(version_file)
-  merged_dat <- read_tsv(merged_file,
+  merged_dat <- read_tsv(
+    merged_file,
     col_names = FALSE,
     col_types = "ciiiccccc"
   )
@@ -22,9 +25,15 @@ main <- function(version_file = "versions.yml",
     stop("The merged bed file is empty")
   }
   colnames(merged_dat) <- c(
-    "chrom", "start", "end",
-    "counts", "score_cat", "strand_cat",
-    "signal_cat", "pvalue_cat", "qvalue_cat"
+    "chrom",
+    "start",
+    "end",
+    "counts",
+    "score_cat",
+    "strand_cat",
+    "signal_cat",
+    "pvalue_cat",
+    "qvalue_cat"
   )
   merged_dat %>%
     filter(counts >= min_count) %>%
@@ -90,6 +99,9 @@ get_version <- function() {
 }
 
 
-main("versions.yml", "${merged_bed}", "${outfile}",
+main(
+  "versions.yml",
+  "${merged_bed}",
+  "${outfile}",
   n_cores = as.integer("${task.cpus}")
 )
