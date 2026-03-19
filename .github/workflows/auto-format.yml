@@ -39,14 +39,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .[dev]
-
+      - id: changed-files
+        name: Check changed files
+        uses: knu/changed-files@v1
+        with:
+          paths: |
+            CITATION.cff
+            nextflow_schema.json
+            nextflow.config
+            conf/genomes.config
+            **.mermaid
+            **.mmd
       - name: Write nf-schema docs
+        if: contains(steps.changed-files.outputs.changed_files_json, 'nextflow')
         run: |
           nf-core pipelines schema docs -f -x markdown -o docs/params.tmp
           cat docs/_params_head.md docs/params.tmp > docs/guide/params.md
           rm docs/params.tmp
 
       - name: Write genomes docs
+        if: contains(steps.changed-files.outputs.changed_files_json, 'genomes.config')
         run: |
           python .github/genome_docs.py
 
@@ -57,21 +69,14 @@ jobs:
       # mermaid diagrams
       - name: Setup mermaid-cli
         uses: AnimMouse/setup-mermaid-cli@v1
-      - name: Get all changed mermaid files
-        id: changed-mermaid-files
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
-        with:
-          # Avoid using single or double quotes for multiline patterns
-          files: |
-            **.mermaid
-            **.mmd
+
       - name: Render Mermaid diagram SVG
-        if: steps.changed-mermaid-files.outputs.any_changed == 'true'
-        env:
-          MMD_FILES: ${{ steps.changed-mermaid-files.outputs.all_changed_files }}
+        if: contains(steps.changed-files.outputs.changed_files_json, 'mermaid') || contains(steps.changed-files.outputs.changed_files_json, 'mmd')
         run: |
-          for input in ${MMD_FILES}; do
+          for input in $(echo '${{ steps.changed-files.outputs.changed_files_json }}' | jq -r '.[] | select(endswith(".mermaid") or endswith(".mmd"))')
+          do
             output="${input%.mermaid}.svg"
+            output="${output%.mmd}.svg"
             mmdc -i "$input" -o "$output"
             git add "$output"
           done

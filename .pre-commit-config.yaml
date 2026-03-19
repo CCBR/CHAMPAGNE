@@ -25,15 +25,17 @@ repos:
       - id: codespell
         args: ["-I", ".github/WORDLIST.txt"]
   # Python formatting
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.3.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.5
     hooks:
-      - id: black
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
   # R formatting
-  - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9021
+  - repo: https://github.com/posit-dev/air-pre-commit
+    rev: 0.8.2
     hooks:
-      - id: style-files
+      - id: air-format
   # general linting
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v4.0.0-alpha.8"
