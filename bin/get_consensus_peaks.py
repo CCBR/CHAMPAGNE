@@ -128,7 +128,7 @@ df = pandas.DataFrame({"peakid": df.index, "score": df.values})
 for index, row in df.iterrows():
     chrom, coords = row["peakid"].split(":")
     start, end = coords.split("-")
-    if args.nofilter == True or float(row["score"]) > filter:
+    if args.nofilter or float(row["score"]) > filter:
         out.write(
             "%s\t%s\t%s\t%s\t%.3f\t.\tNA\tNA\tNA\n"
             % (chrom, start, end, row["peakid"], float(row["score"]))
