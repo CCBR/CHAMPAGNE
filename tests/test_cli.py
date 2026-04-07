@@ -64,8 +64,15 @@ def test_forceall():
 def test_init():
     with tempfile.TemporaryDirectory() as tmp_dir:
         outdir = pathlib.Path(tmp_dir)
-        assertions = [(outdir / "nextflow.config").exists(), (outdir / "log").exists()]
-    assert all(assertions)
+        subprocess.run(
+            f"./bin/champagne init --output {tmp_dir}",
+            capture_output=True,
+            shell=True,
+            text=True,
+            check=True,
+        )
+        assert (outdir / "nextflow.config").exists()
+        assert (outdir / "log").exists()
 
 
 def test_init_default():
@@ -73,10 +80,17 @@ def test_init_default():
     with tempfile.TemporaryDirectory() as tmp_dir:
         os.chdir(tmp_dir)
         outdir = pathlib.Path(tmp_dir)
-        assertions = [(outdir / "nextflow.config").exists(), (outdir / "log").exists()]
+        subprocess.run(
+            "champagne init",
+            capture_output=True,
+            shell=True,
+            text=True,
+            check=True,
+        )
+        assert (outdir / "nextflow.config").exists()
+        assert (outdir / "log").exists()
 
     os.chdir(cwd)
-    assert all(assertions)
 
 
 def test_run_no_init():
