@@ -8,6 +8,7 @@ Usage:
 Example:
     python compute_scaling_factors.py "id1,id2,id3" "100,200,300" scaling_factors.tsv
 """
+
 import sys
 
 

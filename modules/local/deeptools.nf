@@ -139,7 +139,7 @@ process PLOT_CORRELATION {
     container "${params.containers_deeptools}"
 
     input:
-        tuple path(array), val(plottype)
+        tuple path(array), val(plottype), val(deeptools_corr_method)
 
     output:
         path("*.png"), emit: png
@@ -151,17 +151,18 @@ process PLOT_CORRELATION {
     """
     plotCorrelation \\
       -in ${array} \\
-      -o ${array.baseName}.spearman_${plottype}.png \\
-      --outFileCorMatrix ${array.baseName}.spearman_${plottype}.tab \\
-      -c 'spearman' \\
+      -o ${array.baseName}.${deeptools_corr_method}_${plottype}_deeptools.png \\
+      --outFileCorMatrix ${array.baseName}.${deeptools_corr_method}_${plottype}.tab \\
+      -c '${deeptools_corr_method}' \\
       -p '${plottype}' \\
       --skipZeros \\
-      --removeOutliers ${args}
+      --removeOutliers ${args} \\
+      --plotTitle '${deeptools_corr_method} correlation ${plottype}'
     """
 
     stub:
     """
-    touch ${array.baseName}.spearman_${plottype}.png ${array.baseName}.spearman_${plottype}.tab
+    touch ${array.baseName}.${deeptools_corr_method}_${plottype}.png ${array.baseName}.${deeptools_corr_method}_${plottype}.tab
     """
 }
 

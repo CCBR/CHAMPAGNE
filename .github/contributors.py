@@ -1,35 +1,52 @@
 #!/usr/bin/env python3
+import warnings
+
 from ccbr_tools.github import get_repo_contributors, get_user_info
 
 CONTRIB_MD = ["# Contributors\n"]
 
 
 def get_contrib_html(contrib):
+    user_html = None
     user_login = contrib["login"]
-    user_info = get_user_info(user_login)
-    user_name = user_info["name"] if user_info["name"] else user_login
-    avatar_url = contrib["avatar_url"]
-    profile_url = contrib["html_url"]
-    return (
-        f"<a href='{profile_url}' title='{user_name}' style='display: inline-block; text-align: center;'>"
-        f"<img src='{avatar_url}' alt='{user_name}' style='border-radius: 50%; width: 30%;'>"
-        f"<br>{user_name}</a>"
-    )
+    try:
+        user_info = get_user_info(user_login)
+    except ConnectionError as exc:
+        warnings.warn(
+            f"Skipping contributor '{user_login}': {exc}",
+            RuntimeWarning,
+        )
+        user_html = None
+    else:
+        user_name = user_info["name"] if user_info["name"] else user_login
+        avatar_url = contrib["avatar_url"]
+        profile_url = contrib["html_url"]
+        if profile_url.startswith("https://github.com/apps/"):
+            user_html = None
+        else:
+            user_html = (
+                f"<a href='{profile_url}' title='{user_name}' style='display: inline-block; text-align: center;'>"
+                f"<img src='{avatar_url}' alt='{user_name}' style='border-radius: 50%; width: 30%;'>"
+                f"<br>{user_name}</a>"
+            )
+    return user_html
 
 
 def main(contribs_md=CONTRIB_MD, repo="CHAMPAGNE", org="CCBR", ncol=3):
-    contribs_str = "|" + " |" * ncol + "\n|" + "---|" * ncol + "\n| "
-    nmod = ncol - 1
+    header = "|" + " |" * ncol + "\n|" + "---|" * ncol
+    contribs_str = header
     contribs = get_repo_contributors(repo, org)
-    for n, contrib in enumerate(contribs):
+    row_cells = []
+    for contrib in contribs:
         contrib_html = get_contrib_html(contrib)
-        if n % nmod == 0 and n > 0:
-            contrib_html += " |\n"
-            if n < len(contribs) - 1:
-                contrib_html += "| "
-        else:
-            contrib_html += " | "
-        contribs_str += contrib_html
+        if not contrib_html:
+            continue
+        row_cells.append(contrib_html)
+        if len(row_cells) == ncol:
+            contribs_str += "\n| " + " | ".join(row_cells) + " |"
+            row_cells = []
+    if row_cells:
+        contribs_str += "\n| " + " | ".join(row_cells) + " |"
     contribs_md.append(contribs_str)
 
     contribs_md.append(

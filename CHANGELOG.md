@@ -1,12 +1,17 @@
 ## CHAMPAGNE development version
 
+- Add configurable correlation method parameter for deeptools plotCorrelation. (#307, @kelly-sovacool)
+  - Users can now set `--deeptools_corr_method` to `pearson` or `spearman` (default).
+- Add workflow diagram to the documentation. (#309, @JWrows2014, @kelly-sovacool)
+- Add an intro the workflow and a description of the workflow steps to the docs. (#310, @kelly-sovacool)
+
 ## CHAMPAGNE 0.5.3
 
 - CHAMPAGNE now requires nextflow version 25.10.0 or later. (#303, @kelly-sovacool)
 - Increase memory for: (#298, @kelly-sovacool)
-    - main slurm job
-    - diffbind
-    - deeptools plot_heatmap
+  - main slurm job
+  - diffbind
+  - deeptools plot_heatmap
 
 ## CHAMPAGNE 0.5.2
 
@@ -18,11 +23,11 @@
 
 - Minor documentation improvements. (#273, @kelly-sovacool)
 - Set `--blacklist` to a custom bed or fasta file to override the default blacklist used by a built-in `--genome`. (#278, @kelly-sovacool)
-    - Also add support for the hg19 genome on biowulf.
+  - Also add support for the hg19 genome on biowulf.
 - Fix spike-in normalization: (#279, @kelly-sovacool)
-    - Do not include inputs in the scale factor calculation.
-    - Group samples by antibody for scale factor calculation.
-    - Create separate parameters for controlling the deeptools normalization method for samples and inputs.
+  - Do not include inputs in the scale factor calculation.
+  - Group samples by antibody for scale factor calculation.
+  - Create separate parameters for controlling the deeptools normalization method for samples and inputs.
 
 ## CHAMPAGNE 0.5.0
 
@@ -33,28 +38,28 @@
 ### New features
 
 - Contrasts are now specified as a TSV file instead of YAML. (#224, @kelly-sovacool)
-    - See the example contrast sheets in `assets/`.
+  - See the example contrast sheets in `assets/`.
 - New consensus peak method from Corces _et al._ ([doi:10.1126/science.aav1898](https://www.science.org/doi/10.1126/science.aav1898)). (#225, #246, @kelly-sovacool)
 - Normalization with a spike-in genome is now supported. (#259, @kelly-sovacool)
-    - Set `params.spike_genome` to `dmelr6.32` or `ecoli_k12`
-    - The normalization method can be set with `params.spike_norm_method` to `delorenzi` (default) or `guenther`. (#267, @kelly-sovacool)
+  - Set `params.spike_genome` to `dmelr6.32` or `ecoli_k12`
+  - The normalization method can be set with `params.spike_norm_method` to `delorenzi` (default) or `guenther`. (#267, @kelly-sovacool)
 - CLI improvements
-    - Use `nextflow run -resume` by default, or turn it off with `champagne run --forceall`. (#224, @kelly-sovacool)
-    - Add `--output` argument for `champagne init` and `champagne run`. (#232, #233, @kelly-sovacool)
-        - This is equivalent to the nextflow launchDir constant.
-    - `--mode` now has `slurm` as the default. (#249, @kelly-sovacool)
+  - Use `nextflow run -resume` by default, or turn it off with `champagne run --forceall`. (#224, @kelly-sovacool)
+  - Add `--output` argument for `champagne init` and `champagne run`. (#232, #233, @kelly-sovacool)
+    - This is equivalent to the nextflow launchDir constant.
+  - `--mode` now has `slurm` as the default. (#249, @kelly-sovacool)
 - Improved nextflow options:
-    - Set `publish_dir_mode` to `link` by default.
-    - Set `process.cache` to `deep` by default rather than lenient. (#224, @kelly-sovacool)
-    - Enable the nextflow timeline & trace reports by default. (#226, @kelly-sovacool)
-    - Output BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)
+  - Set `publish_dir_mode` to `link` by default.
+  - Set `process.cache` to `deep` by default rather than lenient. (#224, @kelly-sovacool)
+  - Enable the nextflow timeline & trace reports by default. (#226, @kelly-sovacool)
+  - Output BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)
 
 ### Bug fixes
 
 - Refactor checks for the sample sheet & contrast sheet to prevent unnecessary re-running. (#224, @kelly-sovacool)
 - Fix a file name clash during input pooling. (#224, @kelly-sovacool)
 - Fix bug in MEME AME process that caused it not to run on all samples. (#234, @kelly-sovacool)
-    - Also correct the motif rank calculation. (#234, @kopardev)
+  - Also correct the motif rank calculation. (#234, @kopardev)
 - Ensure inputs are pooled correctly for paired end reads. (#250, @kelly-sovacool)
 - Fix chipseeker filename collision. (#252, @kelly-sovacool)
 - Allow fraction-in-peaks plot to run when there is only 1 sample. (#265, @kelly-sovacool)
@@ -76,7 +81,7 @@
 ### New features
 
 - Create a script (`bin/champagne`) to provide an interface to the champagne CLI that works out-of-the-box without the need to install the python package with `pip`. (#180, @kelly-sovacool)
-    - However, any dependencies not in the Python Standard Library must be installed for this to work. See the dependencies list in `pyproject.toml`.
+  - However, any dependencies not in the Python Standard Library must be installed for this to work. See the dependencies list in `pyproject.toml`.
 - Allow additional columns in the sample sheet beyond the minimum required header. (#176, @kelly-sovacool)
 - Add a workflow entry point to download fastq files from SRA. (#176, @kelly-sovacool)
 - Add `test_human` profile with chipseq data from ENCODE. (#176, @kelly-sovacool)
@@ -84,11 +89,11 @@
 ### Bug fixes
 
 - Fix configuration files for compatibility with using the GitHub repo as the source. (#173, @kelly-sovacool)
-    - These equivalent commands now work:
-        ```sh
-        nextflow run CCBR/CHAMPAGNE
-        champagne run --main CCBR/CHAMPAGNE
-        ```
+  - These equivalent commands now work:
+    ```sh
+    nextflow run CCBR/CHAMPAGNE
+    champagne run --main CCBR/CHAMPAGNE
+    ```
 - Allow multiple samples to use the same input. (#176, @kelly-sovacool)
 - In the biowulf config profile, switch variable $SLURM_JOBID to $SLURM_JOB_ID. (@kelly-sovacool)
 - Increase resource allocations for chipseeker and deeptools. (#192, @slsevilla)
@@ -109,21 +114,21 @@
 - Annotate peaks with chipseeker. (#142,#147,#157)
 - Add preseq complexity curve and fastq screen to multiqc report. (#147)
 - Support multiple replicates per sample and call consensus peaks on replicates. (#129)
-    - Optionally normalize p-values with the [CCBR/consensus_peaks](https://github.com/CCBR/nf-modules/tree/60d50f4c45a50378cad70b49013f51750617caaa/subworkflows/CCBR/consensus_peaks) subworkflow.
+  - Optionally normalize p-values with the [CCBR/consensus_peaks](https://github.com/CCBR/nf-modules/tree/60d50f4c45a50378cad70b49013f51750617caaa/subworkflows/CCBR/consensus_peaks) subworkflow.
 - Implement differential peak calling. (#158)
-    - Optionally specify contrasts via a YAML file. If no file is specified, differential analysis is not performed.
-    - If any sample has only one replicate, run `MAnorm`, otherwise run `diffbind`.
+  - Optionally specify contrasts via a YAML file. If no file is specified, differential analysis is not performed.
+  - If any sample has only one replicate, run `MAnorm`, otherwise run `diffbind`.
 - Print the recommended citation in bibtex format with `champagne --citation`. (#153)
-    - CHAMPAGNE is also now archived in Zenodo with DOI `10.5281/zenodo.10516078`.
+  - CHAMPAGNE is also now archived in Zenodo with DOI `10.5281/zenodo.10516078`.
 - The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#170)
 
 ### Bug fixes
 
 - Fix deepTools plots (#144):
-    - Per sample fingerprint plots instead of per replicate.
-    - Input normalized profile plots.
-    - Protein-coding-only versions of plots.
-    - Ensure sample IDs are sorted. (#150)
+  - Per sample fingerprint plots instead of per replicate.
+  - Input normalized profile plots.
+  - Protein-coding-only versions of plots.
+  - Ensure sample IDs are sorted. (#150)
 - Fix a bug where the wrong SICER output file was used for downstream analyses. (#155)
 - Fix CLI profile on machines other than biowulf & FRCE. (#168)
 - Fix broken bold styling in documentation website. (#53)
@@ -146,37 +151,37 @@
 - Implement peak calling with sicer2, macs2, and gem. (#52)
 - Add parameter options to skip QC, input normalization, and/or peak calling steps. (#72)
 - Calculate and plot QC metrics for called peaks:
-    - Fraction in Peaks (FRiP) (#89)
-    - Jaccard index (#92)
-    - Histogram of peak widths (#92)
+  - Fraction in Peaks (FRiP) (#89)
+  - Jaccard index (#92)
+  - Histogram of peak widths (#92)
 - Add support for paired-end reads. (#105)
 - Add an option to use a custom reference from a genome fasta, gtf, and blacklist file. (#105)
 - Champagne CLI: (#112)
-    - New `--mode` option for `champagne run` to execute the workflow locally ('local') or submit it as a slurm job ('slurm').
-    - Option to override the path to the champagne `main.nf` file or specify the github repo (`CCBR/CHAMPAGNE`) instead.
-        ```sh
-        # use the default path
-        champagne run ...
-        # override the path
-        champagne run path/to/champagne/main.nf
-        # use a revision from github instead
-        champagne run CCBR/CHAMPAGNE -r v0.1.0
-        ```
+  - New `--mode` option for `champagne run` to execute the workflow locally ('local') or submit it as a slurm job ('slurm').
+  - Option to override the path to the champagne `main.nf` file or specify the github repo (`CCBR/CHAMPAGNE`) instead.
+    ```sh
+    # use the default path
+    champagne run ...
+    # override the path
+    champagne run path/to/champagne/main.nf
+    # use a revision from github instead
+    champagne run CCBR/CHAMPAGNE -r v0.1.0
+    ```
 
 ### Bug fixes
 
 - CLI:
-    - Error when biowulf-specific environment variables are not defined. (#54)
-    - The host is now correctly detected as biowulf via `scontrol`. (#75)
+  - Error when biowulf-specific environment variables are not defined. (#54)
+  - The host is now correctly detected as biowulf via `scontrol`. (#75)
 - Containers:
-    - Containers are now specified in process definitions instead of `withName`/`withLabel` for better control. (#69)
-        - Shared containers are specified as parameters in the config file `conf/containers.config`.
-    - No longer use `--mount type=bind` or `--volume` for making directories available to processes in containers. Instead, use Nextflow's `Channel.fromPath` constructor with `type: 'dir'`. (#71)
+  - Containers are now specified in process definitions instead of `withName`/`withLabel` for better control. (#69)
+    - Shared containers are specified as parameters in the config file `conf/containers.config`.
+  - No longer use `--mount type=bind` or `--volume` for making directories available to processes in containers. Instead, use Nextflow's `Channel.fromPath` constructor with `type: 'dir'`. (#71)
 
 ### API-breaking changes
 
 - An error is thrown when a required input file doesn't exist. (#71)
-    - Previously, the workflow quietly didn't run the process(es) that required the missing file.
+  - Previously, the workflow quietly didn't run the process(es) that required the missing file.
 - Renamed `champagne config` to `champagne init` to avoid clashing with `nextflow config`. (#112)
 
 ## CHAMPAGNE 0.1.0

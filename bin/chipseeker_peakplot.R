@@ -7,9 +7,26 @@ messages <- lapply(c("ChIPseeker", "dplyr", "glue", "ggplot2"), load_package)
 
 parser <- argparse::ArgumentParser()
 parser$add_argument("-p", "--peak", required = TRUE, help = "peak file")
-parser$add_argument("-o", "--outfile-prefix", required = TRUE, type = "character", dest = "outfile_prefix", help = "prefix for output filenames")
-parser$add_argument("--genome-txdb", dest = "txdb", required = TRUE, help = "BioConductor TxDb package, e.g. TxDb.Hsapiens.UCSC.hg38.knownGene")
-parser$add_argument("--genome-annot", dest = "adb", required = TRUE, help = "BioConductor annotation package, e.g. org.Hs.eg.db")
+parser$add_argument(
+  "-o",
+  "--outfile-prefix",
+  required = TRUE,
+  type = "character",
+  dest = "outfile_prefix",
+  help = "prefix for output filenames"
+)
+parser$add_argument(
+  "--genome-txdb",
+  dest = "txdb",
+  required = TRUE,
+  help = "BioConductor TxDb package, e.g. TxDb.Hsapiens.UCSC.hg38.knownGene"
+)
+parser$add_argument(
+  "--genome-annot",
+  dest = "adb",
+  required = TRUE,
+  help = "BioConductor annotation package, e.g. org.Hs.eg.db"
+)
 
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
@@ -55,9 +72,16 @@ print(peaks)
 plots <- list(
   covplot = covplot(peaks, weightCol = "qvalue"),
   plotPeakProf2 = plotPeakProf2(
-    peak = peaks, upstream = rel(0.2), downstream = rel(0.2),
-    conf = 0.95, by = "gene", type = "body", nbin = 800,
-    TxDb = txdb, weightCol = "qvalue", ignore_strand = TRUE
+    peak = peaks,
+    upstream = rel(0.2),
+    downstream = rel(0.2),
+    conf = 0.95,
+    by = "gene",
+    type = "body",
+    nbin = 800,
+    TxDb = txdb,
+    weightCol = "qvalue",
+    ignore_strand = TRUE
   )
 )
 

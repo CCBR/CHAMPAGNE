@@ -9,11 +9,21 @@
 
 View the full documentation website: <https://ccbr.github.io/CHAMPAGNE>
 
+<a href="https://ccbr.github.io/CHAMPAGNE/latest/diagram/">
+<figure>
+  <img src="https://raw.githubusercontent.com/CCBR/CHAMPAGNE/refs/heads/main/docs/diagram/overview.svg" alt="CHAMPAGNE workflow overview diagram">
+  <figcaption>
+    <strong>CHAMPAGNE Workflow Overview.</strong>
+    View a detailed version of the workflow diagram on the website.
+  </figcaption>
+</figure>
+</a>
+
 ## Set up
 
 Champagne is installed on the [Biowulf HPC](#biowulf).
 For installation in other execution environments,
-refer to the [docs](https://ccbr.github.io/CHAMPAGNE/).
+refer to the [docs](https://ccbr.github.io/CHAMPAGNE/latest/nextflow).
 
 ### Biowulf
 
