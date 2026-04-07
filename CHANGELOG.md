@@ -4,6 +4,7 @@
   - Users can now set `--deeptools_corr_method` to `pearson` or `spearman` (default).
 - Add workflow diagram to the documentation. (#309, @JWrows2014, @kelly-sovacool)
 - Add an intro the workflow and a description of the workflow steps to the docs. (#310, @kelly-sovacool)
+- Output deduplicated tagalign files to `results/align/tagalign/`. (#313, @kelly-sovacool)
 
 ## CHAMPAGNE 0.5.3
 
