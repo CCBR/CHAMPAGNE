@@ -145,7 +145,7 @@ NGSQC_report.txt files. This string must be directly before ".NGSQC_report.txt".
 the output file name.",
     )
 
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
     directory = options.directory
     ext = options.ext
     group = options.group

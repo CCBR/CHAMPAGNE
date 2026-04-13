@@ -4,7 +4,7 @@
 source https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d58381a0ffd696bbf9c047e4f991f9e/Results-template/Scripts/bam_filter_by_mapq.py
 """
 
-import pysam, sys
+import pysam
 import argparse
 
 parser = argparse.ArgumentParser(description="filter PE bamfile by mapQ values")
@@ -33,7 +33,7 @@ for read in samfile.fetch():
     if read.is_proper_pair:
         if read.mapping_quality < args.mapQ and read.query_name in mapq:
             del mapq[read.query_name]
-        if read.mapping_quality >= args.mapQ and not read.query_name in mapq:
+        if read.mapping_quality >= args.mapQ and read.query_name not in mapq:
             mapq[read.query_name] = 1
 samfile.close()
 samfile = pysam.AlignmentFile(args.inBam, "rb")

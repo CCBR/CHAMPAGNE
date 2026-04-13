@@ -34,7 +34,9 @@ plot_jaccard_pca <- function(dat) {
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
-  stop("Error: not enough positional arguments.\n  Example usage:\n   Rscript plot_jaccard.R path/to/jaccard.txt")
+  stop(
+    "Error: not enough positional arguments.\n  Example usage:\n   Rscript plot_jaccard.R path/to/jaccard.txt"
+  )
 }
 jaccard_tsv <- args[1]
 jaccard_dat <- read_tsv(jaccard_tsv) %>%
@@ -54,12 +56,26 @@ jaccard_heatmap <- jaccard_dat %>%
     axis.title.x = element_blank(),
     axis.title.y = element_blank()
   )
-ggsave(plot = jaccard_heatmap, filename = "jaccard_heatmap_all.png", device = "png", dpi = 300, height = 6, width = 7)
+ggsave(
+  plot = jaccard_heatmap,
+  filename = "jaccard_heatmap_all.png",
+  device = "png",
+  dpi = 300,
+  height = 6,
+  width = 7
+)
 
 # one PCA with all tools & samples
 jaccard_dat %>%
   plot_jaccard_pca() %>%
-  ggsave(plot = ., filename = "jaccard_pca_all.png", device = "png", dpi = 300, height = 4, width = 6)
+  ggsave(
+    plot = .,
+    filename = "jaccard_pca_all.png",
+    device = "png",
+    dpi = 300,
+    height = 4,
+    width = 6
+  )
 
 # plot PCA per peak-calling tool
 peak_callers <- c(

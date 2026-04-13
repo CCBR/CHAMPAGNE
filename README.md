@@ -23,7 +23,7 @@ View the full documentation website: <https://ccbr.github.io/CHAMPAGNE>
 
 Champagne is installed on the [Biowulf HPC](#biowulf).
 For installation in other execution environments,
-refer to the [docs](https://ccbr.github.io/CHAMPAGNE/).
+refer to the [docs](https://ccbr.github.io/CHAMPAGNE/latest/nextflow).
 
 ### Biowulf
 

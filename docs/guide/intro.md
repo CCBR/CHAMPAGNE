@@ -70,9 +70,9 @@ See [the spike-in normalization page](./spike-in.md) for more details.
 ## Peak Calling [CALL_PEAKS]
 
 - Identifies enriched regions using multiple peak-calling algorithms:
-    - MACS2 (broad and narrow)
-    - GEM
-    - SICER
+  - MACS2 (broad and narrow)
+  - GEM
+  - SICER
 - Calculates fraction of reads in peaks (FRiP) for quality assessment
 - Computes Jaccard index for peak overlap between samples
 - Analyzes peak width distributions

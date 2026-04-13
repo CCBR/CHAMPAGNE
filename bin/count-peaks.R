@@ -21,5 +21,7 @@ peaks_old <- read_tsv("old_peak_counts.tsv") %>%
   select(sample_id, tool, count_old)
 
 inner_join(peaks_old, peak_counts) %>%
-  mutate(rel_diff_percent = round(100 * (count_new - count_old) / count_old, 2)) %>%
+  mutate(
+    rel_diff_percent = round(100 * (count_new - count_old) / count_old, 2)
+  ) %>%
   View()

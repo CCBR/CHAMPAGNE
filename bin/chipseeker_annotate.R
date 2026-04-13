@@ -8,13 +8,56 @@ messages <- lapply(c("ChIPseeker", "dplyr", "glue", "ggplot2"), load_package)
 
 parser <- argparse::ArgumentParser()
 parser$add_argument("-p", "--peak", required = TRUE, help = "peak file")
-parser$add_argument("-u", "--uptss", required = FALSE, type = "integer", default = 2000, help = "upstream bases from TSS")
-parser$add_argument("-d", "--downtss", required = FALSE, type = "integer", default = 2000, help = "upstream bases from TSS")
-parser$add_argument("-t", "--toppromoterpeaks", required = FALSE, type = "integer", default = 1000, help = "filter top N peaks in promoters for genelist output")
-parser$add_argument("-o", "--outfile-prefix", required = TRUE, type = "character", dest = "outfile_prefix", help = "prefix for output filenames")
-parser$add_argument("--genome-txdb", dest = "txdb", required = TRUE, help = "BioConductor TxDb package, e.g. TxDb.Hsapiens.UCSC.hg38.knownGene")
-parser$add_argument("--genome-annot", dest = "adb", required = TRUE, help = "BioConductor annotation package, e.g. org.Hs.eg.db")
-parser$add_argument("--cores", required = TRUE, type = "integer", help = "Number of cores to use")
+parser$add_argument(
+  "-u",
+  "--uptss",
+  required = FALSE,
+  type = "integer",
+  default = 2000,
+  help = "upstream bases from TSS"
+)
+parser$add_argument(
+  "-d",
+  "--downtss",
+  required = FALSE,
+  type = "integer",
+  default = 2000,
+  help = "upstream bases from TSS"
+)
+parser$add_argument(
+  "-t",
+  "--toppromoterpeaks",
+  required = FALSE,
+  type = "integer",
+  default = 1000,
+  help = "filter top N peaks in promoters for genelist output"
+)
+parser$add_argument(
+  "-o",
+  "--outfile-prefix",
+  required = TRUE,
+  type = "character",
+  dest = "outfile_prefix",
+  help = "prefix for output filenames"
+)
+parser$add_argument(
+  "--genome-txdb",
+  dest = "txdb",
+  required = TRUE,
+  help = "BioConductor TxDb package, e.g. TxDb.Hsapiens.UCSC.hg38.knownGene"
+)
+parser$add_argument(
+  "--genome-annot",
+  dest = "adb",
+  required = TRUE,
+  help = "BioConductor annotation package, e.g. org.Hs.eg.db"
+)
+parser$add_argument(
+  "--cores",
+  required = TRUE,
+  type = "integer",
+  help = "Number of cores to use"
+)
 
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
@@ -48,7 +91,11 @@ if (num_columns == 9) {
 } else if (num_columns == 10) {
   colnames(np) <- c(peak_colnames, "peak")
 } else {
-  stop(paste("Expected 9 or 10 columns in peak file, but", num_columns, "given"))
+  stop(paste(
+    "Expected 9 or 10 columns in peak file, but",
+    num_columns,
+    "given"
+  ))
 }
 np <- np[order(-np$qValue), ]
 np$peakID <- paste(np$chrom, ":", np$chromStart, "-", np$chromEnd, sep = "")
@@ -64,7 +111,15 @@ annot <- annotatePeak(
   tssRegion = c(-2000, 2000),
   TxDb = txdb,
   level = "transcript",
-  genomicAnnotationPriority = c("Promoter", "5UTR", "3UTR", "Exon", "Intron", "Downstream", "Intergenic"),
+  genomicAnnotationPriority = c(
+    "Promoter",
+    "5UTR",
+    "3UTR",
+    "Exon",
+    "Intron",
+    "Downstream",
+    "Intergenic"
+  ),
   annoDb = adb,
   sameStrand = FALSE,
   ignoreOverlap = FALSE,
@@ -105,7 +160,13 @@ merged <- dplyr::full_join(padf, np, by = "peakID") %>%
   dplyr::arrange(dplyr::desc(qValue))
 
 annotated_outfile <- glue("{outfile_prefix}/{outfile_prefix}.annotated.txt")
-write.table(merged, annotated_outfile, sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(
+  merged,
+  annotated_outfile,
+  sep = "\t",
+  quote = FALSE,
+  row.names = FALSE
+)
 l <- paste("# Median peak width : ", median(merged$width), sep = "")
 write(l, annotated_outfile, append = TRUE)
 l <- paste("# Median pValue : ", median(merged$pValue), sep = "")
@@ -127,7 +188,13 @@ promoters <- head(promoters, n = args$toppromoterpeaks)
 if (length(intersect(c("ENSEMBL", "SYMBOL"), colnames(promoters))) == 2) {
   promoter_genes <- unique(promoters[, c("ENSEMBL", "SYMBOL")])
   colnames(promoter_genes) <- c("#ENSEMBL", "SYMBOL")
-  write.table(promoter_genes, outfile_genelist, sep = "\t", quote = FALSE, row.names = FALSE)
+  write.table(
+    promoter_genes,
+    outfile_genelist,
+    sep = "\t",
+    quote = FALSE,
+    row.names = FALSE
+  )
 }
 l <- paste("# Median peak width : ", median(promoters$width), sep = "")
 write(l, outfile_genelist, append = TRUE)
@@ -138,7 +205,14 @@ write(l, outfile_genelist, append = TRUE)
 
 # annotation type frequency table
 
-l <- paste("#annotationType", "frequency", "medianWidth", "medianpValue", "medianqValue", sep = "\t")
+l <- paste(
+  "#annotationType",
+  "frequency",
+  "medianWidth",
+  "medianpValue",
+  "medianqValue",
+  sep = "\t"
+)
 outfile_summary <- glue("{outfile_prefix}/{outfile_prefix}.summary.txt")
 write(l, outfile_summary)
 atypes <- c(

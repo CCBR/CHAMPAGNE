@@ -20,18 +20,29 @@ centerPeaks <- function(gr, width = 500, summit_col = "peak") {
   if (!is.null(summit_col) && summit_col %in% colnames(mcols(gr))) {
     summit_val <- mcols(gr)[[summit_col]]
     use_peak <- summit_val >= 0
-    centers <- ifelse(use_peak, start(gr) + summit_val, floor((start(gr) + end(gr)) / 2))
+    centers <- ifelse(
+      use_peak,
+      start(gr) + summit_val,
+      floor((start(gr) + end(gr)) / 2)
+    )
   } else {
     centers <- floor((start(gr) + end(gr)) / 2)
   }
   half_width <- floor(width / 2)
   IR <- IRanges(start = centers - half_width, width = width)
-  gr <- GRanges(seqnames = seqnames(gr), ranges = IR, strand = strand(gr), mcols(gr))
+  gr <- GRanges(
+    seqnames = seqnames(gr),
+    ranges = IR,
+    strand = strand(gr),
+    mcols(gr)
+  )
   return(gr)
 }
 
 deduplicatePeaksFast <- function(gr, score_col = "score_per_million") {
-  if (!score_col %in% colnames(mcols(gr))) stop(paste("Missing column:", score_col))
+  if (!score_col %in% colnames(mcols(gr))) {
+    stop(paste("Missing column:", score_col))
+  }
   hits <- findOverlaps(gr, gr, ignore.strand = TRUE)
   ov_df <- as.data.frame(hits)
   ov_df <- ov_df[ov_df$queryHits != ov_df$subjectHits, ]
@@ -67,7 +78,18 @@ gr_to_table <- function(gr, output_file) {
     stringsAsFactors = FALSE
   )
   df$strand <- "."
-  df <- df[, c("seqnames", "start", "end", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak")]
+  df <- df[, c(
+    "seqnames",
+    "start",
+    "end",
+    "name",
+    "score",
+    "strand",
+    "signalValue",
+    "pValue",
+    "qValue",
+    "peak"
+  )]
 
   # Write without column names or row names
   write.table(
@@ -83,16 +105,36 @@ gr_to_table <- function(gr, output_file) {
 
 # ---- Argument Parsing ----
 
-parser <- ArgumentParser(description = "Merge and deduplicate narrowPeak files by score_per_million")
-parser$add_argument("narrowPeak_files", nargs = "+", help = "List of narrowPeak files to process")
-parser$add_argument("--width", type = "integer", default = 500, help = "Peak width centered on summit or midpoint (default: 500)")
-parser$add_argument("--output", type = "character", default = "merged_dedup_peaks.narrowPeak", help = "Output narrowPeak file")
+parser <- ArgumentParser(
+  description = "Merge and deduplicate narrowPeak files by score_per_million"
+)
+parser$add_argument(
+  "narrowPeak_files",
+  nargs = "+",
+  help = "List of narrowPeak files to process"
+)
+parser$add_argument(
+  "--width",
+  type = "integer",
+  default = 500,
+  help = "Peak width centered on summit or midpoint (default: 500)"
+)
+parser$add_argument(
+  "--output",
+  type = "character",
+  default = "merged_dedup_peaks.narrowPeak",
+  help = "Output narrowPeak file"
+)
 
 args <- parser$parse_args()
 
 # ---- Main Workflow ----
 
-cat("Processing files:\n", paste(args$narrowPeak_files, collapse = "\n"), "\n\n")
+cat(
+  "Processing files:\n",
+  paste(args$narrowPeak_files, collapse = "\n"),
+  "\n\n"
+)
 
 # Step 1: Process each file individually
 gr_list <- lapply(args$narrowPeak_files, function(file) {
