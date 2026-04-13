@@ -1,0 +1,5 @@
+sample,rep,fastq_1,fastq_2,antibody,input
+SPT5_T0,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR1822153_1.fastq,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR1822153_2.fastq,SPT5,SPT5_INPUT
+SPT5_T0,2,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR1822154_1.fastq,,SPT5,SPT5_INPUT
+SPT5_INPUT,1,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR5204809_Spt5-ChIP_Input1_SacCer_ChIP-Seq_ss100k_R1.fastq,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR5204809_Spt5-ChIP_Input1_SacCer_ChIP-Seq_ss100k_R2.fastq,,
+SPT5_INPUT,2,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR5204810_Spt5-ChIP_Input2_SacCer_ChIP-Seq_ss100k_R1.fastq,/data/CCBR_Pipeliner/testdata/CHAMPAGNE/test/SRR5204810_Spt5-ChIP_Input2_SacCer_ChIP-Seq_ss100k_R2.fastq,,

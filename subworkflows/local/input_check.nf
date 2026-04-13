@@ -5,6 +5,7 @@
 
 include { CHECK_SAMPLESHEET } from '../../modules/local/check_samplesheet.nf'
 include { CHECK_CONTRASTS } from "../../modules/local/check_contrasts/"
+include { GZIP } from "../../modules/local/gzip/"
 
 workflow INPUT_CHECK {
     take:
@@ -17,6 +18,17 @@ workflow INPUT_CHECK {
             .splitCsv ( header:true, sep:',' )
             .map { create_fastq_channel(it) }
             .set { reads }
+
+        reads.transpose()
+            .branch{ meta, file ->
+                gzip: file.extension == 'gz'
+                text: true
+            }
+            .set{ reads_branched }
+        GZIP(reads_branched.text).gzip
+            .mix(reads_branched.gzip)
+            .groupTuple()
+            .set{ reads_gzip }
 
         // Run check on the contrast manifest
         ch_contrasts = Channel.empty()
@@ -38,7 +50,7 @@ workflow INPUT_CHECK {
 
 
     emit:
-        reads                               = reads      // channel: [ meta, [ reads ] ]
+        reads                               = reads_gzip      // channel: [ meta, [ reads ] ]
         contrasts                           = ch_contrasts // one row per sample with contrast name and group in the meta
         versions                            = CHECK_SAMPLESHEET.out.versions // channel: [ versions.yml ]
 }
