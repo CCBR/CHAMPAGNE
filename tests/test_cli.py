@@ -1,4 +1,3 @@
-import json
 import os.path
 import pathlib
 import pytest
@@ -39,9 +38,9 @@ def test_preview():
         check=True,
     ).stdout
     cmd_line = {
-        l.split(":")[0].strip(): l.split(":")[1].strip()
-        for l in output.split("\n")
-        if ":" in l
+        line.split(":")[0].strip(): line.split(":")[1].strip()
+        for line in output.split("\n")
+        if ":" in line
     }["cmd line"]
     assert "-preview" in cmd_line and "-resume" in cmd_line
 
@@ -55,35 +54,47 @@ def test_forceall():
         check=True,
     ).stdout
     cmd_line = {
-        l.split(":")[0].strip(): l.split(":")[1].strip()
-        for l in output.split("\n")
-        if ":" in l
+        line.split(":")[0].strip(): line.split(":")[1].strip()
+        for line in output.split("\n")
+        if ":" in line
     }["cmd line"]
     assert "-preview" in cmd_line and "-resume" not in cmd_line
 
 
 def test_init():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        output = shell_run(f"./bin/champagne init --output {tmp_dir}")
         outdir = pathlib.Path(tmp_dir)
-        assertions = [(outdir / "nextflow.config").exists(), (outdir / "log").exists()]
-    assert all(assertions)
+        subprocess.run(
+            f"./bin/champagne init --output {tmp_dir}",
+            capture_output=True,
+            shell=True,
+            text=True,
+            check=True,
+        )
+        assert (outdir / "nextflow.config").exists()
+        assert (outdir / "log").exists()
 
 
 def test_init_default():
     cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as tmp_dir:
         os.chdir(tmp_dir)
-        output = shell_run(f"{cwd}/bin/champagne init")
         outdir = pathlib.Path(tmp_dir)
-        assertions = [(outdir / "nextflow.config").exists(), (outdir / "log").exists()]
+        subprocess.run(
+            "champagne init",
+            capture_output=True,
+            shell=True,
+            text=True,
+            check=True,
+        )
+        assert (outdir / "nextflow.config").exists()
+        assert (outdir / "log").exists()
 
     os.chdir(cwd)
-    assert all(assertions)
 
 
 def test_run_no_init():
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception):
         with tempfile.TemporaryDirectory() as tmp_dir:
             output = shell_run(
                 f"./bin/champagne run --output {tmp_dir} --mode local",

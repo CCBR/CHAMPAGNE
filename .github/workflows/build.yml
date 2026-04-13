@@ -23,10 +23,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 6
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.13"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -45,7 +45,7 @@ jobs:
           pip install .[dev,test]
       - name: pytest
         run: |
-          pytest tests
+          python -m pytest
       - name: lint nxf
         if: always()
         run: |

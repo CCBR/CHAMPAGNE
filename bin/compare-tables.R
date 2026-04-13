@@ -11,5 +11,7 @@ new <- read_tsv("qc_table.tsv") %>%
 
 
 inner_join(original, new) %>%
-  mutate(rel_diff_percent = round(100 * (value_new - value_orig) / value_orig, 2)) %>%
+  mutate(
+    rel_diff_percent = round(100 * (value_new - value_orig) / value_orig, 2)
+  ) %>%
   View()

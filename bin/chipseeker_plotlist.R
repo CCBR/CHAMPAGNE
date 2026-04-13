@@ -7,8 +7,22 @@ load_package <- function(x) {
 messages <- lapply(c("ChIPseeker", "dplyr", "ggplot2"), load_package)
 
 parser <- argparse::ArgumentParser()
-parser$add_argument("-a", "--annotations", required = TRUE, type = "character", dest = "annots", nargs = "+", help = "space-delimited list of Rds files of peak annotation objects from chipseeker")
-parser$add_argument("-o", "--outfile", required = TRUE, type = "character", help = "output filenames")
+parser$add_argument(
+  "-a",
+  "--annotations",
+  required = TRUE,
+  type = "character",
+  dest = "annots",
+  nargs = "+",
+  help = "space-delimited list of Rds files of peak annotation objects from chipseeker"
+)
+parser$add_argument(
+  "-o",
+  "--outfile",
+  required = TRUE,
+  type = "character",
+  help = "output filenames"
+)
 args <- parser$parse_args()
 
 peak_anno_list <- args$annots %>% lapply(readRDS)

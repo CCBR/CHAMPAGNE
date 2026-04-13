@@ -82,7 +82,8 @@ each sample.
 
 ### Alignments
 
-`align/bam/` contains the sorted and deduped BAM files for each sample.
+- `align/bam/` contains the sorted and deduped BAM files for each sample.
+- `align/tagalign` contains the deduplicated tagalign files.
 
 ### Bigwigs
 

@@ -32,7 +32,7 @@ def make_dir(path):
 
 
 def print_error(error, context="Line", context_str=""):
-    error_str = f"ERROR: Please check samplesheet ->"
+    error_str = "ERROR: Please check samplesheet ->"
     if context != "" and context_str != "":
         error_str = "ERROR: Please check samplesheet -> {}\n{}: '{}'".format(
             error, context.strip(), context_str.strip()
@@ -203,7 +203,7 @@ def check_samplesheet(file_in, file_out):
                     for x in sample_mapping_dict[sample]
                 ):
                     print_error(
-                        f"Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end!",
+                        "Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end!",
                         "Sample",
                         sample,
                     )
@@ -219,7 +219,7 @@ def check_samplesheet(file_in, file_out):
                         )
                     fout.write(",".join(val) + "\n")
     else:
-        print_error(f"No entries to process!", "Samplesheet: {file_in}")
+        print_error("No entries to process!", "Samplesheet: {file_in}")
 
 
 def main(args=None):
