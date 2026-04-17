@@ -1,0 +1,326 @@
+results
+├── full_mm10
+│   ├── align
+│   │   └── bam
+│   │       ├── CTCF_ChIP_macrophage_p20_1.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_macrophage_p20_1.TagAlign.dedup.sort.bam.bai
+│   │       ├── CTCF_ChIP_macrophage_p20_2.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_macrophage_p20_2.TagAlign.dedup.sort.bam.bai
+│   │       ├── CTCF_ChIP_macrophage_p3_1.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_macrophage_p3_1.TagAlign.dedup.sort.bam.bai
+│   │       ├── CTCF_ChIP_macrophage_p3_2.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_macrophage_p3_2.TagAlign.dedup.sort.bam.bai
+│   │       ├── CTCF_ChIP_MEF_p20_1.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_MEF_p20_1.TagAlign.dedup.sort.bam.bai
+│   │       ├── CTCF_ChIP_MEF_p20_2.TagAlign.dedup.sort.bam
+│   │       ├── CTCF_ChIP_MEF_p20_2.TagAlign.dedup.sort.bam.bai
+│   │       ├── WCE_p20.TagAlign.dedup.sort.bam
+│   │       ├── WCE_p20.TagAlign.dedup.sort.bam.bai
+│   │       ├── WCE_p3.TagAlign.dedup.sort.bam
+│   │       └── WCE_p3.TagAlign.dedup.sort.bam.bai
+│   ├── peaks
+│   │   ├── gem
+│   │   │   └── replicates
+│   │   │       ├── CTCF_ChIP_macrophage_p3_1
+│   │   │       │   └── CTCF_ChIP_macrophage_p3_1.GEM_events.narrowPeak.filtered
+│   │   │       └── CTCF_ChIP_macrophage_p3_2
+│   │   │           └── CTCF_ChIP_macrophage_p3_2.GEM_events.narrowPeak.filtered
+│   │   ├── macs_broad
+│   │   │   ├── consensus
+│   │   │   │   └── union
+│   │   │   │       ├── CTCF_ChIP_macrophage_p20.macs_broad.sorted.merged.consensus_union.bed
+│   │   │   │       ├── CTCF_ChIP_macrophage_p3.macs_broad.sorted.merged.consensus_union.bed
+│   │   │   │       └── CTCF_ChIP_MEF_p20.macs_broad.sorted.merged.consensus_union.bed
+│   │   │   ├── diffbind
+│   │   │   │   ├── antibody
+│   │   │   │   │   └── antibody.macs_broad.html
+│   │   │   │   └── celltype_macrophage_vs_fibroblast
+│   │   │   │       └── celltype_macrophage_vs_fibroblast.macs_broad.html
+│   │   │   └── replicates
+│   │   │       ├── CTCF_ChIP_macrophage_p20_1
+│   │   │       │   └── CTCF_ChIP_macrophage_p20_1_peaks.broadPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p20_2
+│   │   │       │   └── CTCF_ChIP_macrophage_p20_2_peaks.broadPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p3_1
+│   │   │       │   └── CTCF_ChIP_macrophage_p3_1_peaks.broadPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p3_2
+│   │   │       │   └── CTCF_ChIP_macrophage_p3_2_peaks.broadPeak
+│   │   │       ├── CTCF_ChIP_MEF_p20_1
+│   │   │       │   └── CTCF_ChIP_MEF_p20_1_peaks.broadPeak
+│   │   │       └── CTCF_ChIP_MEF_p20_2
+│   │   │           └── CTCF_ChIP_MEF_p20_2_peaks.broadPeak
+│   │   ├── macs_narrow
+│   │   │   ├── consensus
+│   │   │   │   └── union
+│   │   │   │       ├── CTCF_ChIP_macrophage_p20.macs_narrow.sorted.merged.consensus_union.bed
+│   │   │   │       ├── CTCF_ChIP_macrophage_p3.macs_narrow.sorted.merged.consensus_union.bed
+│   │   │   │       └── CTCF_ChIP_MEF_p20.macs_narrow.sorted.merged.consensus_union.bed
+│   │   │   ├── diffbind
+│   │   │   │   ├── antibody
+│   │   │   │   │   └── antibody.macs_narrow.html
+│   │   │   │   └── celltype_macrophage_vs_fibroblast
+│   │   │   │       └── celltype_macrophage_vs_fibroblast.macs_narrow.html
+│   │   │   └── replicates
+│   │   │       ├── CTCF_ChIP_macrophage_p20_1
+│   │   │       │   └── CTCF_ChIP_macrophage_p20_1_peaks.narrowPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p20_2
+│   │   │       │   └── CTCF_ChIP_macrophage_p20_2_peaks.narrowPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p3_1
+│   │   │       │   └── CTCF_ChIP_macrophage_p3_1_peaks.narrowPeak
+│   │   │       ├── CTCF_ChIP_macrophage_p3_2
+│   │   │       │   └── CTCF_ChIP_macrophage_p3_2_peaks.narrowPeak
+│   │   │       ├── CTCF_ChIP_MEF_p20_1
+│   │   │       │   └── CTCF_ChIP_MEF_p20_1_peaks.narrowPeak
+│   │   │       └── CTCF_ChIP_MEF_p20_2
+│   │   │           └── CTCF_ChIP_MEF_p20_2_peaks.narrowPeak
+│   │   └── sicer
+│   │       ├── consensus
+│   │       │   └── union
+│   │       │       ├── CTCF_ChIP_macrophage_p20.sicer.sorted.merged.consensus_union.bed
+│   │       │       ├── CTCF_ChIP_macrophage_p3.sicer.sorted.merged.consensus_union.bed
+│   │       │       └── CTCF_ChIP_MEF_p20.sicer.sorted.merged.consensus_union.bed
+│   │       ├── diffbind
+│   │       │   ├── antibody
+│   │       │   │   └── antibody.sicer.html
+│   │       │   └── celltype_macrophage_vs_fibroblast
+│   │       │       └── celltype_macrophage_vs_fibroblast.sicer.html
+│   │       └── replicates
+│   │           ├── CTCF_ChIP_macrophage_p20_1
+│   │           │   └── CTCF_ChIP_macrophage_p20_1.TagAlign.converted_sicer.broadPeak
+│   │           ├── CTCF_ChIP_macrophage_p20_2
+│   │           │   └── CTCF_ChIP_macrophage_p20_2.TagAlign.converted_sicer.broadPeak
+│   │           ├── CTCF_ChIP_macrophage_p3_1
+│   │           │   └── CTCF_ChIP_macrophage_p3_1.TagAlign.converted_sicer.broadPeak
+│   │           ├── CTCF_ChIP_macrophage_p3_2
+│   │           │   └── CTCF_ChIP_macrophage_p3_2.TagAlign.converted_sicer.broadPeak
+│   │           ├── CTCF_ChIP_MEF_p20_1
+│   │           │   └── CTCF_ChIP_MEF_p20_1.TagAlign.converted_sicer.broadPeak
+│   │           └── CTCF_ChIP_MEF_p20_2
+│   │               └── CTCF_ChIP_MEF_p20_2.TagAlign.converted_sicer.broadPeak
+│   └── qc
+│       ├── deeptools
+│       │   ├── bigWigSum.plotPCA.tab
+│       │   ├── bigWigSum.spearman_heatmap.png
+│       │   ├── bigWigSum.spearman_heatmap.tab
+│       │   ├── bigWigSum.spearman_scatterplot.png
+│       │   ├── bigWigSum.spearman_scatterplot.tab
+│       │   ├── CTCF_ChIP_macrophage_p20.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p20.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p20.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p20.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p20.plotFingerprint.mat.txt
+│       │   ├── CTCF_ChIP_macrophage_p20.plotFingerprint.qcmetrics.txt
+│       │   ├── CTCF_ChIP_macrophage_p3.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p3.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p3.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p3.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_macrophage_p3.plotFingerprint.mat.txt
+│       │   ├── CTCF_ChIP_macrophage_p3.plotFingerprint.qcmetrics.txt
+│       │   ├── CTCF_ChIP_MEF_p20.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_MEF_p20.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_MEF_p20.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_MEF_p20.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   ├── CTCF_ChIP_MEF_p20.plotFingerprint.mat.txt
+│       │   ├── CTCF_ChIP_MEF_p20.plotFingerprint.qcmetrics.txt
+│       │   ├── inputnorm.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   ├── inputnorm.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   ├── inputnorm.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   └── inputnorm.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       ├── fastqc
+│       │   ├── raw
+│       │   │   ├── SRR3081748_1_fastqc.html
+│       │   │   ├── SRR3081748_1_fastqc.zip
+│       │   │   ├── SRR3081749_1_fastqc.html
+│       │   │   ├── SRR3081749_1_fastqc.zip
+│       │   │   ├── SRR3081750_1_fastqc.html
+│       │   │   ├── SRR3081750_1_fastqc.zip
+│       │   │   ├── SRR3081751_1_fastqc.html
+│       │   │   ├── SRR3081751_1_fastqc.zip
+│       │   │   ├── SRR3081752_1_fastqc.html
+│       │   │   ├── SRR3081752_1_fastqc.zip
+│       │   │   ├── SRR3081753_1_fastqc.html
+│       │   │   ├── SRR3081753_1_fastqc.zip
+│       │   │   ├── SRR3081772_1_fastqc.html
+│       │   │   ├── SRR3081772_1_fastqc.zip
+│       │   │   ├── SRR3081773_1_fastqc.html
+│       │   │   └── SRR3081773_1_fastqc.zip
+│       │   └── trimmed
+│       │       ├── CTCF_ChIP_macrophage_p20_1.trim_fastqc.html
+│       │       ├── CTCF_ChIP_macrophage_p20_1.trim_fastqc.zip
+│       │       ├── CTCF_ChIP_macrophage_p20_2.trim_fastqc.html
+│       │       ├── CTCF_ChIP_macrophage_p20_2.trim_fastqc.zip
+│       │       ├── CTCF_ChIP_macrophage_p3_1.trim_fastqc.html
+│       │       ├── CTCF_ChIP_macrophage_p3_1.trim_fastqc.zip
+│       │       ├── CTCF_ChIP_macrophage_p3_2.trim_fastqc.html
+│       │       ├── CTCF_ChIP_macrophage_p3_2.trim_fastqc.zip
+│       │       ├── CTCF_ChIP_MEF_p20_1.trim_fastqc.html
+│       │       ├── CTCF_ChIP_MEF_p20_1.trim_fastqc.zip
+│       │       ├── CTCF_ChIP_MEF_p20_2.trim_fastqc.html
+│       │       ├── CTCF_ChIP_MEF_p20_2.trim_fastqc.zip
+│       │       ├── WCE_p20.trim_fastqc.html
+│       │       ├── WCE_p20.trim_fastqc.zip
+│       │       ├── WCE_p3.trim_fastqc.html
+│       │       └── WCE_p3.trim_fastqc.zip
+│       ├── multiqc
+│       │   ├── inputs
+│       │   │   ├── bigWigSum.plotPCA.tab
+│       │   │   ├── bigWigSum.spearman_heatmap.png
+│       │   │   ├── bigWigSum.spearman_heatmap.tab
+│       │   │   ├── bigWigSum.spearman_scatterplot.png
+│       │   │   ├── bigWigSum.spearman_scatterplot.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.c_curve
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.spp.out
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.trim_screen.html
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.trim_screen.png
+│       │   │   ├── CTCF_ChIP_macrophage_p20_1.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.c_curve
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.spp.out
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.trim_screen.html
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.trim_screen.png
+│       │   │   ├── CTCF_ChIP_macrophage_p20_2.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p20.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p20.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p20.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p20.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p20.plotFingerprint.mat.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p20.plotFingerprint.qcmetrics.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.c_curve
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.spp.out
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.trim_screen.html
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.trim_screen.png
+│       │   │   ├── CTCF_ChIP_macrophage_p3_1.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.c_curve
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.spp.out
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.trim_screen.html
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.trim_screen.png
+│       │   │   ├── CTCF_ChIP_macrophage_p3_2.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p3.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p3.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p3.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p3.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_macrophage_p3.plotFingerprint.mat.txt
+│       │   │   ├── CTCF_ChIP_macrophage_p3.plotFingerprint.qcmetrics.txt
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.c_curve
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.spp.out
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.trim_screen.html
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.trim_screen.png
+│       │   │   ├── CTCF_ChIP_MEF_p20_1.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.c_curve
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.spp.out
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.trim_fastqc.zip
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.trim_screen.html
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.trim_screen.png
+│       │   │   ├── CTCF_ChIP_MEF_p20_2.trim_screen.txt
+│       │   │   ├── CTCF_ChIP_MEF_p20.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_MEF_p20.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_MEF_p20.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_MEF_p20.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   │   ├── CTCF_ChIP_MEF_p20.plotFingerprint.mat.txt
+│       │   │   ├── CTCF_ChIP_MEF_p20.plotFingerprint.qcmetrics.txt
+│       │   │   ├── FRiP_nbasesM.png
+│       │   │   ├── FRiP_samples.png
+│       │   │   ├── inputnorm.geneinfo.all_genes.metagene.mat.plotProfile.tab
+│       │   │   ├── inputnorm.geneinfo.all_genes.TSS.mat.plotProfile.tab
+│       │   │   ├── inputnorm.geneinfo.protein_coding.metagene.mat.plotProfile.tab
+│       │   │   ├── inputnorm.geneinfo.protein_coding.TSS.mat.plotProfile.tab
+│       │   │   ├── jaccard_heatmap_all.png
+│       │   │   ├── jaccard_pca_all.png
+│       │   │   ├── jaccard_pca_tool.png
+│       │   │   ├── peak_widths_histogram.png
+│       │   │   ├── qc_table.tsv
+│       │   │   ├── SRR3081748_1_fastqc.zip
+│       │   │   ├── SRR3081749_1_fastqc.zip
+│       │   │   ├── SRR3081750_1_fastqc.zip
+│       │   │   ├── SRR3081751_1_fastqc.zip
+│       │   │   ├── SRR3081752_1_fastqc.zip
+│       │   │   ├── SRR3081753_1_fastqc.zip
+│       │   │   ├── SRR3081772_1_fastqc.zip
+│       │   │   ├── SRR3081773_1_fastqc.zip
+│       │   │   ├── WCE_p20.c_curve
+│       │   │   ├── WCE_p20.spp.out
+│       │   │   ├── WCE_p20.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── WCE_p20.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── WCE_p20.trim_fastqc.zip
+│       │   │   ├── WCE_p20.trim_screen.html
+│       │   │   ├── WCE_p20.trim_screen.png
+│       │   │   ├── WCE_p20.trim_screen.txt
+│       │   │   ├── WCE_p3.c_curve
+│       │   │   ├── WCE_p3.spp.out
+│       │   │   ├── WCE_p3.TagAlign.dedup.sort.bam.flagstat
+│       │   │   ├── WCE_p3.TagAlign.dedup.sort.bam.idxstat
+│       │   │   ├── WCE_p3.trim_fastqc.zip
+│       │   │   ├── WCE_p3.trim_screen.html
+│       │   │   ├── WCE_p3.trim_screen.png
+│       │   │   └── WCE_p3.trim_screen.txt
+│       │   └── multiqc_report.html
+│       └── phantompeakqualtools
+│           ├── CTCF_ChIP_macrophage_p20_1.fraglen.txt
+│           ├── CTCF_ChIP_macrophage_p20_1.ppqt.pdf
+│           ├── CTCF_ChIP_macrophage_p20_1.spp.out
+│           ├── CTCF_ChIP_macrophage_p20_2.fraglen.txt
+│           ├── CTCF_ChIP_macrophage_p20_2.ppqt.pdf
+│           ├── CTCF_ChIP_macrophage_p20_2.spp.out
+│           ├── CTCF_ChIP_macrophage_p3_1.fraglen.txt
+│           ├── CTCF_ChIP_macrophage_p3_1.ppqt.pdf
+│           ├── CTCF_ChIP_macrophage_p3_1.spp.out
+│           ├── CTCF_ChIP_macrophage_p3_2.fraglen.txt
+│           ├── CTCF_ChIP_macrophage_p3_2.ppqt.pdf
+│           ├── CTCF_ChIP_macrophage_p3_2.spp.out
+│           ├── CTCF_ChIP_MEF_p20_1.fraglen.txt
+│           ├── CTCF_ChIP_MEF_p20_1.ppqt.pdf
+│           ├── CTCF_ChIP_MEF_p20_1.spp.out
+│           ├── CTCF_ChIP_MEF_p20_2.fraglen.txt
+│           ├── CTCF_ChIP_MEF_p20_2.ppqt.pdf
+│           ├── CTCF_ChIP_MEF_p20_2.spp.out
+│           ├── WCE_p20.fraglen.txt
+│           ├── WCE_p20.ppqt.pdf
+│           ├── WCE_p20.spp.out
+│           ├── WCE_p3.fraglen.txt
+│           ├── WCE_p3.ppqt.pdf
+│           └── WCE_p3.spp.out
+└── pipeline_info
+    ├── execution_report_2025-06-13_11-06-39.html
+    ├── execution_report_2025-06-13_11-45-30.html
+    ├── execution_report_2025-06-13_11-46-35.html
+    ├── execution_report_2025-06-13_12-05-44.html
+    ├── execution_report_2025-06-13_12-11-15.html
+    ├── execution_report_2025-06-13_13-09-40.html
+    ├── execution_timeline_2025-06-13_11-06-39.html
+    ├── execution_timeline_2025-06-13_11-45-30.html
+    ├── execution_timeline_2025-06-13_11-46-35.html
+    ├── execution_timeline_2025-06-13_12-05-44.html
+    ├── execution_timeline_2025-06-13_12-11-15.html
+    ├── execution_timeline_2025-06-13_13-09-40.html
+    ├── execution_trace_2025-06-13_11-06-39.txt
+    ├── execution_trace_2025-06-13_11-08-36.txt
+    ├── execution_trace_2025-06-13_11-28-10.txt
+    ├── execution_trace_2025-06-13_11-43-55.txt
+    ├── execution_trace_2025-06-13_11-45-30.txt
+    ├── execution_trace_2025-06-13_11-46-35.txt
+    ├── execution_trace_2025-06-13_12-05-44.txt
+    ├── execution_trace_2025-06-13_12-11-15.txt
+    ├── execution_trace_2025-06-13_13-09-40.txt
+    ├── pipeline_dag_2025-06-13_11-06-39.png
+    ├── pipeline_dag_2025-06-13_11-46-35.png
+    ├── pipeline_dag_2025-06-13_12-05-44.png
+    ├── pipeline_dag_2025-06-13_12-11-15.png
+    └── pipeline_dag_2025-06-13_13-09-40.png
+
+56 directories, 267 files
