@@ -7,7 +7,9 @@ as the config files will be accessed directly from the GitHub repo.
 
 > [!NOTE]
 >
-> CHAMPAGNE requires nextflow v25.10.0 or later.
+> CHAMPAGNE requires nextflow v25.10.0.
+> If you have a different version installed, prefix your nextflow command with
+> `nxf_ver=25.10.0`, e.g. `nxf_ver=25.10.0 nextflow run ...`.
 
 ```sh
 nextflow run CCBR/CHAMPAGNE -profile test,singularity
