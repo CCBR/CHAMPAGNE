@@ -5,7 +5,7 @@ process CUSTOM_SRATOOLSNCBISETTINGS {
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/sra-tools:3.0.8--h9f5acd7_0' :
-        'biocontainers/sra-tools:3.0.8--h9f5acd7_0' }"
+        'quay.io/biocontainers/sra-tools:3.0.8--h9f5acd7_0' }"
 
     output:
     path('*.mkfg')     , emit: ncbi_settings
