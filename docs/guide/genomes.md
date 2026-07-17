@@ -104,7 +104,7 @@ If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
 - genome GTF
-- blacklist fasta
+- blacklist fasta or bed (optional)
 
 Prepare your custom reference genome with:
 

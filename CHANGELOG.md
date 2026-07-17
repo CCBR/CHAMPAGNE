@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- Optionally skip blacklist filtering if no blacklist index, bed, or fasta file is provided. (#349, @kelly-sovacool)
+
 ## CHAMPAGNE 0.6.0
 
 - Support uncompressed fastq files -- they will be gzipped after the samplesheet check. (#306, @kelly-sovacool)
