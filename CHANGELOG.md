@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- Skip fastq screen if the config file or database are not provided. (#351, @kelly-sovacool)
+
 ## CHAMPAGNE 0.6.0
 
 - Support uncompressed fastq files -- they will be gzipped after the samplesheet check. (#306, @kelly-sovacool)
