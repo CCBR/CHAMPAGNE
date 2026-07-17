@@ -1,3 +1,7 @@
-![Workflow Overview](./overview.svg)
+## Workflow overview
 
-![Detailed Workflow Diagram](./workflow.svg)
+![Workflow overview](./overview.svg)
+
+## Detailed diagram
+
+![Detailed workflow diagram](./workflow.svg)
