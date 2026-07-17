@@ -4,6 +4,8 @@
 - Optionally skip blacklist filtering if no blacklist index, bed, or fasta file is provided. (#349, @kelly-sovacool)
 - Skip fastq screen if the config file or database are not provided. (#351, @kelly-sovacool)
 - Fix process container syntax to comply with docker runtime. (#352, @padmashris, @kelly-sovacool)
+- Improve documentation:
+  - Specify that Nextflow version 25.10.0 is required as of now. (#356, @kelly-sovacool)
 
 ## CHAMPAGNE 0.6.0
 
