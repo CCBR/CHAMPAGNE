@@ -26,6 +26,8 @@ include { PHANTOM_PEAKS
           PPQT_PROCESS
           MULTIQC                  } from "./modules/local/qc.nf"
 include { CONSENSUS_CORCES         } from "./modules/local/consensus/corces/main.nf"
+include { CUSTOM_COUNTFASTQ        } from './modules/CCBR/custom/countfastq'
+
 // Plugins
 include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
 
@@ -110,8 +112,17 @@ workflow {
     chrom_sizes = PREPARE_GENOME.out.chrom_sizes
     effective_genome_size = PREPARE_GENOME.out.effective_genome_size
 
-    FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
-    ALIGN_GENOME(FILTER_BLACKLIST.out.reads, PREPARE_GENOME.out.reference_index)
+    if ( PREPARE_GENOME.out.blacklist_index ) {
+      FILTER_BLACKLIST(trimmed_fastqs, PREPARE_GENOME.out.blacklist_index)
+      ch_reads_filt = FILTER_BLACKLIST.out.reads
+      n_surviving_reads = FILTER_BLACKLIST.out.n_surviving_reads
+    } else {
+      log.info("Skipping blacklist filtering: no blacklist index, bed, or fasta was provided.")
+      ch_reads_filt = trimmed_fastqs
+      n_surviving_reads = CUSTOM_COUNTFASTQ(trimmed_fastqs).count
+    }
+
+    ALIGN_GENOME(ch_reads_filt, PREPARE_GENOME.out.reference_index)
     aligned_bam = ALIGN_GENOME.out.bam
 
     DEDUPLICATE(aligned_bam, chrom_sizes, effective_genome_size)
@@ -177,7 +188,7 @@ workflow {
     }
 
     if (params.run_qc) {
-        QC(raw_fastqs, CUTADAPT.out.reads, FILTER_BLACKLIST.out.n_surviving_reads,
+        QC(raw_fastqs, CUTADAPT.out.reads, n_surviving_reads,
            aligned_bam, ALIGN_GENOME.out.aligned_flagstat, ALIGN_GENOME.out.filtered_flagstat,
            DEDUPLICATE.out.flagstat,
            PHANTOM_PEAKS.out.spp, frag_lengths,
