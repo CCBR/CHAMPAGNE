@@ -5,7 +5,7 @@ process FASTQC {
     label 'process_high'
 
     //container "${params.containers_fastqc}"
-    container 'docker://nciccbr/ccrgb_qctools:v4.0'
+    container 'nciccbr/ccrgb_qctools:v4.0'
 
     input:
         tuple val(meta), path(fastq), val(fqtype)
