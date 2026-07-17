@@ -1,5 +1,6 @@
 ## CHAMPAGNE development version
 
+- Fix broken link to diagram in docs. (#348, @padmashris)
 - Optionally skip blacklist filtering if no blacklist index, bed, or fasta file is provided. (#349, @kelly-sovacool)
 
 ## CHAMPAGNE 0.6.0
