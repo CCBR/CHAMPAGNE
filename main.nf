@@ -121,7 +121,7 @@ workflow {
       ch_reads_filt = trimmed_fastqs
       n_surviving_reads = CUSTOM_COUNTFASTQ(trimmed_fastqs).count
     }
-    
+
     ALIGN_GENOME(ch_reads_filt, PREPARE_GENOME.out.reference_index)
     aligned_bam = ALIGN_GENOME.out.bam
 
