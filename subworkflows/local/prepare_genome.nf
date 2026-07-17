@@ -15,18 +15,19 @@ workflow PREPARE_GENOME {
         if (params.genomes[ params.genome ]) {
             ch_fasta = Channel.fromPath(params.genomes[ params.genome ].fasta, checkIfExists: true)
             ch_genes_gtf = Channel.fromPath(params.genomes[ params.genome ].genes_gtf, checkIfExists: true)
-
-            if (!params.blacklist) {
+            ch_blacklist_index = Channel.empty()
+            if (params.blacklist) {
+                ch_blacklist_index = PREPARE_BLACKLIST(file(params.blacklist, checkIfExists: true),
+                                                        ch_fasta,
+                                                        params.rename_contigs
+                                                        ).index
+            }
+            else if (params.genomes[ params.genome ].blacklist_index) {
                 ch_blacklist_index = Channel.fromPath(params.genomes[ params.genome ].blacklist_index, checkIfExists: true)
                     .collect()
                     .map{ file ->
                         [file.baseName, file]
                     }
-            } else {
-                ch_blacklist_index = PREPARE_BLACKLIST(file(params.blacklist, checkIfExists: true),
-                                                       ch_fasta,
-                                                       params.rename_contigs
-                                                       ).index
             }
 
             ch_reference_index = Channel.fromPath(params.genomes[ params.genome ].reference_index, checkIfExists: true)
@@ -42,7 +43,7 @@ workflow PREPARE_GENOME {
             ch_bioc_txdb = Channel.value(params.genomes[ params.genome ].bioc_txdb)
             ch_bioc_annot = Channel.value(params.genomes[ params.genome ].bioc_annot)
 
-        } else if (params.genome_fasta && params.genes_gtf && params.blacklist) {
+        } else if (params.genome_fasta && params.genes_gtf) {
             fasta_file = Channel.fromPath(params.genome_fasta, checkIfExists: true)
             gtf_file = file(params.genes_gtf, checkIfExists: true)
 
@@ -59,10 +60,13 @@ workflow PREPARE_GENOME {
             fasta_meta = ch_fasta.map{ it -> [it.baseName, it]}
 
             ch_genes_gtf = Channel.fromPath(gtf_file)
-            ch_blacklist_index =  PREPARE_BLACKLIST(file(params.blacklist, checkIfExists: true),
-                                                    ch_fasta,
-                                                    params.rename_contigs
-                                                    ).index
+            ch_blacklist_index = Channel.empty()
+            if (params.blacklist) {
+                ch_blacklist_index =  PREPARE_BLACKLIST(file(params.blacklist, checkIfExists: true),
+                                                        ch_fasta,
+                                                        params.rename_contigs
+                                                        ).index
+            }
             ch_reference_index = BWA_INDEX_REF(fasta_meta).index.collect()
             KHMER_UNIQUEKMERS(ch_fasta, params.read_length)
             ch_gsize = KHMER_UNIQUEKMERS.out.kmers.map { it.text.trim() }
