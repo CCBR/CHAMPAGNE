@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- Fix broken link to diagram in docs. (#348, @padmashris)
+
 ## CHAMPAGNE 0.6.0
 
 - Support uncompressed fastq files -- they will be gzipped after the samplesheet check. (#306, @kelly-sovacool)
