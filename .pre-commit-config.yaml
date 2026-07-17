@@ -18,6 +18,11 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-json
+  # CCBR custom hooks
+  - repo: https://github.com/CCBR/Tools
+    rev: v0.7.0
+    hooks:
+      - id: sync-nextflow-version
   # spell check
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.2
