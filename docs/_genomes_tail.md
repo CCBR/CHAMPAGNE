@@ -20,6 +20,7 @@ CHAMPAGNE can obtain reference genomes three ways:
    ```
 
    You can force this path even when `index_dir` is set with `--download_refs true`.
+
 3. **Custom genome build.** Provide your own files with `-entry MAKE_REFERENCE`
    (see [Custom reference genome](#custom-reference-genome) below).
 

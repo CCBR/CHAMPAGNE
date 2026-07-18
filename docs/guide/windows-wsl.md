@@ -120,7 +120,7 @@ Verify Apptainer works:
 apptainer exec docker://alpine:3.19 echo ok
 ```
 
-Before a real run, point the image cache **and** Apptainer's *build* temp at a
+Before a real run, point the image cache **and** Apptainer's _build_ temp at a
 **Linux-filesystem** path (not `/mnt/d/...` — NTFS is slow; and not `/tmp` —
 on WSL `/tmp` is often a small RAM-backed `tmpfs` that fills during large
 image conversions with `no space left on device`). Add this to your
@@ -220,17 +220,17 @@ champagne run -profile apptainer \
 
 ## Troubleshooting (WSL-specific)
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `.command.run: line NNN: Unexpected: unbound variable` | uutils `date` on Ubuntu 25.10+ | Use the `champagne` conda env (installs GNU coreutils) |
-| `` `outputDir` is not defined `` / config parse errors | Nextflow 26.x strict parser | Use Nextflow 25.10 (in the env), or `export NXF_VER=25.10.0` |
-| `env: 'python3\r': No such file or directory` | `CRLF` line endings | See [step 2](#2-configure-git-line-endings-windows-side); re-clone or run `git add --renormalize .` |
-| `Process requirement exceeds available memory -- req: 120 GB` | request not capped to your RAM | Pass `--max_memory` (e.g. `6.GB`) and ensure you're on Nextflow 25.10 so `resourceLimits` caps requests |
-| `env: 'Rscript': No such file` during a stub run | stubbed `-profile test` on the host; the contrast-check step runs real R | Run stubs with a self-contained config (see [step 7](#7-smoke-test-with-a-stub-run)), or add a container profile for a real run |
-| `unauthorized` pulling `quay.io/nciccbr/...` | Singularity defaulted bare image names to quay.io; CCBR images live on Docker Hub | Use `-profile apptainer` (sets `singularity.registry = 'docker.io'`). Pull a test image with `apptainer pull docker://docker.io/nciccbr/ccbr_ubuntu_base_20.04:v6.1` |
-| `no space left on device` while packing a SIF under `/tmp/build-temp-...` | WSL `/tmp` is a small RAM `tmpfs` (~8 GB); large images overflow it | Set `APPTAINER_TMPDIR`/`SINGULARITY_TMPDIR` to a disk path (see [step 6](#6-containers-for-real-runs)); `rm -rf /tmp/build-temp-*` then retry |
-| `Unknown problem creating directory` / exit 141 on a task | `TMPDIR` was exported on the host and leaked into containers | `unset TMPDIR` and remove it from `~/.bashrc`; keep only `APPTAINER_TMPDIR` / `SINGULARITY_TMPDIR` / `NXF_SINGULARITY_CACHEDIR` |
-| `tree: command not found` / spooker traceback after a run | `ccbr_tools` spooker needs the `tree` CLI | `conda install -n champagne -c conda-forge tree` (already in `environment.yml`) |
+| Symptom                                                                   | Cause                                                                             | Fix                                                                                                                                                                  |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.command.run: line NNN: Unexpected: unbound variable`                    | uutils `date` on Ubuntu 25.10+                                                    | Use the `champagne` conda env (installs GNU coreutils)                                                                                                               |
+| `` `outputDir` is not defined `` / config parse errors                    | Nextflow 26.x strict parser                                                       | Use Nextflow 25.10 (in the env), or `export NXF_VER=25.10.0`                                                                                                         |
+| `env: 'python3\r': No such file or directory`                             | `CRLF` line endings                                                               | See [step 2](#2-configure-git-line-endings-windows-side); re-clone or run `git add --renormalize .`                                                                  |
+| `Process requirement exceeds available memory -- req: 120 GB`             | request not capped to your RAM                                                    | Pass `--max_memory` (e.g. `6.GB`) and ensure you're on Nextflow 25.10 so `resourceLimits` caps requests                                                              |
+| `env: 'Rscript': No such file` during a stub run                          | stubbed `-profile test` on the host; the contrast-check step runs real R          | Run stubs with a self-contained config (see [step 7](#7-smoke-test-with-a-stub-run)), or add a container profile for a real run                                      |
+| `unauthorized` pulling `quay.io/nciccbr/...`                              | Singularity defaulted bare image names to quay.io; CCBR images live on Docker Hub | Use `-profile apptainer` (sets `singularity.registry = 'docker.io'`). Pull a test image with `apptainer pull docker://docker.io/nciccbr/ccbr_ubuntu_base_20.04:v6.1` |
+| `no space left on device` while packing a SIF under `/tmp/build-temp-...` | WSL `/tmp` is a small RAM `tmpfs` (~8 GB); large images overflow it               | Set `APPTAINER_TMPDIR`/`SINGULARITY_TMPDIR` to a disk path (see [step 6](#6-containers-for-real-runs)); `rm -rf /tmp/build-temp-*` then retry                        |
+| `Unknown problem creating directory` / exit 141 on a task                 | `TMPDIR` was exported on the host and leaked into containers                      | `unset TMPDIR` and remove it from `~/.bashrc`; keep only `APPTAINER_TMPDIR` / `SINGULARITY_TMPDIR` / `NXF_SINGULARITY_CACHEDIR`                                      |
+| `tree: command not found` / spooker traceback after a run                 | `ccbr_tools` spooker needs the `tree` CLI                                         | `conda install -n champagne -c conda-forge tree` (already in `environment.yml`)                                                                                      |
 
 See also the general [Troubleshooting](troubleshooting.md) page and
 [running the Nextflow pipeline directly](../nextflow.md).

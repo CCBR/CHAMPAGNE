@@ -87,6 +87,7 @@ These genomes can be passed to the `--spike_genome` parameter.
 - blacklist_bed: `NO_FILE`
 - effective_genome_size: `4641652`
 - chrom_sizes: `${params.index_dir}/ecoli_k12/Chromosomes/chrom.sizes`
+
 ## Obtaining reference genomes
 
 CHAMPAGNE can obtain reference genomes three ways:
@@ -109,6 +110,7 @@ CHAMPAGNE can obtain reference genomes three ways:
    ```
 
    You can force this path even when `index_dir` is set with `--download_refs true`.
+
 3. **Custom genome build.** Provide your own files with `-entry MAKE_REFERENCE`
    (see [Custom reference genome](#custom-reference-genome) below).
 

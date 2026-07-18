@@ -39,8 +39,8 @@ dependencies:
   - pip
   - coreutils >=9.0
   - nextflow >=25.10.0,<26.0.0
-  - apptainer >=1.3   # rootless containers for real runs (-profile apptainer)
-  - graphviz          # optional: lets Nextflow render the execution DAG
-  - tree              # used by spooker (run-usage logging) in workflow.onComplete
+  - apptainer >=1.3 # rootless containers for real runs (-profile apptainer)
+  - graphviz # optional: lets Nextflow render the execution DAG
+  - tree # used by spooker (run-usage logging) in workflow.onComplete
   - pip:
       - -e .
