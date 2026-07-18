@@ -84,7 +84,6 @@ nav:
       - Troubleshooting: guide/troubleshooting.md
   - Developer Guide:
       - How to contribute: devs/contributing.md
-      - Portable pipelines with coding agents: devs/agent-portability-guide.md
       #- Release guide: devs/release-guide.md
       - Contributors: devs/contributors.md
   - Changelog: changelog.md
