@@ -9,6 +9,7 @@ import os
 import errno
 import argparse
 import operator
+import pprint
 
 
 def parse_args(args=None):
@@ -90,6 +91,8 @@ def check_samplesheet(file_in, file_out):
                 antibody,
                 input,
             ) = operator.itemgetter(*HEADER_MIN)(line_dict)
+            print("lspl")
+            pprint.pprint(lspl)
             sample = f"{sample_basename}_{rep}" if rep else sample_basename
             if sample.find(" ") != -1:
                 print(
@@ -158,11 +161,14 @@ def check_samplesheet(file_in, file_out):
                 antibody,
                 input,
             ]
+            print("sample_info")
+            pprint.pprint(sample_info)
 
             ## Create sample mapping dictionary = {sample: [[ single_end, fastq_1, fastq_2, antibody, input ]]}
             if sample not in sample_mapping_dict.keys():
                 sample_mapping_dict[sample] = [sample_info]
             else:
+                print(f"{sample} in keys")
                 if sample_info in sample_mapping_dict[sample]:
                     print_error("Samplesheet contains duplicate rows!", "Line", line)
                 else:

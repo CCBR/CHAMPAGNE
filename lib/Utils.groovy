@@ -26,17 +26,17 @@ class Utils {
     }
     // check whether a command is in the path
     public static Boolean check_command_in_path(cmd) {
+        def command_string = "command -V ${cmd}"
         def out = new StringBuilder()
         def err = new StringBuilder()
         try {
-            // `command` is a shell builtin, so it must run via a shell rather than
-            // String.execute() (which uses Runtime.exec and would throw IOException).
-            def command = ["bash", "-c", "command -v ${cmd}"].execute()
+            def command = command_string.execute()
             command.consumeProcessOutput(out, err)
             command.waitFor()
-            return command.exitValue() == 0
-        } catch(Exception e) {
-            return false
+        } catch(IOException e) {
+            err = e
         }
+        return err.length()==0
+
     }
 }

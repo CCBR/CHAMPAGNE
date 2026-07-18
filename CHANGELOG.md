@@ -1,15 +1,5 @@
 ## CHAMPAGNE development version
 
-- Add checksummed public hg38 reference downloads, workflow-managed index builds, and an optional persistent genome cache so the pipeline can run without Biowulf's shared indices.
-- Pin the supported Nextflow version to the 25.10 line (`>=25.10.0, <26.0.0`) in the manifest, host environment, and CI. Nextflow 26.x enables the strict config parser by default, which is incompatible with the current config syntax.
-- Add a conda `environment.yml` and a [Windows (WSL) setup guide](docs/guide/windows-wsl.md) for reproducible installs off Biowulf. The environment pins Nextflow 25.10, installs GNU coreutils (Ubuntu 25.10+ ships uutils coreutils by default, whose `date` breaks Nextflow's task wrapper), bundles Apptainer for rootless real runs, and installs the `champagne` CLI.
-- Add an `apptainer` profile so real runs can use rootless Apptainer containers (no Docker daemon/Docker Desktop) with `-profile apptainer`. The profile sets `singularity.registry = 'docker.io'` so bare `nciccbr/*` image names pull from Docker Hub (Singularity's default registry is quay.io, where those images are unauthorized).
-- Make `-profile test` runnable off Biowulf: replace the hardcoded `/data/CCBR_Pipeliner/...` blacklist in `conf/test.config` with a small bundled fixture (`tests/data/test.blacklist.fa`).
-- Skip FastQ Screen gracefully when `fastq_screen_conf`/`fastq_screen_db_dir` are unset (instead of failing on `fromPath(null)`), so QC runs off Biowulf without `--run_qc false`.
-- Default `meme_motifs`, `bioc_txdb`, and `bioc_annot` to `null` in `nextflow.config` to silence "undefined parameter" warnings for genomes/configs that omit them.
-- Fix `tests/nxf/ci_test.config`: interpolate `${projectDir}` (was single-quoted, so it was taken literally) and point `blacklist` at a `.fa`-extension fixture the pipeline accepts.
-- Fix the reference-genome cache `storeDir` selectors in `conf/modules.config` so they match the `PREPARE_GENOME` processes whether the subworkflow is top-level or nested, eliminating "no process matching config selector" warnings.
-- Remove leftover debug output from `bin/check_samplesheet.py`.
 - Fix broken link to diagram in docs. (#348, @padmashris)
 - Optionally skip blacklist filtering if no blacklist index, bed, or fasta file is provided. (#349, @kelly-sovacool)
 - Skip fastq screen if the config file or database are not provided. (#351, @kelly-sovacool)

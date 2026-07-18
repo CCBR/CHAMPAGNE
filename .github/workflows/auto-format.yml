@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: 3.14
       - name: Install nextflow
-        uses: nf-core/setup-nextflow@v1
+        uses: nf-core/setup-nextflow@v3
         with:
-          version: "25.10.0"
+          version: 25.10.0
       - name: git config
         run: |
           git config --global user.name "github-actions[bot]"
