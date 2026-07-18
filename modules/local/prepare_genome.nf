@@ -1,4 +1,51 @@
 
+process DOWNLOAD_GENOME {
+    """
+    Prepare a reference asset (fasta, gtf, or blacklist) for the build chain.
+    The remote URL is staged by Nextflow (native http/https/ftp/s3 support); this
+    process verifies an optional md5 checksum and decompresses gzipped files so the
+    downstream build tools (which read plain text) can consume them.
+    """
+    tag { meta }
+    label 'process_single'
+
+    container "${params.containers_base}"
+
+    errorStrategy 'retry'
+    maxRetries 2
+
+    input:
+        tuple val(meta), path(archive), val(md5)
+
+    output:
+        // output name drops any .gz suffix; derived from the staged input so it is
+        // resolvable in the output block regardless of the script/stub branch
+        tuple val(meta), path("${ archive.name.endsWith('.gz') ? archive.baseName : archive.name }"), emit: file
+
+    script:
+    def outname = archive.name.endsWith('.gz') ? archive.baseName : archive.name
+    """
+    if [ -n "${md5}" ]; then
+        echo "${md5}  ${archive}" | md5sum -c -
+    fi
+
+    if [[ "${archive}" == *.gz ]]; then
+        zcat "${archive}" > "${outname}"
+    else
+        # materialize a copy under a temp name to avoid read==write on the staged input
+        cp -L "${archive}" "${outname}.tmp" && mv "${outname}.tmp" "${outname}"
+    fi
+    """
+
+    stub:
+    def outname = archive.name.endsWith('.gz') ? archive.baseName : archive.name
+    """
+    # materialize a real output file (via a temp name) so it never collides with,
+    # or remains a symlink to, the staged input
+    cp -L "${archive}" "stub.download" && mv "stub.download" "${outname}"
+    """
+}
+
 process GTF2BED {
     tag { gtf }
     label 'process_single'
@@ -142,10 +189,10 @@ process WRITE_GENOME_CONFIG {
 
     output:
         path("*.config"), emit: conf
-        path("custom_genome/"), emit: files // TODO can't use genome_name variable here, nextflow thinks it's null??
+        path("${params.genome ?: 'custom_genome'}/"), emit: files
 
     script:
-    def genome_name = 'custom_genome'
+    def genome_name = params.genome ?: 'custom_genome'
     """
     #!/usr/bin/env python
     import os
@@ -190,8 +237,9 @@ process WRITE_GENOME_CONFIG {
     """
 
     stub:
+    def genome_name = params.genome ?: 'custom_genome'
     """
-    mkdir custom_genome/
-    touch custom_genome.config custom_genome/genome.fa
+    mkdir ${genome_name}/
+    touch ${genome_name}.config ${genome_name}/genome.fa
     """
 }

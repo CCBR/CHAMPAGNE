@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 from collections import defaultdict
 
 
@@ -44,17 +45,18 @@ class Genome:
 
 def parse_genome_config(file_path):
     genomes = defaultdict(dict)
-    with open("conf/genomes.config", "r") as config_file:
+    with open(file_path, "r") as config_file:
         next(config_file)  # Skip the first line
         next(config_file)  # Skip the second line
         for line in config_file:
             line = line.strip()
-            if line.startswith('"') or line.startswith("'") and line.endswith("{"):
+            if (line.startswith('"') or line.startswith("'")) and line.endswith("{"):
                 genome = line.strip(" {").strip('"').strip("'")
             elif "=" in line:
-                if "//" in line:
-                    line = line.split("//")[0]
-                key, value = line.split("=")
+                # Groovy comments are introduced by whitespace followed by //.
+                # Splitting on every // truncates URL values such as https://...
+                line = re.split(r"\s+//", line, maxsplit=1)[0]
+                key, value = line.split("=", maxsplit=1)
                 genomes[genome][key.strip()] = value.strip().strip('"').strip("'")
     return {
         genome: Genome(genome, attributes)

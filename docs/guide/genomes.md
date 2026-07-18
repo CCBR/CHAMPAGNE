@@ -27,6 +27,13 @@ These genomes can be passed to the `--genome` parameter.
 - meme_motifs: `${projectDir}/assets/HOCOMOCOv11_core_HUMAN_mono_meme_format.tar.gz`
 - bioc_txdb: `TxDb.Hsapiens.UCSC.hg38.knownGene`
 - bioc_annot: `org.Hs.eg.db`
+- fasta_url: `https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz`
+- fasta_md5: `1c9dcaddfa41027f17cd8f7a82c7293b`
+- gtf_url: `https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.annotation.gtf.gz`
+- gtf_md5: `b6eeb6c9791b7a43a5504a654ff09d9a`
+- blacklist_url: `https://raw.githubusercontent.com/Boyle-Lab/Blacklist/master/lists/hg38-blacklist.v2.bed.gz`
+- blacklist_md5: `83fe6bf8187a64dee8079b80f75ba289`
+- read_length: `50`
 
 #### `hg19`
 
@@ -80,6 +87,60 @@ These genomes can be passed to the `--spike_genome` parameter.
 - blacklist_bed: `NO_FILE`
 - effective_genome_size: `4641652`
 - chrom_sizes: `${params.index_dir}/ecoli_k12/Chromosomes/chrom.sizes`
+## Obtaining reference genomes
+
+CHAMPAGNE can obtain reference genomes three ways:
+
+1. **Prebuilt shared assets (Biowulf).** With `-profile biowulf`, `index_dir` points at
+   the pre-built CCBR indices and `--genome hg38` uses them directly. This is the fastest
+   option and requires no downloads.
+2. **Automatic download + build (portable).** When prebuilt assets are unavailable
+   (i.e. `index_dir` is not set, such as off Biowulf) and the genome defines public
+   download URLs in [`conf/genomes.config`](https://github.com/CCBR/CHAMPAGNE/blob/main/conf/genomes.config),
+   CHAMPAGNE stages the reference files from canonical public sources (using Nextflow's
+   native URL handling), verifies an md5 checksum for each, and builds all required
+   indices automatically. For example:
+
+   ```sh
+   champagne run --output ./champagne_project \
+       --mode local \
+       --input samplesheet.csv \
+       --genome hg38
+   ```
+
+   You can force this path even when `index_dir` is set with `--download_refs true`.
+3. **Custom genome build.** Provide your own files with `-entry MAKE_REFERENCE`
+   (see [Custom reference genome](#custom-reference-genome) below).
+
+### Caching downloaded/built genomes
+
+By default, Nextflow's `-resume` reuses built assets within a run's work directory.
+For cross-run (and cross-user) reuse, opt in by setting `genome_cache_dir` to a path;
+repeat runs with the same `--genome` then reuse the cached assets instead of rebuilding.
+Point it at shared storage to share a single genome build across users:
+
+```sh
+champagne run --output ./champagne_project \
+    --input samplesheet.csv \
+    --genome hg38 \
+    --genome_cache_dir /path/to/shared/champagne_genomes
+```
+
+When `genome_cache_dir` is unset (the default), caching is disabled.
+
+### Sharing a built genome as a bundle
+
+Running `-entry MAKE_REFERENCE --genome hg38` downloads and builds the complete
+reference under `results/genome/hg38/` and writes its config to
+`results/genome/hg38.config`. These outputs can be archived (e.g. on a durable
+mirror) and reused directly:
+
+```sh
+champagne run --output ./champagne_project \
+    --input samplesheet.csv \
+    --genome hg38 \
+    -c results/genome/hg38.config
+```
 
 ### Custom blacklist
 
@@ -118,7 +179,8 @@ champagne run --output /data/$USER/champagne_project \
     --blacklist blacklist.fasta
 ```
 
-The reference files and a config file for the genome will be written in `results/genome/custom_genome/`.
+The reference files will be written in `results/genome/custom_genome/` and the
+config will be written to `results/genome/custom_genome.config`.
 
 Then you can run champagne using your custom genome:
 
@@ -127,5 +189,5 @@ champagne run --output /data/$USER/champagne_project \
     --mode slurm -profile biowulf \
     --input samplesheet.csv \
     --genome custom_genome \
-    -c results/genome/custom_genome/custom_genome.config
+    -c results/genome/custom_genome.config
 ```
