@@ -1,3 +1,16 @@
+# Force LF line endings for all text files. The pipeline's scripts (*.nf,
+# *.config, bin/*.py, *.sh, etc.) are executed under Linux (Biowulf, WSL,
+# containers); a CRLF checkout on Windows corrupts shebangs and shell scripts.
+* text=auto eol=lf
+
+# Common binary types: never normalize.
+*.png binary
+*.jpg binary
+*.gz binary
+*.tar binary
+*.svg binary
+*.ico binary
+
 *.config linguist-language=nextflow
 *.nf.test linguist-language=nextflow
 modules/nf-core/** linguist-generated

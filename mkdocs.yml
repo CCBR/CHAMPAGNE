@@ -76,6 +76,7 @@ nav:
   - User Guide:
       - Introduction: guide/intro.md
       - Usage: guide/usage.md
+      - Windows (WSL) setup: guide/windows-wsl.md
       - Output: guide/output.md
       - Parameters: guide/params.md
       - Genomes: guide/genomes.md
@@ -83,6 +84,7 @@ nav:
       - Troubleshooting: guide/troubleshooting.md
   - Developer Guide:
       - How to contribute: devs/contributing.md
+      - Portable pipelines with coding agents: devs/agent-portability-guide.md
       #- Release guide: devs/release-guide.md
       - Contributors: devs/contributors.md
   - Changelog: changelog.md
