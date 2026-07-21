@@ -76,6 +76,7 @@ nav:
   - User Guide:
       - Introduction: guide/intro.md
       - Usage: guide/usage.md
+      - Windows (WSL) setup: guide/windows-wsl.md
       - Output: guide/output.md
       - Parameters: guide/params.md
       - Genomes: guide/genomes.md

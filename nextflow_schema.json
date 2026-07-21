@@ -90,6 +90,12 @@
                     "type": "string",
                     "fa_icon": "fas fa-file",
                     "description": "File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)"
+                },
+                "download_refs": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-download",
+                    "description": "Force downloading and building a `--genome` from its public URLs even when index_dir is set. When index_dir is unset (e.g. off Biowulf), downloadable genomes are built automatically."
                 }
             }
         },
@@ -337,6 +343,11 @@
                     "type": "string",
                     "fa_icon": "fas fa-folder-open",
                     "description": "Absolute path to directory containing pre-built reference genomes."
+                },
+                "genome_cache_dir": {
+                    "type": "string",
+                    "fa_icon": "fas fa-folder-open",
+                    "description": "Directory where downloaded/built reference assets are cached and reused across runs. Point this at shared storage to share a genome build across users. Set to null to disable caching."
                 },
                 "fastq_screen_conf": {
                     "type": "string",
