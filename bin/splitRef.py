@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 import os
 import sys
 
@@ -35,9 +34,8 @@ def parsed(filename):
             sequence += line
             if seqindex == 1:
                 seqlen = len(line)
-    else:
-        # formatSequencelength(sequence, seqlen)
-        yield chrom, formatSequencelength(sequence, seqlen), len(sequence)
+    # formatSequencelength(sequence, seqlen)
+    yield chrom, formatSequencelength(sequence, seqlen), len(sequence)
     fh.close()
 
 
@@ -49,8 +47,8 @@ def main(fasta_fn, chrom_sizes_fn, outdir):
         chromsizesfh.write("{}\t{}\n".format(chrom.replace(">", ""), chromsize))
         outfilename = os.path.join(outdir, chrom.replace(">", "") + ".fa")
         outfh = open(outfilename, "w")
-        print("{}\n".format(chrom))
-        outfh.write("{}\n{}\n".format(chrom, seq.rstrip()))
+        print(f"{chrom}\n")
+        outfh.write(f"{chrom}\n{seq.rstrip()}\n")
         outfh.close()
 
     chromsizesfh.close()

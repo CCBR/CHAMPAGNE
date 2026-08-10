@@ -102,8 +102,7 @@ def main():
     with open("docs/_genomes_tail.md", "r") as tail_file:
         tail = tail_file.readlines()
     with open("docs/guide/genomes.md", "w") as md_file:
-        for line in markdown:
-            md_file.write(line + "\n")
+        md_file.writelines(line + "\n" for line in markdown)
         md_file.writelines(tail)
 
 

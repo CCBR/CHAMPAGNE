@@ -4,11 +4,11 @@
 adapted from: https://github.com/nf-core/chipseq/blob/51eba00b32885c4d0bec60db3cb0a45eb61e34c5/bin/check_samplesheet.py
 """
 
-import collections
-import os
-import errno
 import argparse
+import collections
+import errno
 import operator
+import os
 import pprint
 
 
@@ -34,9 +34,7 @@ def make_dir(path):
 def print_error(error, context="Line", context_str=""):
     error_str = "ERROR: Please check samplesheet ->"
     if context != "" and context_str != "":
-        error_str = "ERROR: Please check samplesheet -> {}\n{}: '{}'".format(
-            error, context.strip(), context_str.strip()
-        )
+        error_str = f"ERROR: Please check samplesheet -> {error}\n{context.strip()}: '{context_str.strip()}'"
     raise ValueError(error_str)
 
 
@@ -74,9 +72,7 @@ def check_samplesheet(file_in, file_out):
             num_cols = len([x for x in lspl if x])
             if num_cols < MIN_COLS:
                 print_error(
-                    "Invalid number of populated columns (minimum = {})!".format(
-                        MIN_COLS
-                    ),
+                    f"Invalid number of populated columns (minimum = {MIN_COLS})!",
                     "Line",
                     line,
                 )
@@ -165,7 +161,7 @@ def check_samplesheet(file_in, file_out):
             pprint.pprint(sample_info)
 
             ## Create sample mapping dictionary = {sample: [[ single_end, fastq_1, fastq_2, antibody, input ]]}
-            if sample not in sample_mapping_dict.keys():
+            if sample not in sample_mapping_dict:
                 sample_mapping_dict[sample] = [sample_info]
             else:
                 print(f"{sample} in keys")

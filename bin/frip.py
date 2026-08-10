@@ -14,9 +14,10 @@ Source: https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d58381a0ffd696bbf9c047e4
 ##########################################
 # Modules
 import optparse
-from pybedtools import BedTool
-import pysam
+
 import pandas as pd
+import pysam
+from pybedtools import BedTool
 
 ##########################################
 # Functions
