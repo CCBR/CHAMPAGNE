@@ -21,7 +21,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 samfile = pysam.AlignmentFile(args.inBam, "rb")
-mapq = dict()
+mapq = {}
 for read in samfile.fetch():
     if read.is_unmapped:
         continue

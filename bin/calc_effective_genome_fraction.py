@@ -27,12 +27,8 @@ def calc_egf(effective_genome_size: int, chrom_sizes_list: list):
     # creates dictionary with { chromosome: length }
     chrom_lengths = {line.split()[0]: int(line.split()[1]) for line in chrom_sizes_list}
     chrom_len_sum = sum(
-        chrom_lengths[chrom] for chrom in chrom_lengths if "_" not in chrom
+        length for chrom, length in chrom_lengths.items() if "_" not in chrom
     )
-    chrom_len_sum = 0
-    for chrom in chrom_lengths:
-        if "_" not in chrom:
-            chrom_len_sum += chrom_lengths[chrom]
 
     frac = effective_genome_size / chrom_len_sum
     if not (0 < frac <= 1):

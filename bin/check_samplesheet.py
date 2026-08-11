@@ -28,7 +28,7 @@ def make_dir(path):
             os.makedirs(path)
         except OSError as exception:
             if exception.errno != errno.EEXIST:
-                raise exception
+                raise
 
 
 def print_error(error, context="Line", context_str=""):
@@ -103,12 +103,7 @@ def check_samplesheet(file_in, file_out):
                 if fastq:
                     if fastq.find(" ") != -1:
                         print_error("FastQ file contains spaces!", "Line", line)
-                    if not (
-                        fastq.endswith(".fastq.gz")
-                        or fastq.endswith(".fq.gz")
-                        or fastq.endswith(".fastq")
-                        or fastq.endswith(".fq")
-                    ):
+                    if not fastq.endswith((".fastq.gz", ".fq.gz", ".fastq", ".fq")):
                         print_error(
                             "FastQ file does not have extension '.fastq.gz', '.fq.gz', '.fastq', or '.fq'!",
                             "Line",
@@ -178,19 +173,7 @@ def check_samplesheet(file_in, file_out):
         make_dir(out_dir)
         with open(file_out, "w") as fout:
             fout.write(
-                ",".join(
-                    [
-                        "sample",
-                        "sample_basename",
-                        "rep",
-                        "single_end",
-                        "fastq_1",
-                        "fastq_2",
-                        "antibody",
-                        "input",
-                    ]
-                )
-                + "\n"
+                "sample,sample_basename,rep,single_end,fastq_1,fastq_2,antibody,input\n"
             )
             for sample in sorted(sample_mapping_dict.keys()):
                 ## Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
@@ -207,7 +190,7 @@ def check_samplesheet(file_in, file_out):
                 # check that the input/input exists
                 for idx, val in enumerate(sample_mapping_dict[sample]):
                     input = val[-1]
-                    if input and input not in input_dict.keys():
+                    if input and input not in input_dict:
                         print_error(
                             "input identifier has to match a provided sample identifier!",
                             "input",

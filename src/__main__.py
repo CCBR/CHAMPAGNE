@@ -27,7 +27,7 @@ def print_citation_flag(ctx, param, value):
 
 @click.group(
     cls=ccbr_tools.pkg_util.CustomClickGroup,
-    context_settings=dict(help_option_names=["-h", "--help"]),
+    context_settings={"help_option_names": ["-h", "--help"]},
 )
 @click.version_option(
     ccbr_tools.pkg_util.get_version(repo_base=repo_base),
@@ -75,9 +75,10 @@ Add nextflow args (anything supported by `nextflow run`):
 # e.g. -profile clashed with -o (--output) and caused the command to be parsed as "-pr -o file"
 @click.command(
     epilog=help_msg_extra,
-    context_settings=dict(
-        help_option_names=["-h", "--help"], ignore_unknown_options=True
-    ),
+    context_settings={
+        "help_option_names": ["-h", "--help"],
+        "ignore_unknown_options": True,
+    },
 )
 @click.option(
     "--main",
@@ -123,13 +124,11 @@ def run(main_path, output, _mode, force_all, **kwargs):
     docs: https://ccbr.github.io/CHAMPAGNE
     """
     if (  # this is the only acceptable github repo option for champagne
-        main_path != "CCBR/CHAMPAGNE"
+        main_path != "CCBR/CHAMPAGNE" and not os.path.exists(main_path)
     ):
-        # make sure the path exists
-        if not os.path.exists(main_path):
-            raise FileNotFoundError(
-                f"Path to the champagne main.nf file not found: {main_path}"
-            )
+        raise FileNotFoundError(
+            f"Path to the champagne main.nf file not found: {main_path}"
+        )
     output_dir = output if isinstance(output, pathlib.Path) else pathlib.Path(output)
     ccbr_tools.pkg_util.msg_box("Output Directory", errmsg=str(output_dir))
     if not output_dir.is_dir() or not (output_dir / "nextflow.config").exists():
