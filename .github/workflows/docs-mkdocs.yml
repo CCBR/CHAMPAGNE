@@ -1,4 +1,7 @@
 name: docs
+# this workflow requires:
+#  - an mkdocs config file (`mkdocs.yml`)
+#  - website dependencies in `docs/requirements.txt`
 on:
   workflow_dispatch:
   release:
@@ -12,12 +15,21 @@ on:
       - "**.md"
       - .github/workflows/docs-mkdocs.yml
       - mkdocs.yml
+
 permissions:
   contents: write
   pages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   mkdocs:
     runs-on: ubuntu-latest
+    # optional: run in the ccbr_actions image (built for each release tag) to skip
+    # installing python/ccbr_actions/mkdocs/mike -- omit `container` to install them via pip instead
+    container: nciccbr/ccbr_actions:main
     steps:
       - uses: actions/checkout@v7
         with:
