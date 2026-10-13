@@ -106,6 +106,9 @@ If you'd like to use a custom genome, you'll need the following files:
 - genome GTF
 - blacklist fasta or bed (optional)
 
+The FASTA and GTF inputs, and an optional blacklist, may be gzip-compressed
+(`.fa.gz`, `.fasta.gz`, `.gtf.gz`, or `.bed.gz`).
+
 Prepare your custom reference genome with:
 
 ```sh

@@ -1,6 +1,8 @@
 include { BWA_INDEX as BWA_INDEX_REF } from "../../modules/CCBR/bwa/index"
 include { KHMER_UNIQUEKMERS          } from '../../modules/CCBR/khmer/uniquekmers'
-include { SPLIT_REF_CHROMS
+include { GUNZIP_REFERENCE as GUNZIP_FASTA
+          GUNZIP_REFERENCE as GUNZIP_GTF
+          SPLIT_REF_CHROMS
           RENAME_FASTA_CONTIGS as RENAME_FASTA_CONTIGS_REF
           RENAME_FASTA_CONTIGS as RENAME_FASTA_CONTIGS_BL
           RENAME_DELIM_CONTIGS
@@ -45,7 +47,14 @@ workflow PREPARE_GENOME {
 
         } else if (params.genome_fasta && params.genes_gtf) {
             fasta_file = Channel.fromPath(params.genome_fasta, checkIfExists: true)
-            gtf_file = file(params.genes_gtf, checkIfExists: true)
+            gtf_file = Channel.fromPath(params.genes_gtf, checkIfExists: true)
+
+            if (file(params.genome_fasta).extension == 'gz') {
+                fasta_file = GUNZIP_FASTA(fasta_file).uncompressed
+            }
+            if (file(params.genes_gtf).extension == 'gz') {
+                gtf_file = GUNZIP_GTF(gtf_file).uncompressed
+            }
 
             // rename contigs from ensembl to UCSC if needed
             if (params.rename_contigs) {
@@ -59,7 +68,7 @@ workflow PREPARE_GENOME {
 
             fasta_meta = ch_fasta.map{ it -> [it.baseName, it]}
 
-            ch_genes_gtf = Channel.fromPath(gtf_file)
+            ch_genes_gtf = ch_gtf
             ch_blacklist_index = Channel.empty()
             if (params.blacklist) {
                 ch_blacklist_index =  PREPARE_BLACKLIST(file(params.blacklist, checkIfExists: true),

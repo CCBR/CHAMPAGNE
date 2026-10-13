@@ -1,7 +1,8 @@
 
 include { BEDTOOLS_GETFASTA          } from '../../modules/nf-core/bedtools/getfasta/main'
 include { BWA_INDEX as BWA_INDEX_BL } from "../../modules/CCBR/bwa/index"
-include { RENAME_FASTA_CONTIGS as RENAME_FASTA_CONTIGS_BL } from "../../modules/local/prepare_genome.nf"
+include { GUNZIP_REFERENCE as GUNZIP_BLACKLIST
+          RENAME_FASTA_CONTIGS as RENAME_FASTA_CONTIGS_BL } from "../../modules/local/prepare_genome.nf"
 
 workflow PREPARE_BLACKLIST {
     take:
@@ -10,14 +11,20 @@ workflow PREPARE_BLACKLIST {
         rename_contigs // optional
     main:
 
-        // blacklist bed to fasta
-        if (blacklist_file.extension == 'bed') {
-            BEDTOOLS_GETFASTA(blacklist_file, genome_fasta)
+        blacklist_path = file(blacklist_file, checkIfExists: true)
+        blacklist_extension = blacklist_path.extension
+        ch_blacklist_input = Channel.fromPath(blacklist_path)
+        if (blacklist_extension == 'gz') {
+            blacklist_extension = blacklist_path.name.toLowerCase().replaceFirst(/\.gz$/, '').tokenize('.').last()
+            ch_blacklist_input = GUNZIP_BLACKLIST(ch_blacklist_input).uncompressed
+        }
+
+        // Convert BED intervals to fasta before indexing.
+        if (blacklist_extension == 'bed') {
+            BEDTOOLS_GETFASTA(ch_blacklist_input, genome_fasta)
             ch_blacklist_input = BEDTOOLS_GETFASTA.out.fasta
-        } else if (blacklist_file.extension == 'fasta' || blacklist_file.extension == 'fa') {
-            ch_blacklist_input = Channel.fromPath(blacklist_file)
-        } else {
-            error "Unsupported blacklist file format extension: ${blacklist_file.extension}. Expected .bed or .fasta/.fa"
+        } else if (blacklist_extension != 'fasta' && blacklist_extension != 'fa') {
+            error "Unsupported blacklist file format extension: ${blacklist_extension}. Expected .bed, .fasta, or .fa, optionally compressed with .gz"
         }
         if (rename_contigs) {
             contig_map = file(rename_contigs, checkIfExists: true)
