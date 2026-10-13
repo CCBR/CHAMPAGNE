@@ -44,6 +44,10 @@ workflow version {
     println "CHAMPAGNE ${workflow.manifest.version}"
 }
 
+workflow MAKE_REFERENCE {
+    error "The 'MAKE_REFERENCE' entrypoint has been removed. Use the '--build_reference' flag instead."
+}
+
 workflow debug {
 
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
