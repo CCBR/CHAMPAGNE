@@ -12,8 +12,14 @@ For [Biowulf](#biowulf) users, CHAMPAGNE is installed in the
 If you'd like to run the pipeline in a different execution environment,
 take a look at [how to run the nextflow pipeline directly](/nextflow.md).
 
-CHAMPAGNE depends on [Nextflow](https://www.nextflow.io/) version 25 or later
-and Singularity or Docker.
+CHAMPAGNE depends on [Nextflow](https://www.nextflow.io/) in the 25.10 line
+(`>=25.10.0, <26.0.0`) and Singularity or Docker. Nextflow 26.x is not yet
+supported. If your `nextflow` install is newer, pin it before running with
+`export NXF_VER=25.10.0`.
+
+On **Windows**, run CHAMPAGNE inside WSL2 — see the
+[Windows (WSL) setup guide](windows-wsl.md) for a reproducible from-scratch
+install using the provided `environment.yml`.
 
 ### Biowulf
 
