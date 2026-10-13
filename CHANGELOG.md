@@ -6,6 +6,8 @@
 - Fix process container syntax to comply with docker runtime. (#352, @padmashris, @kelly-sovacool)
 - Improve documentation:
   - Specify that Nextflow version 25.10.0 is required as of now. (#356, @kelly-sovacool)
+- Replace the `-entry MAKE_REFERENCE` workflow entrypoint with a `--build_reference` flag, fixing an error caused by incompatible output directives between the two workflows. (#385, @kelly-sovacool)
+  - Custom reference genome FASTA, GTF, and blacklist files may now be gzip-compressed.
 
 ## CHAMPAGNE 0.6.0
 
