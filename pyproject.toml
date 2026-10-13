@@ -66,3 +66,20 @@ champagne = "."
 [tool.setuptools.dynamic]
 version = {file = "VERSION"}
 readme = {file = "README.md"}
+
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+CHAMPAGNE = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+
+[tool.pixi.tasks]
+
+[tool.pixi.feature.test.dependencies]
+nextflow = ">=25.10.4,<26"

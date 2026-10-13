@@ -5,3 +5,5 @@ subworkflows/nf-core/** linguist-generated
 modules/CCBR/** linguist-generated
 subworkflows/CCBR/** linguist-generated
 docs/**.html linguist-generated
+# SCM syntax highlighting & preventing 3-way merges
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true -diff
