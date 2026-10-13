@@ -4,11 +4,11 @@
 adapted from: https://github.com/nf-core/chipseq/blob/51eba00b32885c4d0bec60db3cb0a45eb61e34c5/bin/check_samplesheet.py
 """
 
-import collections
-import os
-import errno
 import argparse
+import collections
+import errno
 import operator
+import os
 import pprint
 
 
@@ -28,15 +28,13 @@ def make_dir(path):
             os.makedirs(path)
         except OSError as exception:
             if exception.errno != errno.EEXIST:
-                raise exception
+                raise
 
 
 def print_error(error, context="Line", context_str=""):
     error_str = "ERROR: Please check samplesheet ->"
     if context != "" and context_str != "":
-        error_str = "ERROR: Please check samplesheet -> {}\n{}: '{}'".format(
-            error, context.strip(), context_str.strip()
-        )
+        error_str = f"ERROR: Please check samplesheet -> {error}\n{context.strip()}: '{context_str.strip()}'"
     raise ValueError(error_str)
 
 
@@ -74,9 +72,7 @@ def check_samplesheet(file_in, file_out):
             num_cols = len([x for x in lspl if x])
             if num_cols < MIN_COLS:
                 print_error(
-                    "Invalid number of populated columns (minimum = {})!".format(
-                        MIN_COLS
-                    ),
+                    f"Invalid number of populated columns (minimum = {MIN_COLS})!",
                     "Line",
                     line,
                 )
@@ -107,12 +103,7 @@ def check_samplesheet(file_in, file_out):
                 if fastq:
                     if fastq.find(" ") != -1:
                         print_error("FastQ file contains spaces!", "Line", line)
-                    if not (
-                        fastq.endswith(".fastq.gz")
-                        or fastq.endswith(".fq.gz")
-                        or fastq.endswith(".fastq")
-                        or fastq.endswith(".fq")
-                    ):
+                    if not fastq.endswith((".fastq.gz", ".fq.gz", ".fastq", ".fq")):
                         print_error(
                             "FastQ file does not have extension '.fastq.gz', '.fq.gz', '.fastq', or '.fq'!",
                             "Line",
@@ -165,7 +156,7 @@ def check_samplesheet(file_in, file_out):
             pprint.pprint(sample_info)
 
             ## Create sample mapping dictionary = {sample: [[ single_end, fastq_1, fastq_2, antibody, input ]]}
-            if sample not in sample_mapping_dict.keys():
+            if sample not in sample_mapping_dict:
                 sample_mapping_dict[sample] = [sample_info]
             else:
                 print(f"{sample} in keys")
@@ -182,19 +173,7 @@ def check_samplesheet(file_in, file_out):
         make_dir(out_dir)
         with open(file_out, "w") as fout:
             fout.write(
-                ",".join(
-                    [
-                        "sample",
-                        "sample_basename",
-                        "rep",
-                        "single_end",
-                        "fastq_1",
-                        "fastq_2",
-                        "antibody",
-                        "input",
-                    ]
-                )
-                + "\n"
+                "sample,sample_basename,rep,single_end,fastq_1,fastq_2,antibody,input\n"
             )
             for sample in sorted(sample_mapping_dict.keys()):
                 ## Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
@@ -211,7 +190,7 @@ def check_samplesheet(file_in, file_out):
                 # check that the input/input exists
                 for idx, val in enumerate(sample_mapping_dict[sample]):
                     input = val[-1]
-                    if input and input not in input_dict.keys():
+                    if input and input not in input_dict:
                         print_error(
                             "input identifier has to match a provided sample identifier!",
                             "input",

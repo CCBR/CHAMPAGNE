@@ -1,8 +1,9 @@
 import os.path
 import pathlib
-import pytest
 import subprocess
 import tempfile
+
+import pytest
 from ccbr_tools.shell import shell_run
 
 # from champagne.src.util import run_nextflow
@@ -10,21 +11,33 @@ from ccbr_tools.shell import shell_run
 
 def test_help():
     output = subprocess.run(
-        "./bin/champagne --help", capture_output=True, shell=True, text=True
+        "./bin/champagne --help",
+        capture_output=True,
+        shell=True,
+        text=True,
+        check=False,
     ).stdout
     assert "Usage: champagne [OPTIONS]" in output
 
 
 def test_version():
     output = subprocess.run(
-        "./bin/champagne --version", capture_output=True, shell=True, text=True
+        "./bin/champagne --version",
+        capture_output=True,
+        shell=True,
+        text=True,
+        check=False,
     ).stdout
     assert "champagne, version" in output
 
 
 def test_citation():
     output = subprocess.run(
-        "./bin/champagne --citation", capture_output=True, shell=True, text=True
+        "./bin/champagne --citation",
+        capture_output=True,
+        shell=True,
+        text=True,
+        check=False,
     ).stdout
     assert "title = {CHAMPAGNE" in output
 
@@ -94,12 +107,13 @@ def test_init_default():
 
 
 def test_run_no_init():
-    with pytest.raises(Exception):
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            output = shell_run(
-                f"./bin/champagne run --output {tmp_dir} --mode local",
-                check=True,
-                capture_output=True,
-            )
-            assertions = ["Hint: you must initialize the output directory" in output]
-            assert all(assertions)
+    with pytest.raises(
+        subprocess.CalledProcessError
+    ), tempfile.TemporaryDirectory() as tmp_dir:
+        output = shell_run(
+            f"./bin/champagne run --output {tmp_dir} --mode local",
+            check=True,
+            capture_output=True,
+        )
+        assertions = ["Hint: you must initialize the output directory" in output]
+        assert all(assertions)

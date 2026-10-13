@@ -27,12 +27,8 @@ def calc_egf(effective_genome_size: int, chrom_sizes_list: list):
     # creates dictionary with { chromosome: length }
     chrom_lengths = {line.split()[0]: int(line.split()[1]) for line in chrom_sizes_list}
     chrom_len_sum = sum(
-        chrom_lengths[chrom] for chrom in chrom_lengths if "_" not in chrom
+        length for chrom, length in chrom_lengths.items() if "_" not in chrom
     )
-    chrom_len_sum = 0
-    for chrom in chrom_lengths:
-        if "_" not in chrom:
-            chrom_len_sum += chrom_lengths[chrom]
 
     frac = effective_genome_size / chrom_len_sum
     if not (0 < frac <= 1):
@@ -41,31 +37,33 @@ def calc_egf(effective_genome_size: int, chrom_sizes_list: list):
 
 
 def test():
-    chrom_sizes = """chr1	248956422
-chr2	242193529
-chr3	198295559
-chr4	190214555
-chr5	181538259
-chr6	170805979
-chr7	159345973
-chr8	145138636
-chr9	138394717
-chr10	133797422
-chr11	135086622
-chr12	133275309
-chr13	114364328
-chr14	107043718
-chr15	101991189
-chr16	90338345
-chr17	83257441
-chr18	80373285
-chr19	58617616
-chr20	64444167
-chr21	46709983
-chr22	50818468
-chr_X	156040895
-chr_Y	57227415
-chr_M	16569""".split("\n")
+    chrom_sizes = [
+        "chr1\t248956422",
+        "chr2\t242193529",
+        "chr3\t198295559",
+        "chr4\t190214555",
+        "chr5\t181538259",
+        "chr6\t170805979",
+        "chr7\t159345973",
+        "chr8\t145138636",
+        "chr9\t138394717",
+        "chr10\t133797422",
+        "chr11\t135086622",
+        "chr12\t133275309",
+        "chr13\t114364328",
+        "chr14\t107043718",
+        "chr15\t101991189",
+        "chr16\t90338345",
+        "chr17\t83257441",
+        "chr18\t80373285",
+        "chr19\t58617616",
+        "chr20\t64444167",
+        "chr21\t46709983",
+        "chr22\t50818468",
+        "chr_X\t156040895",
+        "chr_Y\t57227415",
+        "chr_M\t16569",
+    ]
     effective_genome_size = 2700000000
 
     assert calc_egf(effective_genome_size, chrom_sizes) == 0.9391299376153861

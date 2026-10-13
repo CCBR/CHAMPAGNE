@@ -21,7 +21,7 @@ If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
 - genome GTF
-- blacklist fasta
+- blacklist fasta or bed (optional)
 
 Prepare your custom reference genome with:
 
@@ -32,7 +32,7 @@ champagne run --output /data/$USER/champagne_project \
     --genome custom_genome \
     --genome_fasta genome.fasta \
     --genes_gtf genome.gtf \
-    --blacklist blacklist.fasta
+    --blacklist blacklist.bed
 ```
 
 The reference files and a config file for the genome will be written in `results/genome/custom_genome/`.
@@ -45,4 +45,16 @@ champagne run --output /data/$USER/champagne_project \
     --input samplesheet.csv \
     --genome custom_genome \
     -c results/genome/custom_genome/custom_genome.config
+```
+
+Alternatively, you can build the reference genome and run the rest of the
+pipeline in one shot by specifying the custom files like so:
+
+```sh
+champagne run --output /data/$USER/champagne_project \
+    --mode slurm \
+    --genome custom_genome \
+    --genome_fasta genome.fasta \
+    --genes_gtf genome.gtf \
+    --blacklist blacklist.bed
 ```

@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-import Bio.SeqIO
 import gzip
 import platform
+
+import Bio.SeqIO
 
 
 def main():
     count = 0
-    for fastq_filename in "${fastq}".split():
+    for fastq_filename in ["${fastq}"]:
         with gzip.open(fastq_filename, "rt") as file_handle:
             n_seqs = sum(1 for rec in Bio.SeqIO.parse(file_handle, "fastq"))
         count += n_seqs

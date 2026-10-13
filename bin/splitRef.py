@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 import os
 import sys
 
@@ -17,43 +16,37 @@ def formatSequencelength(seq, stringlen):
 
 
 def parsed(filename):
-    fh = open(filename, "r")
-    sequence = ""
-    chrom = ""
-    seqindex = 0
-    seqlen = 0
-    for line in fh:
-        line = line.strip()
-        if line.startswith(">") and sequence != "":
-            yield chrom, formatSequencelength(sequence, seqlen), len(sequence)
-            chrom = line.split(" ")[0]
-            sequence = ""
-        elif line.startswith(">"):
-            chrom = line.split(" ")[0]
-        else:
-            seqindex += 1
-            sequence += line
-            if seqindex == 1:
-                seqlen = len(line)
-    else:
+    with open(filename, "r") as fh:
+        sequence = ""
+        chrom = ""
+        seqindex = 0
+        seqlen = 0
+        for line in fh:
+            line = line.strip()
+            if line.startswith(">") and sequence != "":
+                yield chrom, formatSequencelength(sequence, seqlen), len(sequence)
+                chrom = line.split(" ")[0]
+                sequence = ""
+            elif line.startswith(">"):
+                chrom = line.split(" ")[0]
+            else:
+                seqindex += 1
+                sequence += line
+                if seqindex == 1:
+                    seqlen = len(line)
         # formatSequencelength(sequence, seqlen)
         yield chrom, formatSequencelength(sequence, seqlen), len(sequence)
-    fh.close()
 
 
 def main(fasta_fn, chrom_sizes_fn, outdir):
     os.mkdir(outdir)
-    chromsizesfh = open(chrom_sizes_fn, "w")
-
-    for chrom, seq, chromsize in parsed(fasta_fn):
-        chromsizesfh.write("{}\t{}\n".format(chrom.replace(">", ""), chromsize))
-        outfilename = os.path.join(outdir, chrom.replace(">", "") + ".fa")
-        outfh = open(outfilename, "w")
-        print("{}\n".format(chrom))
-        outfh.write("{}\n{}\n".format(chrom, seq.rstrip()))
-        outfh.close()
-
-    chromsizesfh.close()
+    with open(chrom_sizes_fn, "w") as chromsizesfh:
+        for chrom, seq, chromsize in parsed(fasta_fn):
+            chromsizesfh.write("{}\t{}\n".format(chrom.replace(">", ""), chromsize))
+            outfilename = os.path.join(outdir, chrom.replace(">", "") + ".fa")
+            print(f"{chrom}\n")
+            with open(outfilename, "w") as outfh:
+                outfh.write(f"{chrom}\n{seq.rstrip()}\n")
 
 
 if __name__ == "__main__":

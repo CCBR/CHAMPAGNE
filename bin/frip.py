@@ -14,9 +14,10 @@ Source: https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d58381a0ffd696bbf9c047e4
 ##########################################
 # Modules
 import optparse
-from pybedtools import BedTool
-import pysam
+
 import pandas as pd
+import pysam
+from pybedtools import BedTool
 
 ##########################################
 # Functions
@@ -86,9 +87,11 @@ def clip_bedfile_name(bedfile, filetype):
         sample = bedfile.split("/")[-2]
     else:
         toolused = filetype
-        sample = (
-            bedfile.split("/")[-1].split(".")[0].strip("_peaks").strip("_broadpeaks")
-        )
+        sample = bedfile.split("/")[-1].split(".")[0]
+        for suffix in ("_broadpeaks", "_peaks"):
+            if sample.endswith(suffix):
+                sample = sample[: -len(suffix)]
+                break
     return (toolused, sample)
 
 
@@ -200,7 +203,7 @@ source of bed file is not built into the script. Default: ""',
         "-s", dest="sample", default="", help="Sample name/ID of the bedfile(s)"
     )
 
-    options, args = parser.parse_args()
+    options, _args = parser.parse_args()
     bedfiles = options.peakfiles
     bamfile = options.bamfile
     genomefile = options.genomefile

@@ -40,7 +40,6 @@ Python version(s):	2.7 or 3.X
 
 """
 
-from __future__ import print_function, division
 import sys
 
 
@@ -84,10 +83,10 @@ def filteredData(sample, ftype):
             mtypes = getmetadata(ftype)
             if ftype == "tnreads":
                 v1 = int(linelist[0])
-                print("{}\t{}\t{}".format(sample, mtypes, divide(v1)))
+                print(f"{sample}\t{mtypes}\t{divide(v1)}")
             else:
                 v1, v2 = linelist[0], linelist[1]
-                print("{}\t{}\t{}".format(sample, mtypes, add(v1, v2)))
+                print(f"{sample}\t{mtypes}\t{add(v1, v2)}")
         elif ftype == "fragLen":
             mtypes = getmetadata(ftype)
             extenders = []
@@ -95,13 +94,13 @@ def filteredData(sample, ftype):
                 if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             if len(extenders) > 0:
-                print("{}\t{}\t{}".format(sample, mtypes, extenders[0]))
+                print(f"{sample}\t{mtypes}\t{extenders[0]}")
             else:
-                print("{}\t{}\t{}".format(sample, mtypes, linelist[0]))
+                print(f"{sample}\t{mtypes}\t{linelist[0]}")
         elif ftype == "ppqt" or ftype == "ngsqc" or ftype == "nrf":
             mtypes = getmetadata(ftype)
             for i in range(len(linelist)):
-                print("{}\t{}\t{}".format(sample, mtypes[i], linelist[i]))
+                print(f"{sample}\t{mtypes[i]}\t{linelist[i]}")
 
 
 def main():

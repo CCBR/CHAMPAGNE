@@ -15,8 +15,9 @@ About: This program takes standard input from the concatenation of each *qc.metr
 Python version: 3+
 """
 
-import pandas as pd
 import sys
+
+import pandas as pd
 
 
 def file2table():

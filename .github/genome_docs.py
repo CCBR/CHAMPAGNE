@@ -83,14 +83,14 @@ def to_markdown(genomes, md_head=MD_HEAD):
         "### Reference Genomes\n",
         "These genomes can be passed to the `--genome` parameter.",
     ]
-    for gname, genome in genomes.items():
+    for genome in genomes.values():
         if genome.is_reference:
             md += genome.md
     md += [
         "\n### Spike-in Genomes\n",
         "These genomes can be passed to the `--spike_genome` parameter.",
     ]
-    for gname, genome in genomes.items():
+    for genome in genomes.values():
         if genome.is_spike:
             md += genome.md
     return md
@@ -102,8 +102,7 @@ def main():
     with open("docs/_genomes_tail.md", "r") as tail_file:
         tail = tail_file.readlines()
     with open("docs/guide/genomes.md", "w") as md_file:
-        for line in markdown:
-            md_file.write(line + "\n")
+        md_file.writelines(line + "\n" for line in markdown)
         md_file.writelines(tail)
 
 

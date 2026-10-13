@@ -4,8 +4,9 @@
 source https://github.com/CCBR/Pipeliner/blob/86c6ccaa3d58381a0ffd696bbf9c047e4f991f9e/Results-template/Scripts/bam_filter_by_mapq.py
 """
 
-import pysam
 import argparse
+
+import pysam
 
 parser = argparse.ArgumentParser(description="filter PE bamfile by mapQ values")
 parser.add_argument("-i", dest="inBam", required=True, help="Input Bam File")
@@ -20,7 +21,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 samfile = pysam.AlignmentFile(args.inBam, "rb")
-mapq = dict()
+mapq = {}
 for read in samfile.fetch():
     if read.is_unmapped:
         continue

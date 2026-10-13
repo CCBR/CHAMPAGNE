@@ -3,9 +3,11 @@
 adapted from https://github.com/CCBR/ASPEN/blob/55f909d76500c3502c1c397ef3000908649b0284/workflow/scripts/ccbr_get_consensus_peaks.py
 """
 
-import os
 import argparse
+import os
+import sys
 import uuid
+
 import pandas
 
 parser = argparse.ArgumentParser(
@@ -42,7 +44,6 @@ deleteFiles = []
 
 args = parser.parse_args()
 print(args)
-out = open(args.outbed, "w")
 
 
 filter = float(args.filter)
@@ -77,15 +78,13 @@ print(cmd)
 os.system(cmd)
 
 # check merged count
-npeaks = len(open(rand_name + ".merged.bed").readlines())
+with open(rand_name + ".merged.bed") as merged_file:
+    npeaks = len(merged_file.readlines())
 if npeaks == 0:
-    out.close()
-    exit("Number of merged peaks = 0")
+    sys.exit("Number of merged peaks = 0")
 
 
-count = 0
-for p in args.peakfiles:
-    count += 1
+for count, p in enumerate(args.peakfiles, start=1):
     sortedfile = p + ".sorted." + rand_name
     countfile = p + ".counts." + rand_name
     cmd = (
@@ -125,15 +124,15 @@ df = df.sum(axis=1) / len(df.columns)
 df = pandas.DataFrame({"peakid": df.index, "score": df.values})
 
 
-for index, row in df.iterrows():
-    chrom, coords = row["peakid"].split(":")
-    start, end = coords.split("-")
-    if args.nofilter or float(row["score"]) > filter:
-        out.write(
-            "%s\t%s\t%s\t%s\t%.3f\t.\tNA\tNA\tNA\n"
-            % (chrom, start, end, row["peakid"], float(row["score"]))
-        )
-out.close()
+with open(args.outbed, "w") as out:
+    for _index, row in df.iterrows():
+        chrom, coords = row["peakid"].split(":")
+        start, end = coords.split("-")
+        score = float(row["score"])
+        if args.nofilter or score > filter:
+            out.write(
+                f"{chrom}\t{start}\t{end}\t{row['peakid']}\t{score:.3f}\t.\tNA\tNA\tNA\n"
+            )
 
 for f in deleteFiles:
     os.remove(f)

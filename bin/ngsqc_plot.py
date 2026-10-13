@@ -24,6 +24,7 @@ matplotlib.use("Agg")
 import optparse
 import os
 import re
+
 import matplotlib.pyplot as plt
 
 ##########################################
@@ -32,9 +33,8 @@ import matplotlib.pyplot as plt
 
 def read_ngsqc(ngsqcFile):
     """Purpose: read in ngsqc file and extract similarity QCi data"""
-    f = open(ngsqcFile, "r")
-    ngsqc = f.readlines()
-    f.close()
+    with open(ngsqcFile, "r") as f:
+        ngsqc = f.readlines()
     ngsqc2 = [[], []]
     for i in range(len(ngsqc)):
         if re.search("<", ngsqc[i]):
@@ -70,14 +70,13 @@ def write_ngsqc(ngsqcAll, directory, ext):
             outfile = directory + "/" + sample[0] + ".NGSQC.txt"
         else:
             outfile = directory + "/" + sample[0] + "." + ext + ".NGSQC.txt"
-        f = open(outfile, "w")
-        f.write(
-            "\n".join(
-                str(sample[1][0][i]) + "," + str(sample[1][1][i])
-                for i in range(len(sample[1][0]))
+        with open(outfile, "w") as f:
+            f.write(
+                "\n".join(
+                    str(sample[1][0][i]) + "," + str(sample[1][1][i])
+                    for i in range(len(sample[1][0]))
+                )
             )
-        )
-        f.close()
 
 
 def all_ngsqc(directory, ext):
@@ -145,7 +144,7 @@ NGSQC_report.txt files. This string must be directly before ".NGSQC_report.txt".
 the output file name.",
     )
 
-    options, args = parser.parse_args()
+    options, _args = parser.parse_args()
     directory = options.directory
     ext = options.ext
     group = options.group
