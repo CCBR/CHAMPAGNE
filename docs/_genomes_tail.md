@@ -16,7 +16,7 @@ the genome version you're using.
 ### Custom reference genome
 
 If you'd like to use a genome not available on Biowulf,
-you can prepare a custom genome with the `MAKE_REFERENCE` entrypoint.
+you can prepare a custom genome with `--build_reference`.
 If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
@@ -28,7 +28,7 @@ Prepare your custom reference genome with:
 ```sh
 champagne run --output /data/$USER/champagne_project \
     --mode slurm \
-    -entry MAKE_REFERENCE \
+    --build_reference \
     --genome custom_genome \
     --genome_fasta genome.fasta \
     --genes_gtf genome.gtf \

@@ -61,11 +61,6 @@ workflow DOWNLOAD_SRA {
 
 }
 
-workflow MAKE_REFERENCE {
-    PREPARE_GENOME()
-}
-
-
 workflow LOG {
     log.info """\
             CHAMPAGNE $workflow.manifest.version
@@ -86,11 +81,17 @@ workflow LOG {
 workflow {
     main:
     LOG()
-    validateParameters()
+    if (params.build_reference) {
+        if (!params.genome_fasta || !params.genes_gtf || !params.read_length) {
+            error "Build-reference mode requires --genome_fasta, --genes_gtf, and --read_length."
+        }
+    } else {
+        validateParameters()
+    }
 
     // initialize output channels
     ch_multiqc = Channel.empty()
-    multiqc_report = channel.empty()
+    multiqc_report = Channel.empty()
     fastqc_raw = Channel.empty()
     fastqc_trimmed = Channel.empty()
     ch_peaks = Channel.empty()
@@ -100,6 +101,16 @@ workflow {
     ch_motifs_meme = Channel.empty()
     ch_diffbind = Channel.empty()
     ch_manorm = Channel.empty()
+    ch_ppqt = Channel.empty()
+    ch_deeptools_bw = Channel.empty()
+    ch_deeptools_bw_input_norm = Channel.empty()
+    ch_deeptools_stats = Channel.empty()
+    ch_dedup_bam = Channel.empty()
+    ch_dedup_tagalign = Channel.empty()
+
+    PREPARE_GENOME()
+
+    if (!params.build_reference) {
 
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
     contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
@@ -108,7 +119,6 @@ workflow {
     CUTADAPT(raw_fastqs).reads | POOL_INPUTS
     trimmed_fastqs = POOL_INPUTS.out.reads
 
-    PREPARE_GENOME()
     chrom_sizes = PREPARE_GENOME.out.chrom_sizes
     effective_genome_size = PREPARE_GENOME.out.effective_genome_size
 
@@ -128,6 +138,8 @@ workflow {
     DEDUPLICATE(aligned_bam, chrom_sizes, effective_genome_size)
     deduped_bam = DEDUPLICATE.out.bam
     deduped_tagalign = DEDUPLICATE.out.tag_align
+    ch_dedup_bam = DEDUPLICATE.out.bam
+    ch_dedup_tagalign = DEDUPLICATE.out.tag_align
 
     PHANTOM_PEAKS(deduped_bam).fraglen | PPQT_PROCESS
     frag_lengths = PPQT_PROCESS.out.fraglen
@@ -305,6 +317,7 @@ workflow {
         multiqc_report = MULTIQC.out
     }
 
+    }
 
     publish:
         genome = PREPARE_GENOME.out.conf
@@ -316,8 +329,8 @@ workflow {
         deeptools_stats = ch_deeptools_stats
         multiqc_report = multiqc_report
         multiqc_inputs = ch_multiqc
-        dedup_bam = DEDUPLICATE.out.bam
-        dedup_tagalign = DEDUPLICATE.out.tag_align
+        dedup_bam = ch_dedup_bam
+        dedup_tagalign = ch_dedup_tagalign
         peaks = ch_peaks
         peaks_consensus = ch_peaks_consensus
         annot = ch_annot

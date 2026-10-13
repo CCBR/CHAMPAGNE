@@ -24,7 +24,7 @@ nextflow run CCBR/CHAMPAGNE -r v0.3.0 -profile test,singularity
 Create and use a custom reference genome:
 
 ```sh
-nextflow run CCBR/CHAMPAGNE -profile test -entry MAKE_REFERENCE
+nextflow run CCBR/CHAMPAGNE -profile test --build_reference
 nextflow run CCBR/CHAMPAGNE -profile test -c results/test/genome/custom_genome.config
 ```
 

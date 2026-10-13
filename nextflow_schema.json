@@ -67,6 +67,11 @@
             "description": "Use these to build a custom reference genome not already listed in conf/genomes.config. For an example, see conf/test.config.",
             "default": "",
             "properties": {
+                "build_reference": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Build the custom genome reference and stop without running sample analysis."
+                },
                 "genome_fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-file",
