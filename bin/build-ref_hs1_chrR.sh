@@ -9,6 +9,7 @@ READ_LENGTH=50
 
 cat "$INDICES/hs1/genes.gtf" \
     "$INDICES/hs1_chrR/indexes/chrR_annotations.gtf" \
+    | awk -F'\t' -v OFS='\t' '$9 !~ /transcript_id/ {$9 = $9 " transcript_id \"\";"} {print}' \
     | gzip -c > "$INDICES/hs1_chrR/hs1_chrR.genes.gtf.gz"
 
 "$CHAMPAGNE" init --output "$OUT"
