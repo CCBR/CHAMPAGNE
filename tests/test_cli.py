@@ -107,9 +107,10 @@ def test_init_default():
 
 
 def test_run_no_init():
-    with pytest.raises(
-        subprocess.CalledProcessError
-    ), tempfile.TemporaryDirectory() as tmp_dir:
+    with (
+        pytest.raises(subprocess.CalledProcessError),
+        tempfile.TemporaryDirectory() as tmp_dir,
+    ):
         output = shell_run(
             f"./bin/champagne run --output {tmp_dir} --mode local",
             check=True,
