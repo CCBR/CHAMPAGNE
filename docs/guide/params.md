@@ -68,6 +68,9 @@ Use these to build a custom reference genome not already listed in conf/genomes.
 | `blacklist`       | Custom blacklisted sequences as a fasta file or bed file. These will be filtered out of the trimmed reads before aligning to the reference genome. If null, blacklist filtering will be skipped. | `string`  |         |          |        |
 | `read_length`     | Read length used for counting unique kmers and computing the effective genome size.                                                                                                              | `integer` |         |          |        |
 | `rename_contigs`  | File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)                                                                                                  | `string`  |         |          |        |
+| `meme_motifs`     | Motif file in MEME format. If null, MEME motif analysis will be skipped.                                                                                                                         | `string`  |         |          |        |
+| `bioc_txdb`       | Bioconductor TxDb annotation package name used by ChIPseeker (e.g. TxDb.Hsapiens.UCSC.hg38.knownGene). If null, ChIPseeker annotation will be skipped.                                           | `string`  |         |          |        |
+| `bioc_annot`      | Bioconductor OrgDb annotation package name used by ChIPseeker (e.g. org.Hs.eg.db). If null, ChIPseeker annotation will be skipped.                                                               | `string`  |         |          |        |
 
 ## General parameters
 
