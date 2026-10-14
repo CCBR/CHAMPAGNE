@@ -188,8 +188,8 @@ process WRITE_GENOME_CONFIG {
                   gene_info = '"\${params.index_dir}/${genome_name}/${gene_info}"',
                   effective_genome_size = "${effective_genome_size}",
                   meme_motifs = "${meme_motifs}",
-                  bioc_txdb = "${bioc_txdb}",
-                  bioc_annot = "${bioc_annot}"
+                  bioc_txdb = 'null' if "${bioc_txdb}" == 'null' else '"${bioc_txdb}"',
+                  bioc_annot = 'null' if "${bioc_annot}" == 'null' else '"${bioc_annot}"'
     )
     pprint.pprint(genome)
     with open('${genome_name}.config', 'w') as conf_file:

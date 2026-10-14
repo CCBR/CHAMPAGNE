@@ -91,8 +91,8 @@ workflow PREPARE_GENOME {
                 ch_meme_motifs = Channel.empty()
                 params.run_meme = false
             }
-            ch_bioc_txdb = Channel.value(params.bioc_txdb)
-            ch_bioc_annot = Channel.value(params.bioc_annot)
+            ch_bioc_txdb = Channel.value(params.bioc_txdb ?: 'null')
+            ch_bioc_annot = Channel.value(params.bioc_annot ?: 'null')
 
             WRITE_GENOME_CONFIG(
                 ch_fasta,
