@@ -95,6 +95,19 @@
                     "type": "string",
                     "fa_icon": "fas fa-file",
                     "description": "File with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)"
+                },
+                "meme_motifs": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file",
+                    "description": "Motif file in MEME format. If null, MEME motif analysis will be skipped."
+                },
+                "bioc_txdb": {
+                    "type": "string",
+                    "description": "Bioconductor TxDb annotation package name used by ChIPseeker (e.g. TxDb.Hsapiens.UCSC.hg38.knownGene). If null, ChIPseeker annotation will be skipped."
+                },
+                "bioc_annot": {
+                    "type": "string",
+                    "description": "Bioconductor OrgDb annotation package name used by ChIPseeker (e.g. org.Hs.eg.db). If null, ChIPseeker annotation will be skipped."
                 }
             }
         },
