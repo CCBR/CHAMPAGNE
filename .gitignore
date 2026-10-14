@@ -54,3 +54,7 @@ replay_pid*
 
 # rendered site
 /site/
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+pixi.lock
