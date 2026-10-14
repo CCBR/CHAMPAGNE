@@ -8,6 +8,8 @@
   - Specify that Nextflow version 25.10.0 is required as of now. (#356, @kelly-sovacool)
 - Replace the `-entry MAKE_REFERENCE` workflow entrypoint with a `--build_reference` flag, fixing an error caused by incompatible output directives between the two workflows. (#385, @kelly-sovacool)
   - Custom reference genome FASTA, GTF, and blacklist files may now be gzip-compressed.
+  - Custom spike-in genomes are now supported with `--spike_genome_fasta` and `--spike_blacklist_bed`, which build the spike-in reference the same way as the main reference genome.
+  - Unknown genome names now raise an informative error that lists the genomes available in `conf/genomes.config`.
 
 ## CHAMPAGNE 0.6.0
 

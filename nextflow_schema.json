@@ -149,6 +149,16 @@
                     "type": "string",
                     "description": "Optional spike-in genome (e.g. dmelr6.32, ecoli_k12). If null, spike-in normalization will not be performed."
                 },
+                "spike_genome_fasta": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file",
+                    "description": "Spike-in genome fasta file. Use this to build a custom spike-in reference when spike_genome is not listed in conf/genomes.config. Requires read_length."
+                },
+                "spike_blacklist_bed": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file",
+                    "description": "Blacklisted regions of the custom spike-in genome as a bed file, excluded by deepTools multiBamSummary. If null, no regions are excluded."
+                },
                 "spike_norm_method": {
                     "type": "string",
                     "default": "delorenzi",

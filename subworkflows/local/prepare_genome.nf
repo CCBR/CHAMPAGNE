@@ -111,7 +111,7 @@ workflow PREPARE_GENOME {
             ch_genome_conf = WRITE_GENOME_CONFIG.out.conf.mix(WRITE_GENOME_CONFIG.out.files)
 
         } else {
-            error "Either specify a genome in `conf/genomes.conf`, or specify a genome fasta, gtf, and blacklist file to build a custom reference."
+            error "No reference available for genome '${params.genome}'. Either choose a genome configured in conf/genomes.config (${params.genomes.keySet().sort().join(', ')}), or supply --genome_fasta and --genes_gtf to build a custom reference."
         }
 
     emit:
