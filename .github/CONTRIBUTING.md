@@ -95,6 +95,18 @@ that the changes work as intended.
 We write unit tests with pytest and store them in the `tests/` subdirectory.
 Run the tests with `python -m pytest`.
 
+Nextflow module tests use [nf-test](https://www.nf-test.com/) (CI pins 0.9.5).
+On Biowulf, load the dependencies and run from the repository root:
+
+```sh
+module load ccbrpipeliner nextflow python/3.12
+nf-test test --profile "+singularity"
+```
+
+CI runs the same tests with `--profile "+docker"`, and only runs the tests
+affected by a pull request. Add new module tests in each module's `tests/`
+directory; test data paths are defined in `tests/test-data.config`.
+
 If you change the **workflow**, please run the workflow with the test profile
 and make sure your new feature or bug fix works as intended.
 

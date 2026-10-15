@@ -1,0 +1,34 @@
+nextflow_process {
+
+    name "Test Process GZIP"
+    script "../main.nf"
+    process "GZIP"
+    tag "gzip"
+    tag "modules_local"
+    tag "modules"
+
+    test("Compress a small text file and preserve metadata") {
+
+        when {
+            process {
+                """
+                input[0] = Channel.of([
+                    [id: 'test'],
+                    file("\$projectDir/tests/test_data/gzip.txt", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            def expected = file("$projectDir/tests/test_data/gzip.txt").text
+            assertAll(
+                { assert process.success },
+                { assert process.out.gzip.size() == 1 },
+                { assert process.out.gzip[0][0] == [id: 'test'] },
+                { assert file(process.out.gzip[0][1]).name == 'gzip.txt.gz' },
+                { assert new java.util.zip.GZIPInputStream(file(process.out.gzip[0][1]).newInputStream()).withCloseable { gz -> gz.text } == expected }
+            )
+        }
+    }
+}
