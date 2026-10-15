@@ -103,6 +103,20 @@ module load ccbrpipeliner nextflow python/3.12
 nf-test test --profile "+singularity"
 ```
 
+On Apple Silicon macOS, install Pixi, Podman, and nf-test 0.9.5. Start the
+Podman machine, then run from the repository root:
+
+```sh
+podman machine start
+pixi run -e test test-podman
+```
+
+Pixi supplies Nextflow. The Podman test profile runs AMD64 containers, so the
+Podman machine must support AMD64 emulation. Test fixtures and container images
+require internet access. If Java reports certificate verification errors while
+connected to a VPN, retry off the VPN or configure Java to trust your
+organization's CA; do not disable certificate verification.
+
 CI runs the same tests with `--profile "+docker"`, and only runs the tests
 affected by a pull request. Add new module tests in each module's `tests/`
 directory; test data paths are defined in `tests/test-data.config`.
