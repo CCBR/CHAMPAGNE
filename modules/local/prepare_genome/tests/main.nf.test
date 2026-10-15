@@ -1,0 +1,29 @@
+nextflow_process {
+
+    name "Test Process SPLIT_REF_CHROMS"
+    script "../../prepare_genome.nf"
+    process "SPLIT_REF_CHROMS"
+    tag "prepare_genome"
+    tag "modules_local"
+    tag "modules"
+
+    test("Write correct chromosome sizes and individual FASTA files") {
+        when {
+            process {
+                """
+                input[0] = file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true)
+                """
+            }
+        }
+        then {
+            def chromosomes = path(process.out.chrom_dir[0])
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.chrom_sizes[0]).readLines() == ['1\t8', '2\t12', 'unplaced_scaffold\t4'] },
+                { assert chromosomes.resolve('1.fa').readLines() == ['>1', 'ACGTACGT'] },
+                { assert chromosomes.resolve('2.fa').readLines() == ['>2', 'TTTTCCCCAAAA'] },
+                { assert chromosomes.resolve('unplaced_scaffold.fa').readLines() == ['>unplaced_scaffold', 'GGGG'] }
+            )
+        }
+    }
+}

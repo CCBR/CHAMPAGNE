@@ -1,0 +1,97 @@
+nextflow_workflow {
+
+    name "Test Workflow PREPARE_BLACKLIST"
+    script "../../prepare_blacklist.nf"
+    workflow "PREPARE_BLACKLIST"
+    tag "prepare_blacklist"
+    tag "subworkflows_local"
+    tag "subworkflows"
+
+    test("Index FASTA blacklists after renaming contigs") {
+        when {
+            workflow {
+                """
+                def contigMap = file("$outputDir/contigs.tsv")
+                contigMap.text = '1\\tchr1\\n2\\tchr2\\n'
+                input[0] = file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true)
+                input[1] = Channel.value(file("\$projectDir/tests/test_data/genome.fa"))
+                input[2] = contigMap
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.index[0][1].collect { path(it).fileName.toString() }.sort() == ['genome_renamed.amb', 'genome_renamed.ann', 'genome_renamed.bwt', 'genome_renamed.pac', 'genome_renamed.sa'] },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('chr1') },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('unplaced_scaffold') }
+            )
+        }
+    }
+
+    test("Extract BED intervals before indexing") {
+        when {
+            workflow {
+                """
+                def blacklist = file("$outputDir/blacklist.bed")
+                blacklist.text = '1\\t0\\t4\\n2\\t4\\t8\\n'
+                input[0] = blacklist
+                input[1] = Channel.value(file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true))
+                input[2] = null
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.index[0][1].size() == 5 },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('1:0-4') },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('2:4-8') }
+            )
+        }
+    }
+
+    test("Decompress BED blacklists before extracting and indexing") {
+        when {
+            workflow {
+                """
+                def blacklist = file("$outputDir/blacklist.bed.gz")
+                new java.util.zip.GZIPOutputStream(blacklist.newOutputStream()).withCloseable { stream ->
+                    stream.write('1\\t0\\t4\\n2\\t4\\t8\\n'.bytes)
+                }
+                input[0] = blacklist
+                input[1] = Channel.value(file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true))
+                input[2] = null
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.index[0][1].size() == 5 },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('1:0-4') },
+                { assert path(workflow.out.index[0][1].find { it.toString().endsWith('.ann') }).text.contains('2:4-8') }
+            )
+        }
+    }
+
+    test("Reject unsupported blacklist formats") {
+        when {
+            workflow {
+                """
+                def blacklist = file("$outputDir/blacklist.txt")
+                blacklist.text = 'unsupported'
+                input[0] = blacklist
+                input[1] = Channel.value(file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true))
+                input[2] = null
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.toString().contains('Unsupported blacklist file format extension: txt') }
+            )
+        }
+    }
+}

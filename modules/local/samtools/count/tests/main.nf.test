@@ -1,0 +1,64 @@
+nextflow_process {
+
+    name "Test Process SAMTOOLS_COUNT"
+    script "../main.nf"
+    process "SAMTOOLS_COUNT"
+    tag "samtools/count"
+    tag "modules_local"
+    tag "modules"
+
+    test("Count high-quality mapped single-end reads") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'single', single_end: true], file("\$projectDir/tests/test_data/alignments.sam", checkIfExists: true)]
+                    """
+                }
+            }
+        }
+        when {
+            process {
+                """
+                input[0] = SAMTOOLS_SORT.out.bam
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.count[0][0] == [id: 'single', single_end: true] },
+                { assert process.out.count[0][1].toString().trim() == '3' },
+                { assert path(process.out.versions[0]).text.contains('samtools:') }
+            )
+        }
+    }
+
+    test("Count properly paired high-quality fragments rather than reads") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'paired', single_end: false], file("\$projectDir/tests/test_data/alignments.sam", checkIfExists: true)]
+                    """
+                }
+            }
+        }
+        when {
+            process {
+                """
+                input[0] = SAMTOOLS_SORT.out.bam
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.count[0][0] == [id: 'paired', single_end: false] },
+                { assert process.out.count[0][1].toString().trim() == '1' }
+            )
+        }
+    }
+}

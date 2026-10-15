@@ -1,0 +1,74 @@
+nextflow_workflow {
+
+    name "Test Workflow PREPARE_GENOME"
+    script "../../prepare_genome.nf"
+    workflow "PREPARE_GENOME"
+    tag "prepare_genome"
+    tag "subworkflows_local"
+    tag "subworkflows"
+
+    test("Reuse prebuilt genome assets without rebuilding indexes") {
+        when {
+            params {
+                genome = 'tiny'
+                genomes = [tiny: [
+                    fasta: "$projectDir/tests/test_data/genome.fa",
+                    genes_gtf: "$outputDir/genes.gtf",
+                    reference_index: "$outputDir/reference/genome.*",
+                    chromosomes_dir: "$outputDir/chroms",
+                    chrom_sizes: "$outputDir/genome.chrom.sizes",
+                    gene_info: "$outputDir/genes.bed",
+                    effective_genome_size: 20
+                ]]
+                blacklist = null
+            }
+            workflow {
+                """
+                file("$outputDir/genes.gtf").text = '1\\ttest\\texon\\t1\\t8\\t.\\t+\\t.\\tgene_id "gene1";\\n'
+                file("$outputDir/genes.bed").text = '1\\t0\\t8\\tgene1\\n'
+                file("$outputDir/genome.chrom.sizes").text = '1\\t8\\n2\\t12\\nunplaced_scaffold\\t4\\n'
+                file("$outputDir/chroms").mkdirs()
+                file("$outputDir/chroms/1.fa").text = '>1\\nACGTACGT\\n'
+                file("$outputDir/reference").mkdirs()
+                ['amb', 'ann', 'bwt', 'pac', 'sa'].each { extension ->
+                    file("$outputDir/reference/genome.\${extension}").text = 'prebuilt index fixture'
+                }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert path(workflow.out.fasta[0]).text == path("$projectDir/tests/test_data/genome.fa").text },
+                { assert path(workflow.out.chrom_sizes[0]).readLines() == ['1\t8', '2\t12', 'unplaced_scaffold\t4'] },
+                { assert path(workflow.out.chrom_dir[0]).resolve('1.fa').readLines() == ['>1', 'ACGTACGT'] },
+                { assert path(workflow.out.gene_info[0]).readLines() == ['1\t0\t8\tgene1'] },
+                { assert workflow.out.reference_index[0][1].size() == 5 },
+                { assert workflow.out.effective_genome_size == [20] },
+                { assert workflow.out.blacklist_index.size() == 0 },
+                { assert workflow.out.meme_motifs.size() == 0 },
+                { assert workflow.out.bioc_txdb.size() == 0 },
+                { assert workflow.out.bioc_annot.size() == 0 },
+                { assert workflow.out.conf.size() == 0 }
+            )
+        }
+    }
+
+    test("Fail with guidance when no reference or custom genome is supplied") {
+        when {
+            params {
+                genome = 'missing'
+                genomes = [:]
+                genome_fasta = null
+                genes_gtf = null
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.toString().contains("No reference available for genome 'missing'") },
+                { assert workflow.stdout.toString().contains('--genome_fasta and --genes_gtf') }
+            )
+        }
+    }
+}

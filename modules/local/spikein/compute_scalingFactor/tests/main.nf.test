@@ -1,0 +1,50 @@
+nextflow_process {
+
+    name "Test Process COMPUTE_SCALINGFACTOR"
+    script "../main.nf"
+    process "COMPUTE_SCALINGFACTOR"
+    tag "compute_scalingFactor"
+    tag "modules_local"
+    tag "modules"
+
+    test("Normalize to the minimum count and round to six decimal places") {
+
+        when {
+            process {
+                """
+                input[0] = Channel.of([
+                    [[id: 'sample1', antibody: 'H3K27ac'], [id: 'sample2', antibody: 'H3K27ac'], [id: 'sample3', antibody: 'H3K27ac']],
+                    [100, 200, 300]
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out[0].size() == 1 },
+                { assert path(process.out[0][0]).fileName.toString() == 'H3K27ac_scaling-factors.tsv' },
+                { assert path(process.out[0][0]).readLines() == ['sample\tscalingFactor', 'sample1\t1.0', 'sample2\t0.5', 'sample3\t0.333333'] }
+            )
+        }
+    }
+
+    test("Fail instead of emitting a scaling factor for a zero count") {
+
+        when {
+            process {
+                """
+                input[0] = Channel.of([[[id: 'sample1', antibody: 'H3K27ac']], [0]])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.toString().contains('ZeroDivisionError') }
+            )
+        }
+    }
+}

@@ -1,0 +1,103 @@
+nextflow_process {
+
+    name "Test Process CHECK_CONTRASTS"
+    script "../main.nf"
+    process "CHECK_CONTRASTS"
+    tag "check_contrasts"
+    tag "modules_local"
+    tag "modules"
+
+    test("Accept valid contrasts containing multiple samples per group") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample\\nchip1\\nchip2\\ncontrol\\n'
+                def contrasts = file("$outputDir/contrasts.tsv")
+                contrasts.text = 'contrast_name\\tgroup1\\tgroup2\\ntreatment\\tchip1,chip2\\tcontrol\\n'
+                input[0] = samplesheet
+                input[1] = contrasts
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.versions.size() == 1 },
+                { assert path(process.out.versions[0]).text.contains('CHECK_CONTRASTS') },
+                { assert path(process.out.versions[0]).text.contains('R:') }
+            )
+        }
+    }
+
+    test("Reject samples absent from the samplesheet") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample\\nchip\\ncontrol\\n'
+                def contrasts = file("$outputDir/contrasts.tsv")
+                contrasts.text = 'contrast_name\\tgroup1\\tgroup2\\ntreatment\\tmissing\\tcontrol\\n'
+                input[0] = samplesheet
+                input[1] = contrasts
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.toString().contains('Extra samples found: missing') }
+            )
+        }
+    }
+
+    test("Reject a sample shared by both contrast groups") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample\\nchip\\ncontrol\\n'
+                def contrasts = file("$outputDir/contrasts.tsv")
+                contrasts.text = 'contrast_name\\tgroup1\\tgroup2\\ntreatment\\tchip,control\\tcontrol\\n'
+                input[0] = samplesheet
+                input[1] = contrasts
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.toString().contains('Each sample can only appear in one group') }
+            )
+        }
+    }
+
+    test("Reject duplicate contrast names") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample\\nchip\\ncontrol\\n'
+                def contrasts = file("$outputDir/contrasts.tsv")
+                contrasts.text = 'contrast_name\\tgroup1\\tgroup2\\ntreatment\\tchip\\tcontrol\\ntreatment\\tcontrol\\tchip\\n'
+                input[0] = samplesheet
+                input[1] = contrasts
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.toString().contains('Contrast names must be unique') }
+            )
+        }
+    }
+}

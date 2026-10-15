@@ -1,0 +1,53 @@
+nextflow_workflow {
+
+    name "Test Workflow POOL_INPUTS"
+    script "../main.nf"
+    workflow "POOL_INPUTS"
+    tag "pool_inputs"
+    tag "subworkflows_local"
+    tag "subworkflows"
+
+    test("Pool SE and PE control replicates while preserving ChIP samples") {
+
+        when {
+            workflow {
+                """
+                def read1 = file("\$projectDir/tests/test_data/reads_1.fastq").text
+                def read2 = file("\$projectDir/tests/test_data/reads_2.fastq").text
+                def entries = []
+                [1, 2].each { replicate ->
+                    def forward = file("$outputDir/rep\${replicate}_1.fastq.gz")
+                    def reverse = file("$outputDir/rep\${replicate}_2.fastq.gz")
+                    new java.util.zip.GZIPOutputStream(forward.newOutputStream()).withCloseable { stream -> stream.write(read1.bytes) }
+                    new java.util.zip.GZIPOutputStream(reverse.newOutputStream()).withCloseable { stream -> stream.write(read2.bytes) }
+                    entries << [[id: "single_\${replicate}", sample_basename: 'single', rep: replicate.toString(), single_end: true, is_input: true], [forward]]
+                    entries << [[id: "paired_\${replicate}", sample_basename: 'paired', rep: replicate.toString(), single_end: false, is_input: true], [forward, reverse]]
+                }
+                entries << [[id: 'chip_1', sample_basename: 'chip', rep: '1', single_end: true, is_input: false], [file("$outputDir/rep1_1.fastq.gz")]]
+                input[0] = Channel.fromList(entries)
+                """
+            }
+        }
+
+        then {
+            def single = workflow.out.reads.find { meta, reads -> meta.id == 'single' }
+            def paired = workflow.out.reads.find { meta, reads -> meta.id == 'paired' }
+            def chip = workflow.out.reads.find { meta, reads -> meta.id == 'chip_1' }
+            def forward = path("$projectDir/tests/test_data/reads_1.fastq").readLines()
+            def reverse = path("$projectDir/tests/test_data/reads_2.fastq").readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.reads.size() == 3 },
+                { assert single[0] == [id: 'single', sample_basename: 'single', rep: '', single_end: true, is_input: true] },
+                { assert path(single[1]).linesGzip == forward + forward },
+                { assert paired[0] == [id: 'paired', sample_basename: 'paired', rep: '', single_end: false, is_input: true] },
+                { assert paired[1].size() == 2 },
+                { assert path(paired[1][0]).linesGzip == forward + forward },
+                { assert path(paired[1][1]).linesGzip == reverse + reverse },
+                { assert chip[0] == [id: 'chip_1', sample_basename: 'chip', rep: '1', single_end: true, is_input: false] },
+                { assert path(chip[1][0]).fileName.toString() == 'rep1_1.fastq.gz' },
+                { assert path(chip[1][0]).linesGzip == forward }
+            )
+        }
+    }
+}
