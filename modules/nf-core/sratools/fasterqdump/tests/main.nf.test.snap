@@ -8,7 +8,7 @@
                             "id": "test_single_end",
                             "single_end": true
                         },
-                        "test_single_end.fastq.gz:md5,674d78c1cc3c1308d6d39d6369a42887"
+                        "SRR13255544.fastq.gz:md5,674d78c1cc3c1308d6d39d6369a42887"
                     ]
                 ],
                 "1": [
@@ -20,7 +20,7 @@
                             "id": "test_single_end",
                             "single_end": true
                         },
-                        "test_single_end.fastq.gz:md5,674d78c1cc3c1308d6d39d6369a42887"
+                        "SRR13255544.fastq.gz:md5,674d78c1cc3c1308d6d39d6369a42887"
                     ]
                 ],
                 "versions": [
@@ -40,8 +40,9 @@
                             "single_end": false
                         },
                         [
-                            "test_paired_end_1.fastq.gz:md5,8573015c91d099b6e30789f8bab2f43c",
-                            "test_paired_end_2.fastq.gz:md5,37e6f719a022dc3c9994c80fbc20c311"
+                            "SRR11140744.fastq.gz:md5,96a821b351f3a450889a38e7099f7b95",
+                            "SRR11140744_1.fastq.gz:md5,8573015c91d099b6e30789f8bab2f43c",
+                            "SRR11140744_2.fastq.gz:md5,37e6f719a022dc3c9994c80fbc20c311"
                         ]
                     ]
                 ],
@@ -55,8 +56,9 @@
                             "single_end": false
                         },
                         [
-                            "test_paired_end_1.fastq.gz:md5,8573015c91d099b6e30789f8bab2f43c",
-                            "test_paired_end_2.fastq.gz:md5,37e6f719a022dc3c9994c80fbc20c311"
+                            "SRR11140744.fastq.gz:md5,96a821b351f3a450889a38e7099f7b95",
+                            "SRR11140744_1.fastq.gz:md5,8573015c91d099b6e30789f8bab2f43c",
+                            "SRR11140744_2.fastq.gz:md5,37e6f719a022dc3c9994c80fbc20c311"
                         ]
                     ]
                 ],
