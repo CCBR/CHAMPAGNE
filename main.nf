@@ -116,6 +116,10 @@ workflow {
 
     if (!params.build_reference) {
 
+    annotation_reference = params.genomes[params.genome] ?: params
+    chipseeker_enabled = params.run_chipseeker &&
+        annotation_reference.bioc_txdb && annotation_reference.bioc_annot ? true : false
+
     sample_sheet = Channel.fromPath(file(params.input, checkIfExists: true))
     contrast_sheet = params.contrasts ? Channel.fromPath(file(params.contrasts, checkIfExists: true)) : params.contrasts
     raw_fastqs = INPUT_CHECK(sample_sheet, contrast_sheet).reads
@@ -244,7 +248,7 @@ workflow {
             ANNOTATE_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.bioc_txdb,
                     PREPARE_GENOME.out.bioc_annot,
-                    PREPARE_GENOME.out.chipseeker_enabled)
+                    chipseeker_enabled)
             MOTIFS_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
@@ -275,7 +279,7 @@ workflow {
             ANNOTATE_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.bioc_txdb,
                     PREPARE_GENOME.out.bioc_annot,
-                    PREPARE_GENOME.out.chipseeker_enabled)
+                    chipseeker_enabled)
             MOTIFS_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)

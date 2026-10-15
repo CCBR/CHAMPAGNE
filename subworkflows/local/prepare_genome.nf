@@ -51,10 +51,6 @@ workflow PREPARE_GENOME {
                 Channel.value(params.genomes[ params.genome ].bioc_txdb) : Channel.empty()
             ch_bioc_annot = params.genomes[ params.genome ].bioc_annot ?
                 Channel.value(params.genomes[ params.genome ].bioc_annot) : Channel.empty()
-            ch_chipseeker_enabled = Channel.value(
-                params.run_chipseeker && params.genomes[ params.genome ].bioc_txdb &&
-                params.genomes[ params.genome ].bioc_annot ? true : false
-            )
 
         } else if (params.genome_fasta && params.genes_gtf) {
             fasta_file = Channel.fromPath(params.genome_fasta, checkIfExists: true)
@@ -104,9 +100,6 @@ workflow PREPARE_GENOME {
             }
             ch_bioc_txdb = params.bioc_txdb ? Channel.value(params.bioc_txdb) : Channel.empty()
             ch_bioc_annot = params.bioc_annot ? Channel.value(params.bioc_annot) : Channel.empty()
-            ch_chipseeker_enabled = Channel.value(
-                params.run_chipseeker && params.bioc_txdb && params.bioc_annot ? true : false
-            )
             ch_bioc_txdb_config = Channel.value(params.bioc_txdb ?: 'null')
             ch_bioc_annot_config = Channel.value(params.bioc_annot ?: 'null')
 
@@ -141,6 +134,5 @@ workflow PREPARE_GENOME {
         meme_motifs = ch_meme_motifs
         bioc_txdb = ch_bioc_txdb
         bioc_annot = ch_bioc_annot
-        chipseeker_enabled = ch_chipseeker_enabled
         conf = ch_genome_conf
 }

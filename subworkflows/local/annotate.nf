@@ -12,7 +12,7 @@ workflow ANNOTATE {
 
     main:
         ch_plots = Channel.empty()
-        if (chipseeker_enabled.getVal()) {
+        if (chipseeker_enabled) {
             CHIPSEEKER_PEAKPLOT(ch_peaks, bioc_txdb, bioc_annot)
             CHIPSEEKER_ANNOTATE(ch_peaks, bioc_txdb, bioc_annot)
             ch_annot = CHIPSEEKER_ANNOTATE.out.annot
