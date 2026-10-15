@@ -10,6 +10,7 @@
   - Custom reference genome FASTA, GTF, and blacklist files may now be gzip-compressed.
   - Custom spike-in genomes are now supported with `--spike_genome_fasta` and `--spike_blacklist_bed`, which build the spike-in reference the same way as the main reference genome.
   - Unknown genome names now raise an informative error that lists the genomes available in `conf/genomes.config`.
+- Add support for T2T human genome with ribosomal DNA (`hs1_chrR`) on biowulf. (#386, @kelly-sovacool)
 
 ## CHAMPAGNE 0.6.0
 
