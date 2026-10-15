@@ -41,9 +41,20 @@ workflow PREPARE_GENOME {
             ch_chrom_sizes = Channel.fromPath(params.genomes[ params.genome ].chrom_sizes, checkIfExists: true)
             ch_gene_info = Channel.fromPath(params.genomes[ params.genome ].gene_info, checkIfExists: true)
             ch_gsize = Channel.value(params.genomes[ params.genome ].effective_genome_size)
-            ch_meme_motifs = Channel.fromPath(params.genomes[ params.genome ].meme_motifs, checkIfExists: true)
-            ch_bioc_txdb = Channel.value(params.genomes[ params.genome ].bioc_txdb)
-            ch_bioc_annot = Channel.value(params.genomes[ params.genome ].bioc_annot)
+            if (params.genomes[ params.genome ].meme_motifs) {
+                ch_meme_motifs = Channel.fromPath(params.genomes[ params.genome ].meme_motifs, checkIfExists: true)
+            } else {
+                ch_meme_motifs = Channel.empty()
+                params.run_meme = false
+            }
+            ch_bioc_txdb = params.genomes[ params.genome ].bioc_txdb ?
+                Channel.value(params.genomes[ params.genome ].bioc_txdb) : Channel.empty()
+            ch_bioc_annot = params.genomes[ params.genome ].bioc_annot ?
+                Channel.value(params.genomes[ params.genome ].bioc_annot) : Channel.empty()
+            ch_chipseeker_enabled = Channel.value(
+                params.run_chipseeker && params.genomes[ params.genome ].bioc_txdb &&
+                params.genomes[ params.genome ].bioc_annot ? true : false
+            )
 
         } else if (params.genome_fasta && params.genes_gtf) {
             fasta_file = Channel.fromPath(params.genome_fasta, checkIfExists: true)
@@ -91,8 +102,13 @@ workflow PREPARE_GENOME {
                 ch_meme_motifs = Channel.empty()
                 params.run_meme = false
             }
-            ch_bioc_txdb = Channel.value(params.bioc_txdb ?: 'null')
-            ch_bioc_annot = Channel.value(params.bioc_annot ?: 'null')
+            ch_bioc_txdb = params.bioc_txdb ? Channel.value(params.bioc_txdb) : Channel.empty()
+            ch_bioc_annot = params.bioc_annot ? Channel.value(params.bioc_annot) : Channel.empty()
+            ch_chipseeker_enabled = Channel.value(
+                params.run_chipseeker && params.bioc_txdb && params.bioc_annot ? true : false
+            )
+            ch_bioc_txdb_config = Channel.value(params.bioc_txdb ?: 'null')
+            ch_bioc_annot_config = Channel.value(params.bioc_annot ?: 'null')
 
             WRITE_GENOME_CONFIG(
                 ch_fasta,
@@ -104,8 +120,8 @@ workflow PREPARE_GENOME {
                 ch_gene_info,
                 ch_gsize,
                 meme_motif_name,
-                ch_bioc_txdb,
-                ch_bioc_annot,
+                ch_bioc_txdb_config,
+                ch_bioc_annot_config,
 
             )
             ch_genome_conf = WRITE_GENOME_CONFIG.out.conf.mix(WRITE_GENOME_CONFIG.out.files)
@@ -125,5 +141,6 @@ workflow PREPARE_GENOME {
         meme_motifs = ch_meme_motifs
         bioc_txdb = ch_bioc_txdb
         bioc_annot = ch_bioc_annot
+        chipseeker_enabled = ch_chipseeker_enabled
         conf = ch_genome_conf
 }

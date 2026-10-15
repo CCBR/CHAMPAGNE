@@ -243,7 +243,8 @@ workflow {
                 .set{ ch_consensus_union }
             ANNOTATE_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.bioc_txdb,
-                    PREPARE_GENOME.out.bioc_annot)
+                    PREPARE_GENOME.out.bioc_annot,
+                    PREPARE_GENOME.out.chipseeker_enabled)
             MOTIFS_CONS_UNION(ch_consensus_union,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
@@ -273,7 +274,8 @@ workflow {
 
             ANNOTATE_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.bioc_txdb,
-                    PREPARE_GENOME.out.bioc_annot)
+                    PREPARE_GENOME.out.bioc_annot,
+                    PREPARE_GENOME.out.chipseeker_enabled)
             MOTIFS_CONS_CORCES(CONSENSUS_CORCES.out.peaks,
                     PREPARE_GENOME.out.fasta,
                     PREPARE_GENOME.out.meme_motifs)
