@@ -43,6 +43,22 @@ These genomes can be passed to the `--genome` parameter.
 - bioc_txdb: `TxDb.Hsapiens.UCSC.hg38.knownGene`
 - bioc_annot: `org.Hs.eg.db`
 
+#### `hs1_chrR`
+
+- species: `Homo sapiens`
+- description: `Human T2T-CHM13v2.0 with ribosomal DNA`
+- fasta: `${params.index_dir}/hs1_chrR/hs1_chrR.fa`
+- genes_gtf: `${params.index_dir}/hs1_chrR/hs1_chrR.genes.gtf.gz`
+- blacklist_index: `${params.index_dir}/hs1_chrR/blacklist/*`
+- reference_index: `${params.index_dir}/hs1_chrR/reference/*`
+- chromosomes_dir: `${params.index_dir}/hs1_chrR/chroms/`
+- chrom_sizes: `${params.index_dir}/hs1_chrR/hs1_chrR.chrom.sizes`
+- gene_info: `${params.index_dir}/hs1_chrR/hs1_chrR.genes.bed`
+- effective_genome_size: `2723047107`
+- meme_motifs: `null`
+- bioc_txdb: `null`
+- bioc_annot: `null`
+
 #### `mm10`
 
 - species: `Mus musculus`
@@ -99,26 +115,23 @@ the genome version you're using.
 ### Custom reference genome
 
 If you'd like to use a genome not available on Biowulf,
-you can prepare a custom genome with the `MAKE_REFERENCE` entrypoint.
+you can prepare a custom genome with `--build_reference`.
 If you'd like to use a custom genome, you'll need the following files:
 
 - genome fasta
 - genome GTF
 - blacklist fasta or bed (optional)
 
-The FASTA and GTF inputs, and an optional blacklist, may be gzip-compressed
-(`.fa.gz`, `.fasta.gz`, `.gtf.gz`, or `.bed.gz`).
-
 Prepare your custom reference genome with:
 
 ```sh
 champagne run --output /data/$USER/champagne_project \
     --mode slurm \
-    -entry MAKE_REFERENCE \
+    --build_reference \
     --genome custom_genome \
     --genome_fasta genome.fasta \
     --genes_gtf genome.gtf \
-    --blacklist blacklist.fasta
+    --blacklist blacklist.bed
 ```
 
 The reference files and a config file for the genome will be written in `results/genome/custom_genome/`.
@@ -131,4 +144,16 @@ champagne run --output /data/$USER/champagne_project \
     --input samplesheet.csv \
     --genome custom_genome \
     -c results/genome/custom_genome/custom_genome.config
+```
+
+Alternatively, you can build the reference genome and run the rest of the
+pipeline in one shot by specifying the custom files like so:
+
+```sh
+champagne run --output /data/$USER/champagne_project \
+    --mode slurm \
+    --genome custom_genome \
+    --genome_fasta genome.fasta \
+    --genes_gtf genome.gtf \
+    --blacklist blacklist.bed
 ```
