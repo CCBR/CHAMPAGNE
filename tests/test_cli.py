@@ -2,11 +2,14 @@ import os.path
 import pathlib
 import subprocess
 import tempfile
+from unittest.mock import Mock
 
+import ccbr_tools.pipeline.nextflow
 import pytest
 from ccbr_tools.shell import shell_run
+from click.testing import CliRunner
 
-# from champagne.src.util import run_nextflow
+from src.__main__ import cli
 
 
 def test_help():
@@ -42,35 +45,33 @@ def test_citation():
     assert "title = {CHAMPAGNE" in output
 
 
-def test_preview():
-    output = subprocess.run(
-        "./bin/champagne run -preview -c tests/nxf/ci_stub.config --mode local",
-        capture_output=True,
-        shell=True,
-        text=True,
-        check=True,
-    ).stdout
-    cmd_line = {
-        line.split(":")[0].strip(): line.split(":")[1].strip()
-        for line in output.split("\n")
-        if ":" in line
-    }["cmd line"]
+@pytest.fixture
+def mock_nextflow(monkeypatch, tmp_path):
+    """Capture Nextflow commands without launching external processes."""
+    (tmp_path / "nextflow.config").touch()
+    mock_run = Mock()
+    monkeypatch.setattr(ccbr_tools.pipeline.nextflow, "shell_run", mock_run)
+    return mock_run
+
+
+def test_preview(mock_nextflow, tmp_path):
+    result = CliRunner().invoke(
+        cli, ["run", "--output", str(tmp_path), "--mode", "local", "-preview"]
+    )
+    assert result.exit_code == 0, result.output
+    mock_nextflow.assert_called_once()
+    cmd_line = mock_nextflow.call_args.args[0]
     assert "-preview" in cmd_line and "-resume" in cmd_line
 
 
-def test_forceall():
-    output = subprocess.run(
-        "./bin/champagne run --forceall -preview -c tests/nxf/ci_stub.config --mode local",
-        capture_output=True,
-        shell=True,
-        text=True,
-        check=True,
-    ).stdout
-    cmd_line = {
-        line.split(":")[0].strip(): line.split(":")[1].strip()
-        for line in output.split("\n")
-        if ":" in line
-    }["cmd line"]
+def test_forceall(mock_nextflow, tmp_path):
+    result = CliRunner().invoke(
+        cli,
+        ["run", "--output", str(tmp_path), "--mode", "local", "--forceall", "-preview"],
+    )
+    assert result.exit_code == 0, result.output
+    mock_nextflow.assert_called_once()
+    cmd_line = mock_nextflow.call_args.args[0]
     assert "-preview" in cmd_line and "-resume" not in cmd_line
 
 

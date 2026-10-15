@@ -176,10 +176,8 @@ cli.add_command(init)
 
 
 def main():
-    cli()
+    cli(prog_name="champagne")
 
-
-cli(prog_name="champagne")
 
 if __name__ == "__main__":
     main()
