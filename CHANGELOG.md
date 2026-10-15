@@ -1,3 +1,5 @@
+## CHAMPAGNE development version
+
 ## CHAMPAGNE 0.7.0
 
 - Fix broken link to diagram in docs. (#348, @padmashris)
