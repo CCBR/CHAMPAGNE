@@ -1,0 +1,35 @@
+nextflow_workflow {
+    name "Test Workflow MANORM"
+    script "../main.nf"
+    workflow "MANORM"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: compare opposite groups without self-comparisons") {
+        options "-stub-run"
+        when {
+            workflow {
+                """
+                def fixtures = ['treated.bed', 'control.bed', 'treated.peaks', 'control.peaks'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = '1\\t0\\t8\\n'
+                    fixture
+                }
+                input[0] = Channel.of(
+                    [[id: 'treated', tool: 'macs_narrow', contrast: 'comparison', group: 'group1', fraglen: 150], fixtures[0], fixtures[2]],
+                    [[id: 'control', tool: 'macs_narrow', contrast: 'comparison', group: 'group2', fraglen: 150], fixtures[1], fixtures[3]]
+                )
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.out.size() == 2 },
+                { assert workflow.out.out.collect { meta, result -> meta.contrast }.sort() == ['control_vs_treated', 'treated_vs_control'] },
+                { assert workflow.out.out.every { meta, result -> meta.tool == 'macs_narrow' && path(result).fileName.toString() == 'blank.txt' } }
+            )
+        }
+    }
+}

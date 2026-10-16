@@ -1,0 +1,53 @@
+nextflow_workflow {
+    name "Test Workflow CALL_PEAKS"
+    script "../../peaks.nf"
+    workflow "CALL_PEAKS"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: join control inputs into broad and narrow peaks and QC plots") {
+        options "-stub-run"
+        when {
+            params {
+                run_macs_broad = true
+                run_macs_narrow = true
+                run_sicer = false
+                run_gem = false
+            }
+            workflow {
+                """
+                def chip = [id: 'chip', input: 'control', single_end: true]
+                def control = [id: 'control', input: '', single_end: true]
+                def fixtures = ['chip.bed', 'control.bed', 'chip.bam', 'chip.bam.bai', 'control.bam', 'control.bam.bai'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = 'stub peak input'
+                    fixture
+                }
+                def sizes = file("$outputDir/genome.sizes")
+                sizes.text = 'chr1\\t1000\\n'
+                def chroms = file("$outputDir/chroms")
+                chroms.mkdirs()
+                file("$outputDir/chroms/chr1.fa").text = '>chr1\\nACGTACGT\\n'
+                input[0] = Channel.value(sizes)
+                input[1] = Channel.value(chroms)
+                input[2] = Channel.of([chip, fixtures[0], 'BED'], [control, fixtures[1], 'BED'])
+                input[3] = Channel.of([chip, fixtures[2], fixtures[3]], [control, fixtures[4], fixtures[5]])
+                input[4] = Channel.of([chip, 150], [control, 150])
+                input[5] = Channel.value(800)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.peaks.collect { meta, peak, tool -> tool }.sort() == ['macs_broad', 'macs_narrow'] },
+                { assert workflow.out.narrow_peaks.size() == 1 },
+                { assert workflow.out.narrow_peaks[0][2] == 'macs_narrow' },
+                { assert workflow.out.bam_peaks.size() == 2 },
+                { assert workflow.out.tagalign_peaks.size() == 2 },
+                { assert workflow.out.plots.size() == 3 }
+            )
+        }
+    }
+}

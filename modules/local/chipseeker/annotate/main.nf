@@ -30,7 +30,8 @@ process CHIPSEEKER_ANNOTATE {
 
     stub:
     """
-    for ftype in annotated.txt summary.txt genelist.txt annotation.Rds .png
+    mkdir -p ${meta.id}
+    for ftype in annotated.txt summary.txt genelist.txt annotation.Rds png
     do
         touch ${meta.id}/${meta.id}.\${ftype}
     done

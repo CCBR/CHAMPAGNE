@@ -1,0 +1,37 @@
+nextflow_workflow {
+    name "Test Workflow DIFFBIND"
+    script "../main.nf"
+    workflow "DIFFBIND"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: group samples by contrast and caller into a labelled report") {
+        options "-stub-run"
+        when {
+            params {
+                diffbind_report = "$outputDir/report.Rmd"
+            }
+            workflow {
+                """
+                file("$outputDir/report.Rmd").text = '# Stub report\\n'
+                def fixtures = ['chip.bam', 'chip.bam.bai', 'chip.bed', 'control.bam', 'control.bam.bai'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = 'stub differential input'
+                    fixture
+                }
+                input[0] = Channel.of([[id: 'chip', rep: '1', group: 'group1', input: 'control', contrast: 'comparison', tool: 'macs_narrow'], *fixtures])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.report.size() == 1 },
+                { assert workflow.out.report[0][0] == [id: 'comparison.macs_narrow', contrast: 'comparison', tool: 'macs_narrow'] },
+                { assert path(workflow.out.report[0][1]).fileName.toString() == 'report.html' },
+                { assert workflow.out.versions.size() == 1 }
+            )
+        }
+    }
+}

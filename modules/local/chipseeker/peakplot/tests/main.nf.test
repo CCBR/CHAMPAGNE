@@ -1,0 +1,29 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_PEAKPLOT"
+    script "../main.nf"
+    process "CHIPSEEKER_PEAKPLOT"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+
+    test("Stub: emit a sample-labelled peak plot") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                input[0] = [[id: 'sample'], file("\$projectDir/tests/test_data/genome.fa")]
+                input[1] = 'TxDb.test'
+                input[2] = 'org.test.db'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.plots[0][0] == [id: 'sample'] },
+                { assert path(process.out.plots[0][1]).fileName.toString() == 'sample.png' }
+            )
+        }
+    }
+}

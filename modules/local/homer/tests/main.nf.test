@@ -1,0 +1,34 @@
+nextflow_process {
+    name "Test Process HOMER_MOTIFS"
+    script "../main.nf"
+    process "HOMER_MOTIFS"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+    test("Stub: emit motif artifacts and background and target FASTAs") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                def peaks = file("$outputDir/peaks.bed")
+                peaks.text = '1\\t0\\t8\\n'
+                def motifs = file("$outputDir/motifs.motif")
+                motifs.text = '>test\\n0.25 0.25 0.25 0.25\\n'
+                input[0] = [[id: 'sample'], peaks, file("\$projectDir/tests/test_data/genome.fa"), motifs]
+                input[1] = false
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.motifs[0][0] == [id: 'sample'] },
+                { assert process.out.motifs[0][1].size() == 2 },
+                { assert path(process.out.ame[0][1]).fileName.toString() == 'background.fa' },
+                { assert path(process.out.ame[0][2]).fileName.toString() == 'target.fa' },
+                { assert path(process.out.ame[0][1]).size() > 0 }
+            )
+        }
+    }
+}

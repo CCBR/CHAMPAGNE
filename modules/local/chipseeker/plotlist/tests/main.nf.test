@@ -1,0 +1,27 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_PLOTLIST"
+    script "../main.nf"
+    process "CHIPSEEKER_PLOTLIST"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+
+    test("Stub: name the combined annotation plot by consensus method") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                input[0] = [[consensus: 'corces'], [file("\$projectDir/tests/test_data/genome.fa")]]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out[0].size() == 1 },
+                { assert path(process.out[0][0]).fileName.toString() == 'corces_plot_anno_bar.png' }
+            )
+        }
+    }
+}

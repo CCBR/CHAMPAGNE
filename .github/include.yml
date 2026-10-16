@@ -3,5 +3,6 @@
   - ./nf-test.config
   - ./nextflow.config
   - ./tests/nextflow.config
+  - ./tests/nextflow_stub.config
   - ./tests/test-data.config
   - ./tests/test_data/**

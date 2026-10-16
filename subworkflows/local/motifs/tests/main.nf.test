@@ -1,0 +1,40 @@
+nextflow_workflow {
+    name "Test Workflow MOTIFS"
+    script "../main.nf"
+    workflow "MOTIFS"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: connect HOMER sequence outputs to MEME enrichment") {
+        options "-stub-run"
+        when {
+            params {
+                run_homer = true
+                run_meme = true
+                homer_jaspar_db = "$outputDir/homer.motif"
+            }
+            workflow {
+                """
+                def peaks = file("$outputDir/peaks.bed")
+                peaks.text = '1\\t0\\t8\\n'
+                file("$outputDir/homer.motif").text = '>test\\n0.25 0.25 0.25 0.25\\n'
+                def motifs = file("$outputDir/motifs.tar.gz")
+                motifs.text = 'stub motif archive'
+                input[0] = Channel.of([[id: 'sample', group: ''], peaks])
+                input[1] = Channel.value(file("\$projectDir/tests/test_data/genome.fa"))
+                input[2] = Channel.value(motifs)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.homer.size() == 1 },
+                { assert workflow.out.homer[0][0].id == 'sample' },
+                { assert workflow.out.meme.size() == 2 },
+                { assert workflow.out.meme.collect { meta, result -> path(result).fileName.toString() }.sort() == ['sample.ame.tsv', 'sample.sequences.tsv.gz'] }
+            )
+        }
+    }
+}

@@ -1,0 +1,37 @@
+nextflow_workflow {
+    name "Test Workflow DIFF"
+    script "../main.nf"
+    workflow "DIFF"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: route single-replicate contrasts to MAnorm instead of DiffBind") {
+        options "-stub-run"
+        when {
+            workflow {
+                """
+                def fixtures = ['treated.bam', 'treated.bam.bai', 'treated.peaks', 'control.bam', 'control.bam.bai', 'control.peaks', 'treated.bed', 'control.bed'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = 'stub differential input'
+                    fixture
+                }
+                def treated = [id: 'treated_1', sample_basename: 'treated', rep: '1', tool: 'macs_narrow', fraglen: 150]
+                def control = [id: 'control_1', sample_basename: 'control', rep: '1', tool: 'macs_narrow', fraglen: 150]
+                input[0] = Channel.of([treated, fixtures[0], fixtures[1], fixtures[2], fixtures[3], fixtures[4]], [control, fixtures[3], fixtures[4], fixtures[5], fixtures[0], fixtures[1]])
+                input[1] = Channel.of([treated, fixtures[6], fixtures[2]], [control, fixtures[7], fixtures[5]])
+                input[2] = Channel.of([contrast: 'comparison', sample_basename: 'treated', group: 'group1'], [contrast: 'comparison', sample_basename: 'control', group: 'group2'])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.diff_peaks.size() == 2 },
+                { assert workflow.out.diffbind.size() == 0 },
+                { assert workflow.out.manorm.size() == 2 },
+                { assert workflow.out.manorm.collect { meta, result -> meta.contrast }.sort() == ['control_1_vs_treated_1', 'treated_1_vs_control_1'] }
+            )
+        }
+    }
+}
