@@ -1,0 +1,55 @@
+nextflow_process {
+
+    name "Test Process CHECK_SAMPLESHEET"
+    script "../../check_samplesheet.nf"
+    process "CHECK_SAMPLESHEET"
+    tag "check_samplesheet"
+    tag "modules_local"
+    tag "modules"
+
+    test("Validate paired-end samples and their input control") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample,rep,fastq_1,fastq_2,antibody,input\\nchip,1,chip_1.fastq.gz,chip_2.fastq.gz,H3K27ac,control\\ncontrol,1,control_1.fastq.gz,control_2.fastq.gz,,\\n'
+                input[0] = samplesheet
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.csv.size() == 1 },
+                { assert path(process.out.csv[0]).readLines() == [
+                    'sample,sample_basename,rep,single_end,fastq_1,fastq_2,antibody,input',
+                    'chip_1,chip,1,0,chip_1.fastq.gz,chip_2.fastq.gz,H3K27ac,control',
+                    'control_1,control,1,0,control_1.fastq.gz,control_2.fastq.gz,,'
+                ] },
+                { assert path(process.out.versions[0]).text.contains('python: 3.8.3') }
+            )
+        }
+    }
+
+    test("Reject a samplesheet missing required columns") {
+
+        when {
+            process {
+                """
+                def samplesheet = file("$outputDir/invalid.csv")
+                samplesheet.text = 'sample,fastq_1\\nchip,chip.fastq.gz\\n'
+                input[0] = samplesheet
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.toString().contains('ERROR: Please check samplesheet') }
+            )
+        }
+    }
+}

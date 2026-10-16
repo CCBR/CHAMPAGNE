@@ -1,0 +1,34 @@
+nextflow_process {
+    name "Test Process MEME_AME"
+    script "../main.nf"
+    process "MEME_AME"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+    test("Stub: preserve metadata in motif enrichment and sequence results") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                def background = file("$outputDir/background.fa")
+                background.text = '>background\\nACGTACGT\\n'
+                def target = file("$outputDir/target.fa")
+                target.text = '>target\\nTGCATGCA\\n'
+                def motifs = file("$outputDir/motifs.tar.gz")
+                motifs.text = 'stub motif archive'
+                input[0] = [[id: 'sample', group: ''], background, target, motifs]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.ame[0][0] == [id: 'sample', group: ''] },
+                { assert process.out.seq[0][0] == process.out.ame[0][0] },
+                { assert path(process.out.ame[0][1]).fileName.toString() == 'sample.ame.tsv' },
+                { assert path(process.out.seq[0][1]).fileName.toString() == 'sample.sequences.tsv.gz' }
+            )
+        }
+    }
+}

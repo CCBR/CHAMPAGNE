@@ -1,0 +1,8 @@
+# Shared Nextflow configs run the full suite; CI workflow changes do not.
+".":
+  - ./nf-test.config
+  - ./nextflow.config
+  - ./tests/nextflow.config
+  - ./tests/nextflow_stub.config
+  - ./tests/test-data.config
+  - ./tests/test_data/**

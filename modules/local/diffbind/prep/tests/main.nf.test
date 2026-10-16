@@ -1,0 +1,36 @@
+nextflow_process {
+
+    name "Test Process CONCAT_CSV"
+    script "../main.nf"
+    process "CONCAT_CSV"
+    tag "diffbind/prep"
+    tag "modules_local"
+    tag "modules"
+
+    test("Write the DiffBind header and preserve sample row order") {
+
+        when {
+            process {
+                """
+                input[0] = Channel.of(['contrast.csv', [
+                    'chip2,2,treatment,chip2.bam,control2,control2.bam,chip2.bed,bed',
+                    'chip1,1,treatment,chip1.bam,control1,control1.bam,chip1.bed,bed'
+                ]])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.csv.size() == 1 },
+                { assert path(process.out.csv[0]).fileName.toString() == 'contrast.csv' },
+                { assert path(process.out.csv[0]).readLines() == [
+                    'SampleID,Replicate,Condition,bamReads,ControlID,bamControl,Peaks,PeakCaller',
+                    'chip2,2,treatment,chip2.bam,control2,control2.bam,chip2.bed,bed',
+                    'chip1,1,treatment,chip1.bam,control1,control1.bam,chip1.bed,bed'
+                ] }
+            )
+        }
+    }
+}

@@ -78,6 +78,9 @@ channels = ["bioconda"]
 [tool.pixi.feature.test.target.osx-arm64.dependencies]
 nextflow = ">=25.10.4,<26"
 
+[tool.pixi.feature.test.tasks]
+test-podman = "nf-test test --profile +podman"
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }

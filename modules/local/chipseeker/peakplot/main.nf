@@ -24,7 +24,7 @@ process CHIPSEEKER_PEAKPLOT {
 
     stub:
     """
-    for ftype in annotated.txt summary.txt genelist.txt annotation.Rds .png
+    for ftype in annotated.txt summary.txt genelist.txt annotation.Rds png
     do
         touch ${meta.id}.\${ftype}
     done

@@ -28,9 +28,11 @@ nextflow_workflow {
         }
 
         then {
-            def pelines1 = path(workflow.out.reads[0][1][0]).linesGzip
-            def pelines2 = path(workflow.out.reads[0][1][1]).linesGzip
-            def selines = path(workflow.out.reads[1][1]).linesGzip
+            def pairedReads = workflow.out.reads.find { meta, reads -> meta.id == 'test_paired_end' }[1]
+            def singleReads = workflow.out.reads.find { meta, reads -> meta.id == 'test_single_end' }[1]
+            def pelines1 = path(pairedReads.find { it.toString().endsWith('_1.fastq.gz') }).linesGzip
+            def pelines2 = path(pairedReads.find { it.toString().endsWith('_2.fastq.gz') }).linesGzip
+            def selines = path(singleReads).linesGzip
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(pelines1[0..5]).match("test_pe_reads_1_lines") },

@@ -29,6 +29,7 @@ process MANORM_PAIRWISE {
     """
 
     stub:
+    meta_out = [id: meta1.id, tool: meta1.tool, contrast: "${meta1.id}_vs_${meta2.id}"]
     """
     mkdir ${meta1.id}_vs_${meta2.id}/
     touch ${meta1.id}_vs_${meta2.id}/blank.txt

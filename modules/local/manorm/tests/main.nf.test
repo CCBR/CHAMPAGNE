@@ -1,0 +1,31 @@
+nextflow_process {
+    name "Test Process MANORM_PAIRWISE"
+    script "../main.nf"
+    process "MANORM_PAIRWISE"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+    test("Stub: identify the pairwise contrast in result metadata") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                def fixtures = ['treated.bed', 'control.bed', 'treated.peaks', 'control.peaks'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = '1\\t0\\t8\\n'
+                    fixture
+                }
+                input[0] = [[id: 'treated', tool: 'macs_narrow', group: 'group1', fraglen: 150], [id: 'control', tool: 'macs_narrow', group: 'group2', fraglen: 150], *fixtures]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out[0][0][0] == [id: 'treated', tool: 'macs_narrow', contrast: 'treated_vs_control'] },
+                { assert path(process.out[0][0][1]).fileName.toString() == 'blank.txt' }
+            )
+        }
+    }
+}

@@ -1,0 +1,35 @@
+nextflow_process {
+
+    name "Test Process CONSENSUS_CORCES"
+    script "../main.nf"
+    process "CONSENSUS_CORCES"
+    config "tests/nextflow_stub.config"
+    tag "modules"
+    tag "modules_local"
+    tag "consensus/corces"
+    tag "stub"
+
+    test("Stub: preserve sample and peak-caller metadata in consensus output") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                def peaks = file("$outputDir/peaks.bed")
+                peaks.text = 'chr1\\t10\\t20\\n'
+                def sizes = file("$outputDir/genome.sizes")
+                sizes.text = 'chr1\\t1000\\n'
+                input[0] = [[id: 'treatment', tool: 'macs_narrow'], [peaks], sizes]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.peaks.size() == 1 },
+                { assert process.out.peaks[0][0].id == 'treatment' },
+                { assert process.out.peaks[0][0].tool == 'macs_narrow' },
+                { assert path(process.out.peaks[0][1]).fileName.toString() == 'treatment.macs_narrow.consensus_corces.bed' }
+            )
+        }
+    }
+}

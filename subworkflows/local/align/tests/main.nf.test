@@ -1,0 +1,33 @@
+nextflow_workflow {
+    name "Test Workflow ALIGN_GENOME"
+    script "../../align.nf"
+    workflow "ALIGN_GENOME"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: align and filter reads and retain both flagstat streams") {
+        options "-stub-run"
+        when {
+            workflow {
+                """
+                def index = file("$outputDir/genome.amb")
+                index.text = 'stub BWA index'
+                input[0] = Channel.of([[id: 'sample', single_end: true], [file("\$projectDir/tests/test_data/reads_1.fastq")]])
+                input[1] = Channel.value(['genome', [index]])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam.size() == 1 },
+                { assert workflow.out.bam[0][0] == [id: 'sample', single_end: true] },
+                { assert path(workflow.out.bam[0][1]).fileName.toString() == 'sample.filtered.bam' },
+                { assert workflow.out.aligned_flagstat[0][0].id == 'sample' },
+                { assert workflow.out.filtered_flagstat[0][0].id == 'sample' },
+                { assert workflow.out.versions.size() == 2 }
+            )
+        }
+    }
+}

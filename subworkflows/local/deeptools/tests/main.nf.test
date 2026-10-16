@@ -1,0 +1,45 @@
+nextflow_workflow {
+    name "Test Workflow DEEPTOOLS"
+    script "../main.nf"
+    workflow "DEEPTOOLS"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: match input controls and expand track and gene plot combinations") {
+        options "-stub-run"
+        when {
+            workflow {
+                """
+                def chip = [id: 'chip_1', sample_basename: 'chip', single_end: true, is_input: false, input: 'control_1']
+                def control = [id: 'control_1', sample_basename: 'control', single_end: true, is_input: true, input: '']
+                def fixtures = ['chip.bam', 'chip.bam.bai', 'control.bam', 'control.bam.bai', 'genes.bed'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = 'stub deepTools input'
+                    fixture
+                }
+                input[0] = Channel.of([chip, fixtures[0], fixtures[1]], [control, fixtures[2], fixtures[3]])
+                input[1] = Channel.of([chip, 150], [control, 150])
+                input[2] = Channel.value(1000)
+                input[3] = Channel.value(fixtures[4])
+                input[4] = Channel.of(['chip_1', 1.0], ['control_1', 1.0])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bigwigs.collect { meta, track -> meta.id }.sort() == ['chip_1', 'control_1'] },
+                { assert workflow.out.bigwigs_input_norm.size() == 1 },
+                { assert workflow.out.bigwigs_input_norm[0][0].id == 'chip_1' },
+                { assert path(workflow.out.bigwigs_input_norm[0][1]).fileName.toString() == 'chip_1.inputnorm.bw' },
+                { assert workflow.out.fingerprint_matrix.size() == 1 },
+                { assert workflow.out.fingerprint_metrics.size() == 1 },
+                { assert workflow.out.corr.size() == 2 },
+                { assert workflow.out.pca.size() == 1 },
+                { assert workflow.out.profile.size() == 8 },
+                { assert workflow.out.heatmap.size() == 2 }
+            )
+        }
+    }
+}

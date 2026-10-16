@@ -1,0 +1,53 @@
+nextflow_workflow {
+    name "Test Workflow ALIGN_SPIKEIN"
+    script "../main.nf"
+    workflow "ALIGN_SPIKEIN"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    test("Reject a spike-in genome without a configured or custom reference") {
+        when {
+            params {
+                genomes = [:]
+                spike_genome_fasta = null
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                input[2] = Channel.empty()
+                input[3] = 'missing'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.toString().contains("No reference available for spike-in genome 'missing'") },
+                { assert workflow.stdout.toString().contains('--spike_genome_fasta') }
+            )
+        }
+    }
+    test("Require read length before building a custom spike-in reference") {
+        when {
+            params {
+                genomes = [:]
+                spike_genome_fasta = "$projectDir/tests/test_data/genome.fa"
+                read_length = null
+            }
+            workflow {
+                """
+                input[0] = Channel.empty()
+                input[1] = Channel.empty()
+                input[2] = Channel.empty()
+                input[3] = 'custom'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.toString().contains('Building a custom spike-in reference requires --read_length') }
+            )
+        }
+    }
+}

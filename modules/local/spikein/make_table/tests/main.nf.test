@@ -1,0 +1,41 @@
+nextflow_process {
+
+    name "Test Process MAKE_TABLE"
+    script "../main.nf"
+    process "MAKE_TABLE"
+    tag "make_table"
+    tag "modules_local"
+    tag "modules"
+
+    test("Join scaling factors to counts by sample ID across antibodies") {
+
+        when {
+            process {
+                """
+                def factors1 = file("$outputDir/H3K27ac.tsv")
+                factors1.text = 'sample\\tscalingFactor\\nsample2\\t0.5\\nsample1\\t1.0\\n'
+                def factors2 = file("$outputDir/H3K4me3.tsv")
+                factors2.text = 'sample\\tscalingFactor\\nsample3\\t1.0\\n'
+                input[0] = [factors1, factors2]
+                input[1] = Channel.of([
+                    [[id: 'sample1', antibody: 'H3K27ac'], [id: 'sample2', antibody: 'H3K27ac'], [id: 'sample3', antibody: 'H3K4me3']],
+                    [100, 200, 300]
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.tsv.size() == 1 },
+                { assert path(process.out.tsv[0]).readLines() == [
+                    'sample\tantibody\tn_spikein_reads\tscaling_factor',
+                    'sample1\tH3K27ac\t100\t1.0',
+                    'sample2\tH3K27ac\t200\t0.5',
+                    'sample3\tH3K4me3\t300\t1.0'
+                ] }
+            )
+        }
+    }
+}

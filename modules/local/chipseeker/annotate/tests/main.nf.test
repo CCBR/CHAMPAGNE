@@ -1,0 +1,31 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_ANNOTATE"
+    script "../main.nf"
+    process "CHIPSEEKER_ANNOTATE"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+
+    test("Stub: emit annotation tables, RDS, and a plot for the same sample") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                input[0] = [[id: 'sample', consensus: 'corces'], file("\$projectDir/tests/test_data/genome.fa")]
+                input[1] = 'TxDb.test'
+                input[2] = 'org.test.db'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.txt[0][0] == [id: 'sample', consensus: 'corces'] },
+                { assert process.out.txt[0][1..3].collect { path(it).fileName.toString() } == ['sample.annotated.txt', 'sample.summary.txt', 'sample.genelist.txt'] },
+                { assert path(process.out.annot[0][1]).fileName.toString() == 'sample.annotation.Rds' },
+                { assert path(process.out.plots[0]).fileName.toString() == 'sample.png' }
+            )
+        }
+    }
+}

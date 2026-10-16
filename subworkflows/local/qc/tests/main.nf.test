@@ -1,0 +1,47 @@
+nextflow_workflow {
+    name "Test Workflow QC"
+    script "../../qc.nf"
+    workflow "QC"
+    config "tests/nextflow_stub.config"
+    autoSort false
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: assemble raw, trimmed, alignment, and complexity QC reports") {
+        options "-stub-run"
+        when {
+            params {
+                fastq_screen_conf = null
+                fastq_screen_db_dir = null
+            }
+            workflow {
+                """
+                def meta = [id: 'sample', single_end: true]
+                def fixtures = ['counts.txt', 'aligned.flagstat', 'filtered.flagstat', 'dedup.flagstat', 'dedup.idxstat', 'sample.spp.out'].collect { name ->
+                    def fixture = file("$outputDir/\${name}")
+                    fixture.text = 'stub QC input'
+                    fixture
+                }
+                input[0] = Channel.of([meta, [file("\$projectDir/tests/test_data/reads_1.fastq")]])
+                input[1] = Channel.of([meta, [file("\$projectDir/tests/test_data/reads_1.fastq")]])
+                input[2] = Channel.of([meta, fixtures[0]])
+                input[3] = Channel.of([meta, file("\$projectDir/tests/test_data/alignments.sam")])
+                input[4] = Channel.of([meta, fixtures[1]])
+                input[5] = Channel.of([meta, fixtures[2]])
+                input[6] = Channel.of([meta, fixtures[3], fixtures[4]])
+                input[7] = Channel.of([meta, fixtures[5]])
+                input[8] = Channel.of([meta, 150])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.fastqc_raw.collect { path(it).fileName.toString() }.sort() == ['sample_raw_fastqc.html', 'sample_raw_fastqc.zip'] },
+                { assert workflow.out.fastqc_trimmed.collect { path(it).fileName.toString() }.sort() == ['sample_trimmed_fastqc.html', 'sample_trimmed_fastqc.zip'] },
+                { assert workflow.out.multiqc_input.flatten().size() == 7 },
+                { assert workflow.out.multiqc_input.flatten().collect { path(it).fileName.toString() }.containsAll(['qc_table.tsv', 'sample.c_curve', 'dedup.flagstat', 'dedup.idxstat']) }
+            )
+        }
+    }
+}

@@ -1,0 +1,34 @@
+nextflow_workflow {
+    name "Test Workflow DEDUPLICATE"
+    script "../../deduplicate.nf"
+    workflow "DEDUPLICATE"
+    config "tests/nextflow_stub.config"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "stub"
+    test("Stub: route SE deduplication into indexed BAM and BED peak inputs") {
+        options "-stub-run"
+        when {
+            workflow {
+                """
+                def sizes = file("$outputDir/genome.sizes")
+                sizes.text = 'chr1\\t1000\\n'
+                input[0] = Channel.of([[id: 'sample', single_end: true], file("\$projectDir/tests/test_data/alignments.sam")])
+                input[1] = Channel.value(sizes)
+                input[2] = Channel.value(1000)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam.size() == 1 },
+                { assert workflow.out.bam[0][0] == [id: 'sample', single_end: true] },
+                { assert path(workflow.out.bam[0][1]).fileName.toString() == 'sample.TagAlign.dedup.sort.bam' },
+                { assert path(workflow.out.bam[0][2]).fileName.toString().endsWith('.bam.bai') },
+                { assert workflow.out.tag_align[0][2] == 'BED' },
+                { assert workflow.out.flagstat[0][0].id == 'sample' }
+            )
+        }
+    }
+}

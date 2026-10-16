@@ -25,6 +25,10 @@ replay_pid*
 
 # nextflow
 .nextflow*
+.nf-test/
+.nf-test-*
+/test.xml
+/test.tap
 /work*/
 /data/
 /results/

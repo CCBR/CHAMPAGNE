@@ -1,0 +1,94 @@
+nextflow_workflow {
+
+    name "Test Workflow INPUT_CHECK"
+    script "../../input_check.nf"
+    workflow "INPUT_CHECK"
+    tag "input_check"
+    tag "subworkflows_local"
+    tag "subworkflows"
+
+    test("Compress uncompressed single-end and paired-end reads") {
+
+        when {
+            workflow {
+                """
+                def read1 = file("\$projectDir/tests/test_data/reads_1.fastq", checkIfExists: true)
+                def read2 = file("\$projectDir/tests/test_data/reads_2.fastq", checkIfExists: true)
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = "sample,rep,fastq_1,fastq_2,antibody,input\\nchip,1,\${read1},\${read2},H3K27ac,control\\ncontrol,1,\${read1},,,\\n"
+                input[0] = Channel.value(samplesheet)
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            def chip = workflow.out.reads.find { meta, reads -> meta.id == 'chip_1' }
+            def control = workflow.out.reads.find { meta, reads -> meta.id == 'control_1' }
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.reads.size() == 2 },
+                { assert chip[0] == [id: 'chip_1', sample_basename: 'chip', rep: '1', antibody: 'H3K27ac', input: 'control', is_input: false, single_end: false] },
+                { assert chip[1].collect { path(it).fileName.toString() }.sort() == ['reads_1.fastq.gz', 'reads_2.fastq.gz'] },
+                { assert chip[1].find { path(it).fileName.toString() == 'reads_1.fastq.gz' }.with { path(it).linesGzip } == path("$projectDir/tests/test_data/reads_1.fastq").readLines() },
+                { assert chip[1].find { path(it).fileName.toString() == 'reads_2.fastq.gz' }.with { path(it).linesGzip } == path("$projectDir/tests/test_data/reads_2.fastq").readLines() },
+                { assert control[0].is_input && control[0].single_end },
+                { assert control[1].size() == 1 },
+                { assert path(control[1][0]).linesGzip == path("$projectDir/tests/test_data/reads_1.fastq").readLines() },
+                { assert workflow.out.contrasts.size() == 0 },
+                { assert workflow.out.versions.size() == 1 }
+            )
+        }
+    }
+
+    test("Preserve an already compressed single-end input without a replicate") {
+
+        when {
+            workflow {
+                """
+                def compressed = file("$outputDir/input.fastq.gz")
+                new java.util.zip.GZIPOutputStream(compressed.newOutputStream()).withCloseable { stream ->
+                    stream.write(file("\$projectDir/tests/test_data/reads_1.fastq").bytes)
+                }
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = "sample,rep,fastq_1,fastq_2,antibody,input\\ncontrol,,\${compressed},,,\\n"
+                input[0] = Channel.value(samplesheet)
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.reads.size() == 1 },
+                { assert workflow.out.reads[0][0].id == 'control' },
+                { assert workflow.out.reads[0][0].rep == '' },
+                { assert workflow.out.reads[0][0].single_end },
+                { assert path(workflow.out.reads[0][1][0]).fileName.toString() == 'input.fastq.gz' },
+                { assert path(workflow.out.reads[0][1][0]).linesGzip == path("$projectDir/tests/test_data/reads_1.fastq").readLines() }
+            )
+        }
+    }
+
+    test("Reject a missing FASTQ file") {
+
+        when {
+            workflow {
+                """
+                def samplesheet = file("$outputDir/samplesheet.csv")
+                samplesheet.text = 'sample,rep,fastq_1,fastq_2,antibody,input\\ncontrol,1,missing.fastq,,,\\n'
+                input[0] = Channel.value(samplesheet)
+                input[1] = []
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.toString().contains('Read 1 FastQ file does not exist') }
+            )
+        }
+    }
+}
