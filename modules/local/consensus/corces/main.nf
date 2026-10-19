@@ -1,7 +1,7 @@
 process CONSENSUS_CORCES {
 
     tag "${meta.id}.${meta.tool}"
-    container 'nciccbr/ccbr_atacseq:v11-feat'
+    container 'nciccbr/ccbr_atacseq:v13-feat'
 
     input:
         tuple val(meta), path(peaks), path(chrom_sizes)
