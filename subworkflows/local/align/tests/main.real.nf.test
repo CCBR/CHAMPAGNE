@@ -1,0 +1,48 @@
+nextflow_workflow {
+    name "Test Workflow ALIGN_GENOME (real)"
+    script "../../align.nf"
+    workflow "ALIGN_GENOME"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Align a small set of exact reads and retain mapped-read statistics") {
+        setup {
+            run("BWA_INDEX") {
+                script "modules/CCBR/bwa/index/main.nf"
+                process {
+                    """
+                    def random = new Random(42)
+                    def sequence = (0..<4000).collect { 'ACGT'[random.nextInt(4)] }.join('')
+                    def reference = file("$outputDir/reference.fa")
+                    reference.text = '>chr1\\n' + sequence + '\\n'
+                    input[0] = ['tiny', reference]
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                align_min_quality = 30
+            }
+            workflow {
+                """
+                def readRandom = new Random(42)
+                def readSequence = (0..<4000).collect { 'ACGT'[readRandom.nextInt(4)] }.join('')
+                def reads = file("$outputDir/reads.fastq")
+                reads.text = (0..<20).collect { read -> '@read' + read + '\\n' + readSequence.substring(100 + read * 40, 200 + read * 40) + '\\n+\\n' + 'I' * 100 }.join('\\n') + '\\n'
+                input[0] = Channel.of([[id: 'tiny', single_end: true], [reads]])
+                input[1] = BWA_INDEX.out.index
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam[0][0] == [id: 'tiny', single_end: true] },
+                { assert path(workflow.out.aligned_flagstat[0][1]).text.contains('20 + 0 mapped') },
+                { assert path(workflow.out.filtered_flagstat[0][1]).text.contains('20 + 0 mapped') },
+                { assert workflow.out.versions.size() == 2 }
+            )
+        }
+    }
+}

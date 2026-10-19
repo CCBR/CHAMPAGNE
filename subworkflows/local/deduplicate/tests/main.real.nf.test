@@ -1,0 +1,44 @@
+nextflow_workflow {
+    name "Test Workflow DEDUPLICATE (real)"
+    script "../../deduplicate.nf"
+    workflow "DEDUPLICATE"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Deduplicate and index SE reads and preserve their genomic peak inputs") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    def alignments = file("$outputDir/input.sam")
+                    alignments.text = '@HD\\tVN:1.6\\tSO:unsorted\\n@SQ\\tSN:chr1\\tLN:10000\\n' + (0..<2000).collect { read -> "read\${read}\\t0\\tchr1\\t\${101 + read * 4}\\t60\\t8M\\t*\\t0\\t0\\tACGTACGT\\tIIIIIIII" }.join('\\n') + '\\n'
+                    input[0] = [[id: 'single', single_end: true], alignments]
+                    """
+                }
+            }
+        }
+        when {
+            workflow {
+                """
+                def sizes = file("$outputDir/genome.sizes")
+                sizes.text = 'chr1\\t10000\\n'
+                input[0] = SAMTOOLS_SORT.out.bam.map { meta, bam, bai -> [meta, bam] }
+                input[1] = Channel.value(sizes)
+                input[2] = Channel.value(10000)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam[0][0] == [id: 'single', single_end: true] },
+                { assert path(workflow.out.bam[0][2]).size() > 0 },
+                { assert workflow.out.tag_align[0][2] == 'BED' },
+                { assert path(workflow.out.tag_align[0][1]).readLines().size() == 2000 },
+                { assert path(workflow.out.flagstat[0][1]).text.contains('2000 + 0 mapped') },
+                { assert path(workflow.out.flagstat[0][2]).readLines() == ['chr1\t10000\t2000\t0', '*\t0\t0\t0'] }
+            )
+        }
+    }
+}

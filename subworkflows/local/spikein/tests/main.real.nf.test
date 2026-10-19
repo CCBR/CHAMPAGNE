@@ -1,0 +1,50 @@
+nextflow_workflow {
+    name "Test Workflow ALIGN_SPIKEIN (real)"
+    script "../main.nf"
+    workflow "ALIGN_SPIKEIN"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Align and deduplicate spike-in reads and compute real scaling factors") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = Channel.of([id: 'treated', group: 'group1', single_end: true, antibody: 'H3K27ac'], [id: 'control', group: 'input', single_end: true, antibody: 'H3K27ac'])
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                genomes = [:]
+                spike_genome_fasta = "$outputDir/spike.fa"
+                read_length = 50
+                spike_norm_method = 'guenther'
+            }
+            workflow {
+                """
+                def referenceCode = 'import random, sys; generator = random.Random(42); sequence = "".join(generator.choice("ACGT") for _ in range(100000)); open(sys.argv[1], "w").write(">chr1" + chr(10) + sequence + chr(10))'
+                assert new ProcessBuilder('python3', '-c', referenceCode, "$outputDir/spike.fa").inheritIO().start().waitFor() == 0
+                input[0] = GENERATE_CHIPSEQ.out.fastq.map { meta, reads -> [meta, [reads]] }
+                input[1] = GENERATE_CHIPSEQ.out.bam
+                input[2] = GENERATE_CHIPSEQ.out.bam.map { meta, bam, bai -> [meta, 100] }
+                input[3] = 'tiny'
+                """
+            }
+        }
+        then {
+            def factors = workflow.out.scaling_factors.collectEntries { sample, factor -> [sample, factor.toDouble()] }
+            assertAll(
+                { assert workflow.success },
+                { assert factors.keySet() == ['treated', 'control'] as Set },
+                { assert factors.values().every { it > 0.0 && it <= 1.0 } },
+                { assert factors.values().max() == 1.0 },
+                { assert workflow.out.sf_tsv.size() == 1 },
+                { assert path(workflow.out.sf_tsv[0]).readLines().size() == 3 },
+                { assert path(workflow.out.sf_tsv[0]).text.contains('H3K27ac') }
+            )
+        }
+    }
+}

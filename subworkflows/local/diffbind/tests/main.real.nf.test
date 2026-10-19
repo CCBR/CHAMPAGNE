@@ -1,0 +1,45 @@
+nextflow_workflow {
+    name "Test Workflow DIFFBIND (real)"
+    script "../main.nf"
+    workflow "DIFFBIND"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Count real replicated BAMs and render a differential-binding report") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        [id: 'treated_1', rep: '1', group: 'group1', input: 'input', contrast: 'comparison', tool: 'bed'],
+                        [id: 'treated_2', rep: '2', group: 'group1', input: 'input', contrast: 'comparison', tool: 'bed'],
+                        [id: 'control_1', rep: '1', group: 'group2', input: 'input', contrast: 'comparison', tool: 'bed'],
+                        [id: 'control_2', rep: '2', group: 'group2', input: 'input', contrast: 'comparison', tool: 'bed'],
+                        [id: 'input', group: 'input']
+                    ])
+                    """
+                }
+            }
+        }
+        when {
+            workflow {
+                """
+                input[0] = GENERATE_CHIPSEQ.out.bam.filter { meta, bam, bai -> meta.group != 'input' }
+                    .join(GENERATE_CHIPSEQ.out.peaks)
+                    .combine(GENERATE_CHIPSEQ.out.bam.filter { meta, bam, bai -> meta.group == 'input' }.map { meta, bam, bai -> [bam, bai] })
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.report.size() == 1 },
+                { assert workflow.out.report[0][0] == [id: 'comparison.bed', contrast: 'comparison', tool: 'bed'] },
+                { assert path(workflow.out.report[0][1]).size() > 1000 },
+                { assert path(workflow.out.report[0][1]).text.contains('DiffBind') },
+                { assert path(workflow.out.report[0][1]).text.contains('DESeq2') }
+            )
+        }
+    }
+}

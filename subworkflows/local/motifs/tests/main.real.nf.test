@@ -1,0 +1,45 @@
+nextflow_workflow {
+    name "Test Workflow MOTIFS (real)"
+    script "../main.nf"
+    workflow "MOTIFS"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Run HOMER and MEME on a compact reference and peak set") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = [id: 'tiny', group: 'group1', tool: 'macs_narrow']
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                run_homer = true
+                run_meme = true
+                homer_de_novo = false
+                homer_jaspar_db = "$outputDir/known.motif"
+            }
+            workflow {
+                """
+                file("$outputDir/known.motif").text = '>ACGTGC\\ttest\\t1\\n' + 'ACGTGC'.collect { expected -> 'ACGT'.collect { base -> base == expected ? '0.97' : '0.01' }.join('\\t') }.join('\\n') + '\\n'
+                input[0] = GENERATE_CHIPSEQ.out.peaks
+                input[1] = GENERATE_CHIPSEQ.out.fasta
+                input[2] = GENERATE_CHIPSEQ.out.meme_motifs
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.homer.size() == 1 },
+                { assert workflow.out.homer[0][1].any { path(it).fileName.toString() == 'knownResults.txt' } },
+                { assert workflow.out.meme.size() == 2 },
+                { assert workflow.out.meme.every { meta, result -> path(result).size() > 0 } }
+            )
+        }
+    }
+}

@@ -1,0 +1,26 @@
+nextflow_process {
+    name "Test Fixture GENERATE_CHIPSEQ"
+    script "./chipseq.nf"
+    process "GENERATE_CHIPSEQ"
+    tag "fixtures"
+    tag "real"
+    test("Generate a reproducible small, indexed ChIP-seq dataset") {
+        when {
+            process {
+                """
+                input[0] = [id: 'tiny', group: 'group1']
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.bam[0][1]).size() > 0 },
+                { assert path(process.out.bam[0][2]).size() > 0 },
+                { assert path(process.out.peaks[0][1]).readLines().size() == 100 },
+                { assert path(process.out.fastq[0][1]).linesGzip.size() > 4000 },
+                { assert path(process.out.sizes[0]).text == 'chr1\t100000\n' }
+            )
+        }
+    }
+}

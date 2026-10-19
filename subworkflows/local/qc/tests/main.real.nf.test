@@ -1,0 +1,64 @@
+nextflow_workflow {
+    name "Test Workflow QC (real)"
+    script "../../qc.nf"
+    workflow "QC"
+    autoSort false
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Compute FASTQ, alignment, complexity, and tabular QC on tiny reads") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = [id: 'tiny', group: 'group1', single_end: true]
+                    """
+                }
+            }
+            run("SAMTOOLS_INDEX") {
+                script "modules/local/samtools_index.nf"
+                process {
+                    """
+                    input[0] = GENERATE_CHIPSEQ.out.bam.map { meta, bam, bai -> [meta, bam] }
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                fastq_screen_conf = null
+                fastq_screen_db_dir = null
+            }
+            workflow {
+                """
+                def spp = file("$outputDir/tiny.spp.out")
+                spp.text = 'tiny\\t4000\\t150\\t0\\t0\\t0\\t0\\t0\\t1.2\\t1.1\\t1\\n'
+                input[0] = GENERATE_CHIPSEQ.out.fastq
+                input[1] = GENERATE_CHIPSEQ.out.fastq
+                input[2] = SAMTOOLS_INDEX.out.flagstat.map { meta, flagstat, idxstat ->
+                    def surviving = file("$outputDir/surviving.txt")
+                    surviving.text = flagstat.readLines()[0].tokenize()[0] + '\\n'
+                    [meta, surviving]
+                }
+                input[3] = SAMTOOLS_INDEX.out.bam.map { meta, bam, bai -> [meta, bam] }
+                input[4] = SAMTOOLS_INDEX.out.flagstat.map { meta, flagstat, idxstat -> [meta, flagstat.copyTo(file("$outputDir/aligned.flagstat"))] }
+                input[5] = SAMTOOLS_INDEX.out.flagstat.map { meta, flagstat, idxstat -> [meta, flagstat.copyTo(file("$outputDir/filtered.flagstat"))] }
+                input[6] = SAMTOOLS_INDEX.out.flagstat
+                input[7] = GENERATE_CHIPSEQ.out.fastq.map { meta, reads -> [meta, spp] }
+                input[8] = GENERATE_CHIPSEQ.out.fastq.map { meta, reads -> [meta, 150] }
+                """
+            }
+        }
+        then {
+            def table = workflow.out.multiqc_input.flatten().find { path(it).fileName.toString() == 'qc_table.tsv' }
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.fastqc_raw.size() == 2 && workflow.out.fastqc_raw.every { path(it).size() > 0 } },
+                { assert workflow.out.fastqc_trimmed.size() == 2 },
+                { assert table != null && path(table).text.contains('tiny') },
+                { assert path(table).text.contains('FragmentLength') }
+            )
+        }
+    }
+}

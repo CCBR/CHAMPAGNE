@@ -1,0 +1,35 @@
+nextflow_workflow {
+    name "Test Workflow MANORM (real)"
+    script "../main.nf"
+    workflow "MANORM"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Analyze opposite groups using actual read and peak distributions") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = Channel.of([id: 'treated', group: 'group1', contrast: 'comparison', tool: 'macs_narrow', fraglen: 100], [id: 'control', group: 'group2', contrast: 'comparison', tool: 'macs_narrow', fraglen: 100])
+                    """
+                }
+            }
+        }
+        when {
+            workflow {
+                """
+                input[0] = GENERATE_CHIPSEQ.out.reads.join(GENERATE_CHIPSEQ.out.peaks)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.out.size() == 2 },
+                { assert workflow.out.out.collect { meta, results -> meta.contrast }.sort() == ['control_vs_treated', 'treated_vs_control'] },
+                { assert workflow.out.out.every { meta, results -> results.size() > 1 && results.every { path(it).size() > 0 } } }
+            )
+        }
+    }
+}

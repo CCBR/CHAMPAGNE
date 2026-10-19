@@ -1,0 +1,37 @@
+nextflow_workflow {
+    name "Test Workflow DIFF (real)"
+    script "../main.nf"
+    workflow "DIFF"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Run actual MAnorm for a single-replicate differential contrast") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = Channel.of([id: 'treated', sample_basename: 'treated', rep: '1', group: 'group1', tool: 'macs_narrow', fraglen: 100], [id: 'control', sample_basename: 'control', rep: '1', group: 'group2', tool: 'macs_narrow', fraglen: 100])
+                    """
+                }
+            }
+        }
+        when {
+            workflow {
+                """
+                input[0] = GENERATE_CHIPSEQ.out.bam.join(GENERATE_CHIPSEQ.out.peaks).map { meta, bam, bai, peaks -> [meta, bam, bai, peaks, [], []] }
+                input[1] = GENERATE_CHIPSEQ.out.reads.join(GENERATE_CHIPSEQ.out.peaks)
+                input[2] = Channel.of([contrast: 'comparison', sample_basename: 'treated', group: 'group1'], [contrast: 'comparison', sample_basename: 'control', group: 'group2'])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.diffbind.size() == 0 },
+                { assert workflow.out.manorm.size() == 2 },
+                { assert workflow.out.manorm.every { meta, results -> results.every { path(it).size() > 0 } } }
+            )
+        }
+    }
+}

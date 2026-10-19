@@ -1,0 +1,59 @@
+nextflow_workflow {
+    name "Test Workflow DEEPTOOLS (real)"
+    script "../main.nf"
+    workflow "DEEPTOOLS"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Create coverage, control-normalized tracks, and plots from tiny BAMs") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    def entries = ['chip', 'control'].collect { sample ->
+                        def alignments = file("$outputDir/\${sample}.sam")
+                        alignments.text = '@HD\\tVN:1.6\\tSO:unsorted\\n@SQ\\tSN:chr1\\tLN:100000\\n' + (0..<500).collect { read ->
+                            def position = sample == 'chip' ? 1001 + (read % 100) * 500 : 501 + read * 160
+                            "\${sample}\${read}\\t0\\tchr1\\t\${position}\\t60\\t50M\\t*\\t0\\t0\\t" + 'ACGT' * 12 + 'AC' + '\\t' + 'I' * 50
+                        }.join('\\n') + '\\n'
+                        [[id: sample, sample_basename: sample, single_end: true, is_input: sample == 'control', input: sample == 'chip' ? 'control' : ''], alignments]
+                    }
+                    input[0] = Channel.fromList(entries)
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                deeptools_bin_size = 25
+                deeptools_smooth_length = 25
+                deeptools_normalize_input = 'CPM'
+                deeptools_normalize_samples = 'CPM'
+            }
+            workflow {
+                """
+                def genes = file("$outputDir/genes.bed")
+                genes.text = 'chr1\\t1000\\t5000\\t+\\tgene1\\tprotein_coding\\nchr1\\t50000\\t55000\\t+\\tgene2\\tprotein_coding\\n'
+                input[0] = SAMTOOLS_SORT.out.bam
+                input[1] = SAMTOOLS_SORT.out.bam.map { meta, bam, bai -> [meta, 100] }
+                input[2] = Channel.value(100000)
+                input[3] = Channel.value(genes)
+                input[4] = Channel.of(['chip', 1.0], ['control', 1.0])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bigwigs.collect { meta, track -> meta.id }.sort() == ['chip', 'control'] },
+                { assert workflow.out.bigwigs_input_norm.size() == 1 },
+                { assert path(workflow.out.bigwigs_input_norm[0][1]).size() > 0 },
+                { assert workflow.out.fingerprint_metrics.size() == 1 },
+                { assert workflow.out.corr.size() == 2 && workflow.out.corr.every { path(it).size() > 0 } },
+                { assert workflow.out.pca.size() == 1 && path(workflow.out.pca[0]).size() > 0 },
+                { assert workflow.out.profile.size() == 8 && workflow.out.profile.every { path(it).size() > 0 } }
+            )
+        }
+    }
+}

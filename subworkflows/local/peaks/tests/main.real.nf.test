@@ -1,0 +1,55 @@
+nextflow_workflow {
+    name "Test Workflow CALL_PEAKS (real)"
+    script "../../peaks.nf"
+    workflow "CALL_PEAKS"
+    autoSort false
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Call broad and narrow enrichment peaks with real input controls") {
+        setup {
+            run("GENERATE_CHIPSEQ") {
+                script "tests/helpers/chipseq.nf"
+                process {
+                    """
+                    input[0] = Channel.of([id: 'chip1', input: 'control', single_end: true, group: 'group1'], [id: 'chip2', input: 'control', single_end: true, group: 'group2'], [id: 'control', input: '', single_end: true, group: 'input'])
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                containers_r = 'rocker/tidyverse:4.3.0'
+                macs_narrow_q = 1.0
+                macs_broad_q = 1.0
+                macs_broad_cutoff = 1.0
+                run_macs_broad = true
+                run_macs_narrow = true
+                run_sicer = false
+                run_gem = false
+            }
+            workflow {
+                """
+                def chroms = file("$outputDir/chroms")
+                chroms.mkdirs()
+                input[0] = GENERATE_CHIPSEQ.out.sizes.first()
+                input[1] = Channel.value(chroms)
+                input[2] = GENERATE_CHIPSEQ.out.reads.map { meta, tags -> [meta, tags, 'BED'] }
+                input[3] = GENERATE_CHIPSEQ.out.bam
+                input[4] = GENERATE_CHIPSEQ.out.bam.map { meta, bam, bai -> [meta, 200] }
+                input[5] = Channel.value(100000)
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.peaks.collect { meta, peaks, caller -> caller }.sort() == ['macs_broad', 'macs_broad', 'macs_narrow', 'macs_narrow'] },
+                { assert workflow.out.peaks.every { meta, peaks, caller -> path(peaks).exists() } },
+                { assert workflow.out.peaks.any { meta, peaks, caller -> path(peaks).readLines().size() > 0 } },
+                { assert workflow.out.bam_peaks.size() == 4 },
+                { assert workflow.out.plots.flatten().size() == 6 && workflow.out.plots.flatten().every { path(it).size() > 0 } }
+            )
+        }
+    }
+}

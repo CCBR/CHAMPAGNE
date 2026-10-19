@@ -1,0 +1,23 @@
+nextflow_workflow {
+    name "Test Workflow ANNOTATE (real)"
+    script "../../annotate.nf"
+    workflow "ANNOTATE"
+    tag "subworkflows_local"
+    tag "subworkflows"
+    tag "real"
+    test("Annotate real peaks and aggregate their annotation plots") {
+        when {
+            workflow {
+                """
+                input[0] = Channel.of([[id: 'annotation', consensus: 'corces', tool: 'macs_narrow'], file("\$projectDir/tests/test_data/annotation_profiles.narrowPeak")])
+                input[1] = Channel.value('TxDb.Hsapiens.UCSC.hg38.knownGene')
+                input[2] = Channel.value('org.Hs.eg.db')
+                    input[3] = true
+                """
+            }
+        }
+        then {
+            assert workflow.success
+        }
+    }
+}
