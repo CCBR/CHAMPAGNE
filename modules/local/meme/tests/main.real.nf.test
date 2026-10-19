@@ -1,0 +1,38 @@
+nextflow_process {
+    name "Test Process MEME_AME (real)"
+    script "../main.nf"
+    process "MEME_AME"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Test enrichment of one motif against a small control sequence set") {
+        when {
+            process {
+                """
+                def background = file("$outputDir/background.fa")
+                background.text = (0..<30).collect { seq -> '>background' + seq + '\\n' + 'TTCCCC' * 10 }.join('\\n') + '\\n'
+                def target = file("$outputDir/target.fa")
+                target.text = (0..<30).collect { seq -> '>target' + seq + '\\n' + 'ACGTGC' * 10 }.join('\\n') + '\\n'
+                def motifDir = file("$outputDir/motif_source")
+                motifDir.mkdirs()
+                file("$outputDir/motif_source/test.meme").text = 'MEME version 4\\n\\nALPHABET= ACGT\\n\\nstrands: + -\\n\\nBackground letter frequencies\\nA 0.25 C 0.25 G 0.25 T 0.25\\n\\nMOTIF test\\nletter-probability matrix: alength= 4 w= 6 nsites= 20 E= 0\\n0.97 0.01 0.01 0.01\\n0.01 0.97 0.01 0.01\\n0.01 0.01 0.97 0.01\\n0.01 0.01 0.01 0.97\\n0.01 0.01 0.97 0.01\\n0.01 0.97 0.01 0.01\\n'
+                def motifs = file("$outputDir/motifs.tar.gz")
+                def archiveCode = 'import sys, tarfile\\nwith tarfile.open(sys.argv[1], "w:gz", format=tarfile.USTAR_FORMAT) as archive:\\n    info = archive.gettarinfo(sys.argv[2], arcname="test.meme")\\n    info.uid = info.gid = 0\\n    info.uname = info.gname = "root"\\n    with open(sys.argv[2], "rb") as source:\\n        archive.addfile(info, source)'
+                assert new ProcessBuilder('python3', '-c', archiveCode, motifs.toString(), file("$outputDir/motif_source/test.meme").toString()).inheritIO().start().waitFor() == 0
+                input[0] = [[id: 'tiny', group: ''], background, target, motifs]
+                """
+            }
+        }
+        then {
+            def rows = path(process.out.ame[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert process.out.ame[0][0].id == 'tiny' },
+                { assert rows.size() >= 2 },
+                { assert rows[0].contains('motif') },
+                { assert rows[1].contains('test') },
+                { assert path(process.out.seq[0][1]).linesGzip.size() > 1 }
+            )
+        }
+    }
+}

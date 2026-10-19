@@ -32,7 +32,7 @@ process MEME_AME {
     tar -xzf ${motifs} -C motifs
     # parallelize meme ame by running on each motif separately
     find motifs/ -name "*.meme" -type f | \\
-        parallel \\
+        SHELL=/bin/bash parallel \\
         -j ${task.cpus} \\
         run_ame
     # get header row
