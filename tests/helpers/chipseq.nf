@@ -53,7 +53,7 @@ process GENERATE_CHIPSEQ {
             peaks.write(f'chr1\\t{start}\\t{start + 200}\\tpeak{peak}\\t100\\t.\\t10\\t8\\t6\\t100\\n')
             enriched = (group == 'group1' and peak < 50) or (group == 'group2' and peak >= 50)
             background_count = 20 if group == 'input' else 2
-            count = (250 if enriched else background_count) + randomizer.randint(0, 20 if enriched else 2)
+            count = (randomizer.randint(150, 350) if enriched else background_count) + randomizer.randint(0, 20 if enriched else 2)
             for read in range(count):
                 position = start + randomizer.randint(0, 100)
                 name = f'{sample}_{peak}_{read}'
