@@ -1,0 +1,35 @@
+nextflow_process {
+    name "Test Process MACS_NARROW (real)"
+    script "../../peaks.nf"
+    process "MACS_NARROW"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Call a narrow peak from a small cluster of enriched tag alignments") {
+        when {
+            params {
+                macs_narrow_q = 0.05
+            }
+            process {
+                """
+                def chip = file("$outputDir/chip.bed")
+                chip.text = (0..<100).collect { read -> "chr1\\t\${1000 + read % 50}\\t\${1030 + read % 50}\\tread\${read}\\t0\\t+" }.join('\\n') + '\\n'
+                input[0] = [[id: 'enriched'], chip, [], 'BED', 50, 0.8, 10000]
+                """
+            }
+        }
+        then {
+            def peaks = path(process.out.peak[0][1]).readLines().collect { it.split('\t') }
+            assertAll(
+                { assert process.success },
+                { assert process.out.peak[0][0] == [id: 'enriched'] },
+                { assert process.out.peak[0][2] == 'macs_narrow' },
+                { assert peaks.size() == 1 },
+                { assert peaks[0].size() == 10 },
+                { assert peaks[0][0] == 'chr1' },
+                { assert peaks[0][1].toInteger() <= 1050 && peaks[0][2].toInteger() >= 1050 },
+                { assert path(process.out.summits[0][1]).readLines().size() == 1 }
+            )
+        }
+    }
+}

@@ -1,0 +1,36 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_PLOTLIST (real)"
+    script "../main.nf"
+    process "CHIPSEEKER_PLOTLIST"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Combine real ChIPseeker annotation RDS objects into a summary plot") {
+        setup {
+            run("CHIPSEEKER_ANNOTATE") {
+                script "modules/local/chipseeker/annotate/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'annotation', consensus: 'corces'], file("\$projectDir/tests/test_data/annotation.narrowPeak")]
+                    input[1] = 'TxDb.Hsapiens.UCSC.hg38.knownGene'
+                    input[2] = 'org.Hs.eg.db'
+                    """
+                }
+            }
+        }
+        when {
+            process {
+                """
+                input[0] = CHIPSEEKER_ANNOTATE.out.annot.map { meta, annotation -> [[consensus: 'corces'], [annotation]] }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out[0][0]).fileName.toString() == 'corces_plot_anno_bar.png' },
+                { assert path(process.out[0][0]).size() > 0 }
+            )
+        }
+    }
+}

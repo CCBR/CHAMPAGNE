@@ -1,0 +1,31 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_ANNOTATE (real)"
+    script "../main.nf"
+    process "CHIPSEEKER_ANNOTATE"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Annotate one hg38 peak and write genomic annotation tables and RDS") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'annotation', consensus: 'corces'], file("\$projectDir/tests/test_data/annotation.narrowPeak")]
+                input[1] = 'TxDb.Hsapiens.UCSC.hg38.knownGene'
+                input[2] = 'org.Hs.eg.db'
+                """
+            }
+        }
+        then {
+            def lines = path(process.out.txt[0][1]).readLines().findAll { !it.startsWith('# Median') }
+            assertAll(
+                { assert process.success },
+                { assert process.out.txt[0][0].id == 'annotation' },
+                { assert lines[0].contains('annotation') && lines[0].contains('distanceToTSS') },
+                { assert lines.size() >= 2 },
+                { assert lines[1].startsWith('chr1:11869-12869') },
+                { assert path(process.out.annot[0][1]).size() > 0 },
+                { assert path(process.out.plots[0]).size() > 0 }
+            )
+        }
+    }
+}

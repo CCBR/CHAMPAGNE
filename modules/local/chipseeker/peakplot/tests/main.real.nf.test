@@ -1,0 +1,28 @@
+nextflow_process {
+    name "Test Process CHIPSEEKER_PEAKPLOT (real)"
+    script "../main.nf"
+    process "CHIPSEEKER_PEAKPLOT"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Plot genomic annotation distributions for ten hg38 peaks") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'annotation'], file("\$projectDir/tests/test_data/annotation_profiles.narrowPeak")]
+                input[1] = 'TxDb.Hsapiens.UCSC.hg38.knownGene'
+                input[2] = 'org.Hs.eg.db'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.plots[0][0] == [id: 'annotation'] },
+                { assert process.out.plots[0][1].size() == 2 },
+                { assert process.out.plots[0][1].every { path(it).size() > 0 } },
+                { assert process.out.plots[0][1].every { path(it).newInputStream().withCloseable { stream -> stream.readNBytes(8).collect { it & 255 } } == [137, 80, 78, 71, 13, 10, 26, 10] } }
+            )
+        }
+    }
+}

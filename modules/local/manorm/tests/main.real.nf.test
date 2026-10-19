@@ -1,0 +1,39 @@
+nextflow_process {
+    name "Test Process MANORM_PAIRWISE (real)"
+    script "../main.nf"
+    process "MANORM_PAIRWISE"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Fit MAnorm to a small pair of overlapping peak and read sets") {
+        when {
+            process {
+                """
+                def peaks1 = file("$outputDir/treated.peaks.bed")
+                def peaks2 = file("$outputDir/control.peaks.bed")
+                peaks1.text = (0..<100).collect { peak -> "chr1\\t\${1000 + peak * 300}\\t\${1200 + peak * 300}" }.join('\\n') + '\\n'
+                peaks2.text = (0..<100).collect { peak ->
+                    def start = peak < 80 ? 1020 + peak * 300 : 50000 + peak * 300
+                    "chr1\\t\${start}\\t\${start + 200}"
+                }.join('\\n') + '\\n'
+                def reads1 = file("$outputDir/treated.reads.bed")
+                def reads2 = file("$outputDir/control.reads.bed")
+                reads1.text = (0..<100).collectMany { peak -> (0..<(10 + peak % 10)).collect { read -> "chr1\\t\${1050 + peak * 300 + read}\\t\${1080 + peak * 300 + read}\\tread\${peak}_\${read}\\t0\\t+" } }.join('\\n') + '\\n'
+                reads2.text = (0..<100).collectMany { peak -> (0..<(8 + peak % 7)).collect { read ->
+                    def start = (peak < 80 ? 1050 : 50030) + peak * 300 + read
+                    "chr1\\t\${start}\\t\${start + 30}\\tread\${peak}_\${read}\\t0\\t+"
+                } }.join('\\n') + '\\n'
+                input[0] = [[id: 'treated', tool: 'macs_narrow', group: 'group1', fraglen: 100], [id: 'control', tool: 'macs_narrow', group: 'group2', fraglen: 100], reads1, reads2, peaks1, peaks2]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out[0][0][0] == [id: 'treated', tool: 'macs_narrow', contrast: 'treated_vs_control'] },
+                { assert process.out[0][0][1].size() > 1 },
+                { assert process.out[0][0][1].every { path(it).size() > 0 } }
+            )
+        }
+    }
+}

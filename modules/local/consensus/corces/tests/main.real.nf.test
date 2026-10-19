@@ -1,0 +1,29 @@
+nextflow_process {
+    name "Test Process CONSENSUS_CORCES (real)"
+    script "../main.nf"
+    process "CONSENSUS_CORCES"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Build consensus intervals and normalize peak scores per million") {
+        when {
+            process {
+                """
+                def sizes = file("$outputDir/genome.sizes")
+                sizes.text = 'chr1\\t248956422\\n'
+                input[0] = [[id: 'annotation', tool: 'macs_narrow'], [file("\$projectDir/tests/test_data/annotation.narrowPeak")], sizes]
+                """
+            }
+        }
+        then {
+            def peaks = path(process.out.peaks[0][1]).readLines().collect { it.split('\t') }
+            assertAll(
+                { assert process.success },
+                { assert process.out.peaks[0][0].consensus == 'corces' },
+                { assert peaks.size() == 10 },
+                { assert peaks.every { it.size() == 10 && it[0] == 'chr1' } },
+                { assert Math.abs(peaks.collect { it[7].toDouble() }.sum() - 1000000.0) < 0.01 }
+            )
+        }
+    }
+}
