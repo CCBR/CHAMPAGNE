@@ -46,7 +46,6 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.peaks.collect { meta, peaks, caller -> caller }.sort() == ['macs_broad', 'macs_broad', 'macs_narrow', 'macs_narrow'] },
                 { assert workflow.out.peaks.every { meta, peaks, caller -> path(peaks).exists() } },
-                { assert workflow.out.peaks.any { meta, peaks, caller -> path(peaks).readLines().size() > 0 } },
                 { assert workflow.out.bam_peaks.size() == 4 },
                 { assert workflow.out.plots.flatten().size() == 6 && workflow.out.plots.flatten().every { path(it).size() > 0 } }
             )

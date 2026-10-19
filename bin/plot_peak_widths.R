@@ -16,6 +16,19 @@ peak_dat <- read_tsv(tsv_filename) %>%
   mutate(
     peak_width = chromEnd - chromStart,
   )
+if (nrow(peak_dat) == 0) {
+  ggsave(
+    filename = "peak_widths_histogram.png",
+    plot = ggplot() +
+      annotate("text", x = 0, y = 0, label = "No peaks called") +
+      theme_void(),
+    device = "png",
+    dpi = 300,
+    height = 4,
+    width = 6
+  )
+  quit(save = "no")
+}
 tools <- peak_dat %>%
   pull(tool) %>%
   unique()
