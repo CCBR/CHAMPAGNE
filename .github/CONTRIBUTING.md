@@ -130,6 +130,23 @@ Run only local module and subworkflow tests with:
 pixi run -e test nf-test test modules/local subworkflows/local --profile +podman
 ```
 
+Real-execution cases are in `main.real.nf.test` and tagged `real`; the existing
+stub cases remain in `main.nf.test`. Real cases use the production processes
+with small local fixtures or reproducible generated datasets. Containers match
+the pipeline, except peak-workflow plotting uses the smaller pinned
+`rocker/tidyverse:4.3.0` image to run the same R scripts.
+Run the real cases alone with:
+
+```sh
+pixi run -e test nf-test test modules/local/**/tests/*.real.nf.test subworkflows/local/**/tests/*.real.nf.test --profile +podman
+```
+
+The shared generator in `tests/helpers/chipseq.nf` creates small indexed BAMs,
+FASTQs, peak sets, references, and motif databases. It runs during test setup;
+no large generated alignments are committed. Initial container pulls can be
+large even though the test datasets are small. Keep the real scientific-output
+assertions separate from the faster stub metadata and wiring checks.
+
 #### document
 
 If you have added a new feature or changed the API of an existing feature,
