@@ -1,5 +1,7 @@
 ## CHAMPAGNE development version
 
+- The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)
+
 ## CHAMPAGNE 0.7.0
 
 - Fix broken link to diagram in docs. (#348, @padmashris)
