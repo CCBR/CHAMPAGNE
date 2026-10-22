@@ -3,7 +3,7 @@
 **CH**rom**A**tin i**M**muno **P**recipit**A**tion sequencin**G** a**N**alysis pip**E**line
 
 [![build](https://github.com/CCBR/CHAMPAGNE/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/CHAMPAGNE/actions/workflows/build.yml)
-[![docs](https://github.com/CCBR/CHAMPAGNE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://ccbr.github.io/CHAMPAGNE)
+[![docs](https://github.com/CCBR/CHAMPAGNE/actions/workflows/docs-quarto.yml/badge.svg)](https://ccbr.github.io/CHAMPAGNE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10516078.svg)](https://doi.org/10.5281/zenodo.10516078)
 [![release](https://img.shields.io/github/v/release/CCBR/CHAMPAGNE?color=blue&label=latest%20release)](https://github.com/CCBR/CHAMPAGNE/releases/latest)
 
@@ -23,7 +23,7 @@ View the full documentation website: <https://ccbr.github.io/CHAMPAGNE>
 
 Champagne is installed on the [Biowulf HPC](#biowulf).
 For installation in other execution environments,
-refer to the [docs](https://ccbr.github.io/CHAMPAGNE/latest/nextflow).
+refer to the [docs](https://ccbr.github.io/CHAMPAGNE/latest/nextflow.html).
 
 ### Biowulf
 
@@ -96,15 +96,15 @@ champagne run --output /data/$USER/champagne_project \
     -params-file assets/params.yml
 ```
 
-View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/dev/guide/params)
+View the [full list of parameters](https://ccbr.github.io/CHAMPAGNE/dev/guide/params.html)
 in the documentation.
 
 ### Reference Genomes
 
-View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes)
+View [the list of available reference genomes](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes.html)
 to see which genomes are pre-configured for use with champagne on biowulf.
 If you'd like to use a genome that's not already available, view the
-[guide on preparing a custom reference genome](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes/#custom-reference-genome).
+[guide on preparing a custom reference genome](https://ccbr.github.io/CHAMPAGNE/dev/guide/genomes.html#custom-reference-genome).
 
 ### Spike-in Control
 
@@ -120,7 +120,7 @@ champagne run --output /data/$USER/champagne_project \
     --deeptools_normalize_using None
 ```
 
-View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/dev/guide/spike-in/)
+View [the spike-in docs](https://ccbr.github.io/CHAMPAGNE/dev/guide/spike-in.html)
 for more information on how to use & customize spike-in controls.
 
 ## Help & Contributing
@@ -132,7 +132,7 @@ Have a **question**? Ask it in
 [discussions](https://github.com/CCBR/CHAMPAGNE/discussions).
 
 Want to **contribute** to this project? Check out the
-[contributing guidelines](.github/CONTRIBUTING.md).
+[contributing guidelines](https://github.com/CCBR/CHAMPAGNE/blob/main/.github/CONTRIBUTING.md).
 
 **General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team
 at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).
