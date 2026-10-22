@@ -10,7 +10,7 @@ For [Biowulf](#biowulf) users, CHAMPAGNE is installed in the
 `ccbrpipeliner` module. There's no need to perform any other installation steps.
 
 If you'd like to run the pipeline in a different execution environment,
-take a look at [how to run the nextflow pipeline directly](/nextflow.md).
+take a look at [how to run the nextflow pipeline directly](../nextflow.md).
 
 CHAMPAGNE depends on [Nextflow](https://www.nextflow.io/) version 25 or later
 and Singularity or Docker.

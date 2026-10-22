@@ -151,6 +151,8 @@ assertions separate from the faster stub metadata and wiring checks.
 
 If you have added a new feature or changed the API of an existing feature,
 you will likely need to update the documentation in `docs/`.
+The docs website is built with [Quarto](https://quarto.org/).
+Preview it locally with `quarto preview docs`.
 
 ### Commit and push your changes
 

@@ -1,0 +1,81 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.md"
+    - "guide/*.md"
+    - "devs/*.md"
+    - "diagram/*.md"
+    - "!devs/release-guide.md"
+    - "!_*.md"
+  resources:
+    - "examples/*.html"
+
+website:
+  title: "CHAMPAGNE"
+  description: "ChIP-seq pipeline"
+  site-url: https://ccbr.github.io/CHAMPAGNE
+  repo-url: https://github.com/CCBR/CHAMPAGNE
+  repo-subdir: docs
+  repo-branch: main
+  repo-actions: [edit, issue]
+  search: true
+  google-analytics: "G-D3SL9V30KL"
+  navbar:
+    left:
+      - text: Home
+        href: index.md
+      - text: User Guide
+        href: guide/intro.md
+      - text: Developer Guide
+        href: devs/contributing.md
+      - text: Changelog
+        href: changelog.md
+    right:
+      - icon: people-fill
+        href: http://bioinformatics.cancer.gov
+      - icon: github
+        href: https://github.com/CCBR/CHAMPAGNE
+      - icon: box-seam
+        href: https://hub.docker.com/orgs/nciccbr/repositories
+  sidebar:
+    style: docked
+    contents:
+      - href: index.md
+        text: Home
+      - section: User Guide
+        contents:
+          - href: guide/intro.md
+            text: Introduction
+          - href: guide/usage.md
+            text: Usage
+          - href: guide/output.md
+            text: Output
+          - href: guide/params.md
+            text: Parameters
+          - href: guide/genomes.md
+            text: Genomes
+          - href: guide/spike-in.md
+            text: Spike-in Normalization
+          - href: guide/troubleshooting.md
+            text: Troubleshooting
+      - section: Developer Guide
+        contents:
+          - href: devs/contributing.md
+            text: How to contribute
+          - href: devs/contributors.md
+            text: Contributors
+      - href: changelog.md
+        text: Changelog
+  page-footer:
+    left: |
+      Copyright &copy; 2023-2026
+      [CCR Collaborative Bioinformatics Resource](https://github.com/CCBR)
+
+filters:
+  - version-selector
+
+format:
+  fnl-html:
+    toc: true
+    code-copy: true

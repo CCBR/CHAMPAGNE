@@ -62,3 +62,6 @@ replay_pid*
 .pixi/*
 !.pixi/config.toml
 pixi.lock
+
+# quarto
+/docs/_site/
