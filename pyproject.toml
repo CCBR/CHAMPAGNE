@@ -45,6 +45,9 @@ dev = [
 test = [
     "pytest"
 ]
+docs = [
+    "quarto-version-selector @ git+https://github.com/CCBR/quarto-version-selector.git@main"
+]
 
 [project.scripts]
 champagne = "champagne.src.__main__:main"
@@ -81,9 +84,18 @@ nextflow = ">=25.10.4,<26"
 [tool.pixi.feature.test.tasks]
 test-podman = "nf-test test --profile +podman"
 
+[tool.pixi.feature.docs.dependencies]
+quarto = ">=1.9,<2"
+
+[tool.pixi.feature.docs.tasks]
+docs-render = "quarto render docs"
+docs-preview = "quarto preview docs"
+docs-serve = { cmd = "quarto-version-selector serve --site-dir docs/_site", depends-on = ["docs-render"] }
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
+dev = { features = ["dev", "docs"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
 
 [tool.pixi.tasks]
