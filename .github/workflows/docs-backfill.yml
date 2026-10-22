@@ -1,0 +1,61 @@
+name: docs-backfill
+# One-time (re-runnable) job: re-render the docs of past releases, originally built
+# with mkdocs + mike, with Quarto and redeploy them to gh-pages with
+# quarto-version-selector. See .github/backfill_mike_versions.py.
+on:
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: "Space-separated major.minor versions to redeploy (default: all in versions.json except dev)."
+        required: false
+        type: string
+        default: ""
+      dry-run:
+        description: "Only print the plan."
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: quarto-dev/quarto-actions/setup@v2
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - name: git config
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: Install dependencies
+        run: pip install --upgrade pip pyyaml "git+https://github.com/CCBR/quarto-version-selector.git@main"
+      - name: Redeploy old versions
+        env:
+          VERSIONS: ${{ inputs.versions }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          args=(--push)
+          [ "$DRY_RUN" = "true" ] && args=(--dry-run)
+          # shellcheck disable=SC2206
+          [ -n "$VERSIONS" ] && args+=(--versions $VERSIONS)
+          python .github/backfill_mike_versions.py "${args[@]}"
+      - name: Request GitHub Pages build
+        if: ${{ !inputs.dry-run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh api --method POST "repos/${{ github.repository }}/pages/builds" --silent; then
+            echo "::warning::Could not request a GitHub Pages build."
+          fi
