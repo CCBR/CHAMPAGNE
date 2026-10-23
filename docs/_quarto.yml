@@ -18,8 +18,9 @@ website:
   repo-url: https://github.com/CCBR/CHAMPAGNE
   repo-subdir: docs
   repo-branch: main
-  repo-actions: [edit, issue]
-  search: true
+  repo-actions: [edit, source, issue]
+  search:
+    location: sidebar
   google-analytics: "G-D3SL9V30KL"
   navbar:
     left:
@@ -32,12 +33,8 @@ website:
       - text: Changelog
         href: changelog.md
     right:
-      - icon: people-fill
-        href: http://bioinformatics.cancer.gov
       - icon: github
         href: https://github.com/CCBR/CHAMPAGNE
-      - icon: box-seam
-        href: https://hub.docker.com/orgs/nciccbr/repositories
   sidebar:
     style: docked
     contents:
@@ -74,6 +71,8 @@ website:
 
 filters:
   - version-selector
+version-selector:
+  placement: sidebar
 
 format:
   fnl-html:
