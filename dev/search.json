@@ -1,0 +1,886 @@
+[
+  {
+    "objectID": "nextflow.html",
+    "href": "nextflow.html",
+    "title": "nextflow pipeline",
+    "section": "",
+    "text": "You can run the nextflow pipeline directly by specifying this GitHub repo. You will need nextflow and either singularity or docker installed. In this case you don’t need to run champagne init first, as the config files will be accessed directly from the GitHub repo.\n\n[!NOTE]\nCHAMPAGNE requires nextflow v25.10.0. If you have a different version installed, prefix your nextflow command with nxf_ver=25.10.0, e.g. nxf_ver=25.10.0 nextflow run ....\n\nnextflow run CCBR/CHAMPAGNE -profile test,singularity\nYou can specify a specific version, tag, or branch on GitHub with -r:\nnextflow run CCBR/CHAMPAGNE -r v0.3.0 -profile test,singularity\nCreate and use a custom reference genome:\nnextflow run CCBR/CHAMPAGNE -profile test --build_reference\nnextflow run CCBR/CHAMPAGNE -profile test -c results/test/genome/custom_genome.config\n\n\nIf you’re running it on biowulf without the champagne CLI, first load the ccbrpipeliner and nextflow modules, and be sure to specify the biowulf and slurm profiles:\nmodule load ccbrpipeliner\nmodule load nextflow/25.10\nnextflow run CCBR/CHAMPAGNE -profile test,biowulf,slurm"
+  },
+  {
+    "objectID": "nextflow.html#biowulf",
+    "href": "nextflow.html#biowulf",
+    "title": "nextflow pipeline",
+    "section": "",
+    "text": "If you’re running it on biowulf without the champagne CLI, first load the ccbrpipeliner and nextflow modules, and be sure to specify the biowulf and slurm profiles:\nmodule load ccbrpipeliner\nmodule load nextflow/25.10\nnextflow run CCBR/CHAMPAGNE -profile test,biowulf,slurm"
+  },
+  {
+    "objectID": "guide/usage.html",
+    "href": "guide/usage.html",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "For Biowulf users, CHAMPAGNE is installed in the ccbrpipeliner module. There’s no need to perform any other installation steps.\nIf you’d like to run the pipeline in a different execution environment, take a look at how to run the nextflow pipeline directly.\nCHAMPAGNE depends on Nextflow version 25 or later and Singularity or Docker.\n\n\nChampagne is available on Biowulf in the ccbrpipeliner module. You’ll first need to start an interactive session, then load the module:\n# start an interactive node\nsinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200\n\n# load the ccbrpipeliner module\nmodule load ccbrpipeliner\n\n\n\n\nRun champagne --help to see the available commands and options.\nUsage: champagne [OPTIONS] COMMAND [ARGS]...\n\n  CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline\n\n  docs: https://ccbr.github.io/CHAMPAGNE\n\n  For more options, run: champagne [command] --help\n\nOptions:\n  -v, --version  Show the version and exit.\n  --citation     Print the citation in bibtex format and exit.\n  -h, --help     Show this message and exit.\n\nCommands:\n  run   Run the workflow\n  init  Initialize the launch directory\n\n\n\nInitialize your project directory:\nchampagne init --output /data/$USER/champagne_project\nOr if you do not use --output, your current working directory will be used as default:\nchampagne init\n\n\n\n\n\nThis file is a CSV file that contains information about the samples to be processed. It is passed to the input parameter.\nThe following columns are required:\n\nsample: sample ID; does not need to be a unique column.\nrep: replicate number of sample ID; does not need to be a unique column.\nfastq_1: absolute path to R1 of sample ID. Files can be in compressed (.fastq.gz, .fq.gz) or uncompressed (.fastq, .fq) format.\nfastq_2: absolute path to R2 of sample ID (optional, only for paired-end reads). Files can be in compressed (.fastq.gz, .fq.gz) or uncompressed (.fastq, .fq) format.\nantibody: name of the antibody used for the sample.\ninput: the sampleID of the input control; this must match a sample in the sheet.\n\nExample for a single-end project:\nsamplesheet.csv\nsample,rep,fastq_1,fastq_2,antibody,control\nsampleA,1,/path/to/sample_1.R1.fastq.gz,,Ab,inputA\nsampleA,2,/path/to/sample_2.R1.fastq.gz,,Ab,inputA\ninputA,1,/path/to/sample1.R1.fastq.gz,,,\ninputA,2,/path/to/sample1.R1.fastq.gz,,,\nExample for a paired-end project:\nsamplesheet.csv\nsample,rep,fastq_1,fastq_2,antibody,control\nsample1,1,/path/to/sample_1.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1\nsample1,2,/path/to/sample_2.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1\ninput1,1,/path/to/input_1.R1.fastq.gz,/path/to/input_1.R2.fastq.gz,,\ninput1,2,/path/to/input_2.R1.fastq.gz,/path/to/input_2.R2.fastq.gz,,\nFor more examples, view the sample sheet files in the assets/ directory on GitHub.\n\n\n\nContrasts are specified as a TSV file and is passed to the contrasts parameter. Each row is a unique contrast for differential analysis.\nColumns:\n\ncontrast_name: name of the contrast. Must be unique and contain no spaces.\ngroup1: comma-separated list of sample IDs in group 1.\ngroup2: comma-separated list of sample IDs in group 2.\n\nThe following is an example contrast file with two contrasts\nassets/contrasts_full_mm10.tsv\ncontrast_name   group1  group2\nantibody    CTCF_ChIP_macrophage_p20,CTCF_ChIP_MEF_p20  CTCF_ChIP_macrophage_p3\ncelltype_macrophage_vs_fibroblast   CTCF_ChIP_macrophage_p20,CTCF_ChIP_macrophage_p3    CTCF_ChIP_MEF_p20\nThe sample sheet for this dataset contains all of the sample IDs specified in the contrasts file.\nassets/samplesheet_full_mm10.csv\nsample,rep,fastq_1,fastq_2,antibody,input\nCTCF_ChIP_macrophage_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081748_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_macrophage_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081749_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_macrophage_p3,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081750_1.fastq.gz,,CTCF,WCE_p3\nCTCF_ChIP_macrophage_p3,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081751_1.fastq.gz,,CTCF,WCE_p3\nCTCF_ChIP_MEF_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081752_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_MEF_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081753_1.fastq.gz,,CTCF,WCE_p20\nWCE_p3,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081772_1.fastq.gz,,,\nWCE_p20,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081773_1.fastq.gz,,,\n\n\n\nyou can create a YAML file with the parameters you want to set. This is useful for managing multiple parameters or for sharing configurations with others. Here’s an example YAML file with some common parameters:\nassets/params.yml\ninput: './assets/samplesheet_full_mm10.csv'\ncontrasts: './assets/contrasts_full_mm10.csv'\ngenome: mm10\nrun_gem: false\nrun_chipseeker: false\nrun_qc: true\nYou will then pass this file to the -params-file option when running the pipeline:\nchampagne run --output /data/$USER/champagne_project \\\n    -params-file assets/params.yml\n\n\n\n\nchampagne run is the main command to run the pipeline. Here’s the output of champagne run --help:\nUsage: champagne run [OPTIONS] [NEXTFLOW_ARGS]...\n\n  Run the workflow\n\n  Note: you must first run `champagne init --output &lt;output_dir&gt;` to\n  initialize the output directory.\n\n  docs: https://ccbr.github.io/CHAMPAGNE\n\nOptions:\n  --output DIRECTORY  Output directory path for champagne init & run.\n                      Equivalent to nextflow launchDir. Defaults to your\n                      current working directory.\n  --mode TEXT         Run mode (slurm, local)  [default: slurm]\n  -F, --forceall      Force all processes to run (i.e. do not use nextflow\n                      -resume)\n  -h, --help          Show this message and exit.\n\n  Nextflow options:\n    -profile &lt;profile&gt;    Nextflow profile to use (e.g. test)\n    -params-file &lt;file&gt;   Nextflow params file to use (e.g. assets/params.yml)\n    -preview              Preview the processes that will run without executing them\n\n  EXAMPLES:\n  Execute with slurm:\n    champagne run --output path/to/outdir --mode slurm\n  Preview the processes that will run:\n    champagne run .--output path/to/outdir --mode local -preview\n  Add nextflow args (anything supported by `nextflow run`):\n    champagne run --output path/to/outdir --mode slurm -profile test\n    champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml\nAny nextflow argument can also be passed to champagne run, such as -profile, -preview, or -params-file. These are always prepended with a single hyphen.\nPipeline parameters can also be passed via the command line. These are always prepended with a double-hyphen.\n\n\nRun a local preview:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode local \\\n  -preview\n\n\n\nLaunch a local stub run to view processes that will run, output blank files, and download containers:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode local \\\n  -stub\n\n\n\nLaunch a pipeline run with slurm:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode slurm",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/usage.html#installation",
+    "href": "guide/usage.html#installation",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "For Biowulf users, CHAMPAGNE is installed in the ccbrpipeliner module. There’s no need to perform any other installation steps.\nIf you’d like to run the pipeline in a different execution environment, take a look at how to run the nextflow pipeline directly.\nCHAMPAGNE depends on Nextflow version 25 or later and Singularity or Docker.\n\n\nChampagne is available on Biowulf in the ccbrpipeliner module. You’ll first need to start an interactive session, then load the module:\n# start an interactive node\nsinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200\n\n# load the ccbrpipeliner module\nmodule load ccbrpipeliner",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/usage.html#help",
+    "href": "guide/usage.html#help",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "Run champagne --help to see the available commands and options.\nUsage: champagne [OPTIONS] COMMAND [ARGS]...\n\n  CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline\n\n  docs: https://ccbr.github.io/CHAMPAGNE\n\n  For more options, run: champagne [command] --help\n\nOptions:\n  -v, --version  Show the version and exit.\n  --citation     Print the citation in bibtex format and exit.\n  -h, --help     Show this message and exit.\n\nCommands:\n  run   Run the workflow\n  init  Initialize the launch directory",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/usage.html#initialize",
+    "href": "guide/usage.html#initialize",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "Initialize your project directory:\nchampagne init --output /data/$USER/champagne_project\nOr if you do not use --output, your current working directory will be used as default:\nchampagne init",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/usage.html#prepare-input-files",
+    "href": "guide/usage.html#prepare-input-files",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "This file is a CSV file that contains information about the samples to be processed. It is passed to the input parameter.\nThe following columns are required:\n\nsample: sample ID; does not need to be a unique column.\nrep: replicate number of sample ID; does not need to be a unique column.\nfastq_1: absolute path to R1 of sample ID. Files can be in compressed (.fastq.gz, .fq.gz) or uncompressed (.fastq, .fq) format.\nfastq_2: absolute path to R2 of sample ID (optional, only for paired-end reads). Files can be in compressed (.fastq.gz, .fq.gz) or uncompressed (.fastq, .fq) format.\nantibody: name of the antibody used for the sample.\ninput: the sampleID of the input control; this must match a sample in the sheet.\n\nExample for a single-end project:\nsamplesheet.csv\nsample,rep,fastq_1,fastq_2,antibody,control\nsampleA,1,/path/to/sample_1.R1.fastq.gz,,Ab,inputA\nsampleA,2,/path/to/sample_2.R1.fastq.gz,,Ab,inputA\ninputA,1,/path/to/sample1.R1.fastq.gz,,,\ninputA,2,/path/to/sample1.R1.fastq.gz,,,\nExample for a paired-end project:\nsamplesheet.csv\nsample,rep,fastq_1,fastq_2,antibody,control\nsample1,1,/path/to/sample_1.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1\nsample1,2,/path/to/sample_2.R1.fastq.gz,/path/to/sample_1.R2.fastq.gz,Ab,input1\ninput1,1,/path/to/input_1.R1.fastq.gz,/path/to/input_1.R2.fastq.gz,,\ninput1,2,/path/to/input_2.R1.fastq.gz,/path/to/input_2.R2.fastq.gz,,\nFor more examples, view the sample sheet files in the assets/ directory on GitHub.\n\n\n\nContrasts are specified as a TSV file and is passed to the contrasts parameter. Each row is a unique contrast for differential analysis.\nColumns:\n\ncontrast_name: name of the contrast. Must be unique and contain no spaces.\ngroup1: comma-separated list of sample IDs in group 1.\ngroup2: comma-separated list of sample IDs in group 2.\n\nThe following is an example contrast file with two contrasts\nassets/contrasts_full_mm10.tsv\ncontrast_name   group1  group2\nantibody    CTCF_ChIP_macrophage_p20,CTCF_ChIP_MEF_p20  CTCF_ChIP_macrophage_p3\ncelltype_macrophage_vs_fibroblast   CTCF_ChIP_macrophage_p20,CTCF_ChIP_macrophage_p3    CTCF_ChIP_MEF_p20\nThe sample sheet for this dataset contains all of the sample IDs specified in the contrasts file.\nassets/samplesheet_full_mm10.csv\nsample,rep,fastq_1,fastq_2,antibody,input\nCTCF_ChIP_macrophage_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081748_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_macrophage_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081749_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_macrophage_p3,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081750_1.fastq.gz,,CTCF,WCE_p3\nCTCF_ChIP_macrophage_p3,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081751_1.fastq.gz,,CTCF,WCE_p3\nCTCF_ChIP_MEF_p20,1,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081752_1.fastq.gz,,CTCF,WCE_p20\nCTCF_ChIP_MEF_p20,2,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081753_1.fastq.gz,,CTCF,WCE_p20\nWCE_p3,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081772_1.fastq.gz,,,\nWCE_p20,,/data/CCBR_Pipeliner/testdata/chipseq/SRR3081773_1.fastq.gz,,,\n\n\n\nyou can create a YAML file with the parameters you want to set. This is useful for managing multiple parameters or for sharing configurations with others. Here’s an example YAML file with some common parameters:\nassets/params.yml\ninput: './assets/samplesheet_full_mm10.csv'\ncontrasts: './assets/contrasts_full_mm10.csv'\ngenome: mm10\nrun_gem: false\nrun_chipseeker: false\nrun_qc: true\nYou will then pass this file to the -params-file option when running the pipeline:\nchampagne run --output /data/$USER/champagne_project \\\n    -params-file assets/params.yml",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/usage.html#run",
+    "href": "guide/usage.html#run",
+    "title": "Getting Started with CHAMPAGNE",
+    "section": "",
+    "text": "champagne run is the main command to run the pipeline. Here’s the output of champagne run --help:\nUsage: champagne run [OPTIONS] [NEXTFLOW_ARGS]...\n\n  Run the workflow\n\n  Note: you must first run `champagne init --output &lt;output_dir&gt;` to\n  initialize the output directory.\n\n  docs: https://ccbr.github.io/CHAMPAGNE\n\nOptions:\n  --output DIRECTORY  Output directory path for champagne init & run.\n                      Equivalent to nextflow launchDir. Defaults to your\n                      current working directory.\n  --mode TEXT         Run mode (slurm, local)  [default: slurm]\n  -F, --forceall      Force all processes to run (i.e. do not use nextflow\n                      -resume)\n  -h, --help          Show this message and exit.\n\n  Nextflow options:\n    -profile &lt;profile&gt;    Nextflow profile to use (e.g. test)\n    -params-file &lt;file&gt;   Nextflow params file to use (e.g. assets/params.yml)\n    -preview              Preview the processes that will run without executing them\n\n  EXAMPLES:\n  Execute with slurm:\n    champagne run --output path/to/outdir --mode slurm\n  Preview the processes that will run:\n    champagne run .--output path/to/outdir --mode local -preview\n  Add nextflow args (anything supported by `nextflow run`):\n    champagne run --output path/to/outdir --mode slurm -profile test\n    champagne run --output path/to/outdir --mode slurm -profile test -params-file assets/params.yml\nAny nextflow argument can also be passed to champagne run, such as -profile, -preview, or -params-file. These are always prepended with a single hyphen.\nPipeline parameters can also be passed via the command line. These are always prepended with a double-hyphen.\n\n\nRun a local preview:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode local \\\n  -preview\n\n\n\nLaunch a local stub run to view processes that will run, output blank files, and download containers:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode local \\\n  -stub\n\n\n\nLaunch a pipeline run with slurm:\nchampagne run \\\n  --output /data/$USER/champagne_project \\\n  --input assets/samplesheet_test_mm10.csv \\\n  --contrasts assets/contrasts_test_mm10.tsv \\\n  --genome mm10 \\\n  --mode slurm",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "guide/spike-in.html",
+    "href": "guide/spike-in.html",
+    "title": "CHAMPAGNE",
+    "section": "",
+    "text": "CHAMPAGNE supports ChIP-seq experiments that spike-in reads from alternate species. The data are normalized based on the number of reads aligning to the spike-in genome to account for differences in sequencing depth or other technical variations between samples.\nSamples are grouped by antibody when calculating the scaling factors. Inputs are excluded from this calculation.\n\n\nYou must set the spike_genome parameter to the name of a supported genome (e.g. dmelr6.32, ecoli_k12) that is different from the genome used for the main analysis. When using spike-in normalizations, we recommend setting deeptools_normalize_samples to None so that additional normalization isn’t performed (see this discussion). You can separately set the normalization method for input samples with the deeptools_normalize_input parameter.\nView the spike-in options for a full list of parameters that can be set for spike-in normalization.\n\n\nCHAMPAGNE implements two methods for spike-in normalization:\n\ndelorenzi: This method uses deepTools multiBamSummary --scalingFactors to calculate the scaling factors, which is similar to the method described here: 10.1101/gr.168260.113. To use this method, set the spike_norm_method parameter to delorenzi (default).\nguenther: This method is described in the supplementary material of 10.1016/j.celrep.2014.10.018. Reads are scaled by the minimum number of reads aligning to the spike-in genome across all samples. To use this method, set the spike_norm_method parameter to guenther.\n\n\n\n\n\nUsing the delorenzi normalization method with E. coli as the spike-in genome:\nchampagne run \\\n    --output /data/$USER/champagne_project/ \\\n    --genome hg38 \\\n    --input assets/samplesheet_full_spikein.csv \\\n    --spike_genome ecoli_k12 \\\n    --deeptools_normalize_samples None \\\n    --spike_norm_method delorenzi\nUsing the guenther normalization method with D. melanogaster as the spike-in genome:\nchampagne run \\\n    --output /data/$USER/champagne_project/ \\\n    --genome hg38 \\\n    --input assets/samplesheet_full_spikein.csv \\\n    --spike_genome dmelr6.32 \\\n    --deeptools_normalize_samples None \\\n    --spike_norm_method guenther",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Spike-in Normalization"
+    ]
+  },
+  {
+    "objectID": "guide/spike-in.html#spike-in-normalization",
+    "href": "guide/spike-in.html#spike-in-normalization",
+    "title": "CHAMPAGNE",
+    "section": "",
+    "text": "CHAMPAGNE supports ChIP-seq experiments that spike-in reads from alternate species. The data are normalized based on the number of reads aligning to the spike-in genome to account for differences in sequencing depth or other technical variations between samples.\nSamples are grouped by antibody when calculating the scaling factors. Inputs are excluded from this calculation.\n\n\nYou must set the spike_genome parameter to the name of a supported genome (e.g. dmelr6.32, ecoli_k12) that is different from the genome used for the main analysis. When using spike-in normalizations, we recommend setting deeptools_normalize_samples to None so that additional normalization isn’t performed (see this discussion). You can separately set the normalization method for input samples with the deeptools_normalize_input parameter.\nView the spike-in options for a full list of parameters that can be set for spike-in normalization.\n\n\nCHAMPAGNE implements two methods for spike-in normalization:\n\ndelorenzi: This method uses deepTools multiBamSummary --scalingFactors to calculate the scaling factors, which is similar to the method described here: 10.1101/gr.168260.113. To use this method, set the spike_norm_method parameter to delorenzi (default).\nguenther: This method is described in the supplementary material of 10.1016/j.celrep.2014.10.018. Reads are scaled by the minimum number of reads aligning to the spike-in genome across all samples. To use this method, set the spike_norm_method parameter to guenther.\n\n\n\n\n\nUsing the delorenzi normalization method with E. coli as the spike-in genome:\nchampagne run \\\n    --output /data/$USER/champagne_project/ \\\n    --genome hg38 \\\n    --input assets/samplesheet_full_spikein.csv \\\n    --spike_genome ecoli_k12 \\\n    --deeptools_normalize_samples None \\\n    --spike_norm_method delorenzi\nUsing the guenther normalization method with D. melanogaster as the spike-in genome:\nchampagne run \\\n    --output /data/$USER/champagne_project/ \\\n    --genome hg38 \\\n    --input assets/samplesheet_full_spikein.csv \\\n    --spike_genome dmelr6.32 \\\n    --deeptools_normalize_samples None \\\n    --spike_norm_method guenther",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Spike-in Normalization"
+    ]
+  },
+  {
+    "objectID": "guide/output.html",
+    "href": "guide/output.html",
+    "title": "Output",
+    "section": "",
+    "text": "When you initialize champagne, the project output directory (specified with --output) is populated with assets/, conf/, and nextflow.config. After running the pipeline, the output directory will also contain results/, log/, work/, and submit_slurm.sh (if using --mode slurm).\n/data/$USER/champagne_project\n├── assets/\n├── conf/\n├── log/\n├── nextflow.config\n├── results/\n├── submit_slurm.sh\n└── work/\n\n\n\nDirectory\nDescription\n\n\n\n\nassets/\nContains example sample sheets, contrasts, and other input files.\n\n\nconf/\nContains configuration files for the pipeline.\n\n\nlog/\nContains log files for the pipeline run, including a slurm log if --mode slurm is used.\n\n\nnextflow.config\nThe Nextflow configuration file for the pipeline.\n\n\nresults/\nContains the results files from the pipeline run.\n\n\nsubmit_slurm.sh\nA script to submit the pipeline run to SLURM (only created if --mode slurm is used).\n\n\nwork/\nContains the working directory for Nextflow.\n\n\n\n\n\nWorkflow output files will be written to the results/ directory by default in your pipeline run output directory.\nFor example, if you ran champagne with champagne run --output /data/$USER/champagne_project, the results files will be in /data/$USER/champagne_project/results/.\nAll paths listed below are relative to the results/ directory.\n\n\npipeline_info/ contains information about the pipeline run.\npipeline_info/bco.json is the BioCompute Object (BCO) for the pipeline run, which is a standardized format for sharing computational workflows and results.\npipeline_info/dag.html is the DAG (Directed Acyclic Graph) of the pipeline run, which shows the workflow execution order and dependencies.\nThe execution report, timeline, and trace file generated by Nextflow are also included in this directory and are named with the timestamp of the pipeline run.\n\n\n\nqc/ contains all quality control files.\n\n\nqc/multiqc/multiqc_report.html is the MultiQC report for the entire run, which summarizes the quality control results for all samples.\nView an example multiqc report here.\nInput files passed to multiqc are in qc/multiqc/input/.\n\n\n\nqc/fastqc/raw and qc/fastqc/trimmed contain FastQC reports for raw and trimmed reads, respectively.\n\n\n\nqc/deeptools/ contains plots and intermediate files generated by deepTools, including QC metrics, PCA plots, scatter plots, and correlation heatmaps.\n\n\n\nqc/phantompeakqualtools/ contains the PPQT reports and fragment lengths for each sample.\n\n\n\n\n\nalign/bam/ contains the sorted and deduped BAM files for each sample.\nalign/tagalign contains the deduplicated tagalign files.\n\n\n\n\nbigwigs/ contains the bigwig files for each sample; one before removing input reads ({id}.bw) and one with input reads removed ({id}.inputnorm.bw).\nThese are normalized with the method set by the deeptools_normalize_samples parameter.\nIf using a spike-in genome, these are normalized according the spike-in parameters set. See the Spike-in normalization doc for more details.\n\n\n\npeaks/{peak_caller}/ directories are created for each peak caller. Available peak callers are macs2_narrow, macs2_broad, gem, and sicer. See the run parameters and peak caller parameters for customization options.\npeaks/{peak_caller}/replicates/ contains called peaks for each sample.\n\n\nIf any sample has only one replicate, manorm is used for differential analysis. Otherwise, diffbind is used.\nmanorm results are in peaks/{peak_caller}/diff/manorm/{contrast}/.\ndiffbind results are in peaks/{peak_caller}/diff/diffbind/{contrast}/.\n\n\n\npeaks/{peak_caller}/consensus/{consensus_method} contains the consensus peaks for each peak caller.\n\n\npeaks/{peak_caller}/consensus/{consensus_method}/motifs contains HOMER and MEME AME results.\nHomer results are in motifs/homer/, organized with one directory per sample (e.g. {id}_homer/) and contain a background fasta, target fasta, results HTML, and a subdirectory containing motif files and logos.\nIf the target and background fasta files from homer are not blank, they are used for MEME AME for motif enrichment analysis. These results files are in motifs/meme/.\n\n\n\npeaks/{peak_caller}/consensus/{consensus_method}/annotations contains peak annotations from ChIPseeker.\n\n\n\n\n\nIf you specified a custom genome with custom genome parameters, the prepared genome files will be in genome/{genome}. These include the genome BWA index, blacklist BWA index, and a nextflow config file to reuse the genome in future runs.\n\n\n\n\nwork/ is where Nextflow stores intermediate files during the pipeline run. If you resubmit the pipeline, the working directory will be reused so the pipeline can resume from where it previously stopped. After successfully completing the pipeline run, you can delete the working directory to save disk space.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Output"
+    ]
+  },
+  {
+    "objectID": "guide/output.html#results",
+    "href": "guide/output.html#results",
+    "title": "Output",
+    "section": "",
+    "text": "Workflow output files will be written to the results/ directory by default in your pipeline run output directory.\nFor example, if you ran champagne with champagne run --output /data/$USER/champagne_project, the results files will be in /data/$USER/champagne_project/results/.\nAll paths listed below are relative to the results/ directory.\n\n\npipeline_info/ contains information about the pipeline run.\npipeline_info/bco.json is the BioCompute Object (BCO) for the pipeline run, which is a standardized format for sharing computational workflows and results.\npipeline_info/dag.html is the DAG (Directed Acyclic Graph) of the pipeline run, which shows the workflow execution order and dependencies.\nThe execution report, timeline, and trace file generated by Nextflow are also included in this directory and are named with the timestamp of the pipeline run.\n\n\n\nqc/ contains all quality control files.\n\n\nqc/multiqc/multiqc_report.html is the MultiQC report for the entire run, which summarizes the quality control results for all samples.\nView an example multiqc report here.\nInput files passed to multiqc are in qc/multiqc/input/.\n\n\n\nqc/fastqc/raw and qc/fastqc/trimmed contain FastQC reports for raw and trimmed reads, respectively.\n\n\n\nqc/deeptools/ contains plots and intermediate files generated by deepTools, including QC metrics, PCA plots, scatter plots, and correlation heatmaps.\n\n\n\nqc/phantompeakqualtools/ contains the PPQT reports and fragment lengths for each sample.\n\n\n\n\n\nalign/bam/ contains the sorted and deduped BAM files for each sample.\nalign/tagalign contains the deduplicated tagalign files.\n\n\n\n\nbigwigs/ contains the bigwig files for each sample; one before removing input reads ({id}.bw) and one with input reads removed ({id}.inputnorm.bw).\nThese are normalized with the method set by the deeptools_normalize_samples parameter.\nIf using a spike-in genome, these are normalized according the spike-in parameters set. See the Spike-in normalization doc for more details.\n\n\n\npeaks/{peak_caller}/ directories are created for each peak caller. Available peak callers are macs2_narrow, macs2_broad, gem, and sicer. See the run parameters and peak caller parameters for customization options.\npeaks/{peak_caller}/replicates/ contains called peaks for each sample.\n\n\nIf any sample has only one replicate, manorm is used for differential analysis. Otherwise, diffbind is used.\nmanorm results are in peaks/{peak_caller}/diff/manorm/{contrast}/.\ndiffbind results are in peaks/{peak_caller}/diff/diffbind/{contrast}/.\n\n\n\npeaks/{peak_caller}/consensus/{consensus_method} contains the consensus peaks for each peak caller.\n\n\npeaks/{peak_caller}/consensus/{consensus_method}/motifs contains HOMER and MEME AME results.\nHomer results are in motifs/homer/, organized with one directory per sample (e.g. {id}_homer/) and contain a background fasta, target fasta, results HTML, and a subdirectory containing motif files and logos.\nIf the target and background fasta files from homer are not blank, they are used for MEME AME for motif enrichment analysis. These results files are in motifs/meme/.\n\n\n\npeaks/{peak_caller}/consensus/{consensus_method}/annotations contains peak annotations from ChIPseeker.\n\n\n\n\n\nIf you specified a custom genome with custom genome parameters, the prepared genome files will be in genome/{genome}. These include the genome BWA index, blacklist BWA index, and a nextflow config file to reuse the genome in future runs.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Output"
+    ]
+  },
+  {
+    "objectID": "guide/output.html#working-directory",
+    "href": "guide/output.html#working-directory",
+    "title": "Output",
+    "section": "",
+    "text": "work/ is where Nextflow stores intermediate files during the pipeline run. If you resubmit the pipeline, the working directory will be reused so the pipeline can resume from where it previously stopped. After successfully completing the pipeline run, you can delete the working directory to save disk space.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Output"
+    ]
+  },
+  {
+    "objectID": "guide/genomes.html",
+    "href": "guide/genomes.html",
+    "title": "Genomes",
+    "section": "",
+    "text": "These genomes are available on biowulf.\n\n\nThese genomes can be passed to the --genome parameter.\n\n\n\nspecies: Homo sapiens\nfasta: ${params.index_dir}/hg38_basic/hg38_basic.fa\ngenes_gtf: ${params.index_dir}/hg38_basic/genes.gtf\nblacklist_index: ${params.index_dir}/hg38_basic/indexes/blacklist/hg38.blacklist_v3.chrM.chr_rDNA.*\nreference_index: ${params.index_dir}/hg38_basic/bwa_index/hg38*\nchromosomes_dir: ${params.index_dir}/hg38_basic/Chromsomes/\nchrom_sizes: ${params.index_dir}/hg38_basic/indexes/hg38.fa.sizes\ngene_info: ${params.index_dir}/hg38_basic/geneinfo.bed\neffective_genome_size: 2700000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_HUMAN_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Hsapiens.UCSC.hg38.knownGene\nbioc_annot: org.Hs.eg.db\n\n\n\n\n\nspecies: Homo sapiens\nfasta: ${params.index_dir}/hg19_basic/hg19.fa\ngenes_gtf: ${params.index_dir}/hg19_basic/genes.gtf\nblacklist_index: ${params.index_dir}/hg19_basic/indexes/blacklist/hg19.blacklist.*\nreference_index: ${params.index_dir}/hg19_basic/bwa_index/hg19.*\nchromosomes_dir: ${params.index_dir}/hg19_basic/Chromosomes\nchrom_sizes: ${params.index_dir}/hg19_basic/Chromosomes/chrom.sizes\ngene_info: ${params.index_dir}/hg19_basic/geneinfo.bed\neffective_genome_size: 2700000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_HUMAN_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Hsapiens.UCSC.hg38.knownGene\nbioc_annot: org.Hs.eg.db\n\n\n\n\n\nspecies: Homo sapiens\ndescription: Human T2T-CHM13v2.0 with ribosomal DNA\nfasta: ${params.index_dir}/hs1_chrR/hs1_chrR.fa\ngenes_gtf: ${params.index_dir}/hs1_chrR/hs1_chrR.genes.gtf.gz\nblacklist_index: ${params.index_dir}/hs1_chrR/blacklist/*\nreference_index: ${params.index_dir}/hs1_chrR/reference/*\nchromosomes_dir: ${params.index_dir}/hs1_chrR/chroms/\nchrom_sizes: ${params.index_dir}/hs1_chrR/hs1_chrR.chrom.sizes\ngene_info: ${params.index_dir}/hs1_chrR/hs1_chrR.genes.bed\neffective_genome_size: 2723047107\nmeme_motifs: null\nbioc_txdb: null\nbioc_annot: null\n\n\n\n\n\nspecies: Mus musculus\nfasta: ${params.index_dir}/mm10_basic/mm10_basic.fa\ngenes_gtf: ${params.index_dir}/mm10_basic/genes.gtf\nblacklist_index: ${params.index_dir}/mm10_basic/indexes/blacklist/mm10.blacklist.chrM.chr_rDNA.*\nreference_index: ${params.index_dir}/mm10_basic/indexes/reference/mm10*\nchromosomes_dir: ${params.index_dir}/mm10_basic/Chromsomes/\nchrom_sizes: ${params.index_dir}/mm10_basic/indexes/mm10.fa.sizes\ngene_info: ${params.index_dir}/mm10_basic/geneinfo.bed\neffective_genome_size: 2400000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_MOUSE_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Mmusculus.UCSC.mm10.knownGene\nbioc_annot: org.Mmu.eg.db\n\n\n\n\n\nThese genomes can be passed to the --spike_genome parameter.\n\n\n\nspecies: Drosophila melanogaster\nfasta: ${params.index_dir}/dmelr6.32/indexes/dmelr6.32.fa\nreference_index: ${params.index_dir}/dmelr6.32/indexes/bwa/Drosophila_melanogaster.*\nblacklist_index: ${params.index_dir}/dmelr6.32/indexes/blacklist/dmelr6.32.blacklist.*\nblacklist_bed: ${params.index_dir}/dmelr6.32/indexes/dm6-blacklist.v2.no_chr.bed.gz\neffective_genome_size: 142573017\nchrom_sizes: ${params.index_dir}/dmelr6.32/chrom_dmelr6.28.sizes\n\n\n\n\n\nspecies: Escherichia coli K-12\nfasta: ${params.index_dir}/ecoli_k12/indexes/ecoli_k12.fa\nreference_index: ${params.index_dir}/ecoli_k12/indexes/ecoli_k12.*\nblacklist_bed: NO_FILE\neffective_genome_size: 4641652\nchrom_sizes: ${params.index_dir}/ecoli_k12/Chromosomes/chrom.sizes\n\n\n\n\n\nIf you’d like to override the default blacklist used by one of the built-in genomes, you can provide a custom blacklist bed file or fasta file:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --genome hg38 \\\n    --blacklist /path/to/blacklist.bed\nIf you’re providing a custom blacklist bed file, make sure its regions refer to the genome version you’re using.\n\n\n\nIf you’d like to use a genome not available on Biowulf, you can prepare a custom genome with --build_reference. If you’d like to use a custom genome, you’ll need the following files:\n\ngenome fasta\ngenome GTF\nblacklist fasta or bed (optional)\n\nPrepare your custom reference genome with:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --build_reference \\\n    --genome custom_genome \\\n    --genome_fasta genome.fasta \\\n    --genes_gtf genome.gtf \\\n    --blacklist blacklist.bed\nThe reference files and a config file for the genome will be written in results/genome/custom_genome/.\nThen you can run champagne using your custom genome:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm -profile biowulf \\\n    --input samplesheet.csv \\\n    --genome custom_genome \\\n    -c results/genome/custom_genome/custom_genome.config\nAlternatively, you can build the reference genome and run the rest of the pipeline in one shot by specifying the custom files like so:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --genome custom_genome \\\n    --genome_fasta genome.fasta \\\n    --genes_gtf genome.gtf \\\n    --blacklist blacklist.bed",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Genomes"
+    ]
+  },
+  {
+    "objectID": "guide/genomes.html#supported-reference-genomes",
+    "href": "guide/genomes.html#supported-reference-genomes",
+    "title": "Genomes",
+    "section": "",
+    "text": "These genomes are available on biowulf.\n\n\nThese genomes can be passed to the --genome parameter.\n\n\n\nspecies: Homo sapiens\nfasta: ${params.index_dir}/hg38_basic/hg38_basic.fa\ngenes_gtf: ${params.index_dir}/hg38_basic/genes.gtf\nblacklist_index: ${params.index_dir}/hg38_basic/indexes/blacklist/hg38.blacklist_v3.chrM.chr_rDNA.*\nreference_index: ${params.index_dir}/hg38_basic/bwa_index/hg38*\nchromosomes_dir: ${params.index_dir}/hg38_basic/Chromsomes/\nchrom_sizes: ${params.index_dir}/hg38_basic/indexes/hg38.fa.sizes\ngene_info: ${params.index_dir}/hg38_basic/geneinfo.bed\neffective_genome_size: 2700000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_HUMAN_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Hsapiens.UCSC.hg38.knownGene\nbioc_annot: org.Hs.eg.db\n\n\n\n\n\nspecies: Homo sapiens\nfasta: ${params.index_dir}/hg19_basic/hg19.fa\ngenes_gtf: ${params.index_dir}/hg19_basic/genes.gtf\nblacklist_index: ${params.index_dir}/hg19_basic/indexes/blacklist/hg19.blacklist.*\nreference_index: ${params.index_dir}/hg19_basic/bwa_index/hg19.*\nchromosomes_dir: ${params.index_dir}/hg19_basic/Chromosomes\nchrom_sizes: ${params.index_dir}/hg19_basic/Chromosomes/chrom.sizes\ngene_info: ${params.index_dir}/hg19_basic/geneinfo.bed\neffective_genome_size: 2700000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_HUMAN_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Hsapiens.UCSC.hg38.knownGene\nbioc_annot: org.Hs.eg.db\n\n\n\n\n\nspecies: Homo sapiens\ndescription: Human T2T-CHM13v2.0 with ribosomal DNA\nfasta: ${params.index_dir}/hs1_chrR/hs1_chrR.fa\ngenes_gtf: ${params.index_dir}/hs1_chrR/hs1_chrR.genes.gtf.gz\nblacklist_index: ${params.index_dir}/hs1_chrR/blacklist/*\nreference_index: ${params.index_dir}/hs1_chrR/reference/*\nchromosomes_dir: ${params.index_dir}/hs1_chrR/chroms/\nchrom_sizes: ${params.index_dir}/hs1_chrR/hs1_chrR.chrom.sizes\ngene_info: ${params.index_dir}/hs1_chrR/hs1_chrR.genes.bed\neffective_genome_size: 2723047107\nmeme_motifs: null\nbioc_txdb: null\nbioc_annot: null\n\n\n\n\n\nspecies: Mus musculus\nfasta: ${params.index_dir}/mm10_basic/mm10_basic.fa\ngenes_gtf: ${params.index_dir}/mm10_basic/genes.gtf\nblacklist_index: ${params.index_dir}/mm10_basic/indexes/blacklist/mm10.blacklist.chrM.chr_rDNA.*\nreference_index: ${params.index_dir}/mm10_basic/indexes/reference/mm10*\nchromosomes_dir: ${params.index_dir}/mm10_basic/Chromsomes/\nchrom_sizes: ${params.index_dir}/mm10_basic/indexes/mm10.fa.sizes\ngene_info: ${params.index_dir}/mm10_basic/geneinfo.bed\neffective_genome_size: 2400000000\nmeme_motifs: ${projectDir}/assets/HOCOMOCOv11_core_MOUSE_mono_meme_format.tar.gz\nbioc_txdb: TxDb.Mmusculus.UCSC.mm10.knownGene\nbioc_annot: org.Mmu.eg.db\n\n\n\n\n\nThese genomes can be passed to the --spike_genome parameter.\n\n\n\nspecies: Drosophila melanogaster\nfasta: ${params.index_dir}/dmelr6.32/indexes/dmelr6.32.fa\nreference_index: ${params.index_dir}/dmelr6.32/indexes/bwa/Drosophila_melanogaster.*\nblacklist_index: ${params.index_dir}/dmelr6.32/indexes/blacklist/dmelr6.32.blacklist.*\nblacklist_bed: ${params.index_dir}/dmelr6.32/indexes/dm6-blacklist.v2.no_chr.bed.gz\neffective_genome_size: 142573017\nchrom_sizes: ${params.index_dir}/dmelr6.32/chrom_dmelr6.28.sizes\n\n\n\n\n\nspecies: Escherichia coli K-12\nfasta: ${params.index_dir}/ecoli_k12/indexes/ecoli_k12.fa\nreference_index: ${params.index_dir}/ecoli_k12/indexes/ecoli_k12.*\nblacklist_bed: NO_FILE\neffective_genome_size: 4641652\nchrom_sizes: ${params.index_dir}/ecoli_k12/Chromosomes/chrom.sizes\n\n\n\n\n\nIf you’d like to override the default blacklist used by one of the built-in genomes, you can provide a custom blacklist bed file or fasta file:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --genome hg38 \\\n    --blacklist /path/to/blacklist.bed\nIf you’re providing a custom blacklist bed file, make sure its regions refer to the genome version you’re using.\n\n\n\nIf you’d like to use a genome not available on Biowulf, you can prepare a custom genome with --build_reference. If you’d like to use a custom genome, you’ll need the following files:\n\ngenome fasta\ngenome GTF\nblacklist fasta or bed (optional)\n\nPrepare your custom reference genome with:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --build_reference \\\n    --genome custom_genome \\\n    --genome_fasta genome.fasta \\\n    --genes_gtf genome.gtf \\\n    --blacklist blacklist.bed\nThe reference files and a config file for the genome will be written in results/genome/custom_genome/.\nThen you can run champagne using your custom genome:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm -profile biowulf \\\n    --input samplesheet.csv \\\n    --genome custom_genome \\\n    -c results/genome/custom_genome/custom_genome.config\nAlternatively, you can build the reference genome and run the rest of the pipeline in one shot by specifying the custom files like so:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --genome custom_genome \\\n    --genome_fasta genome.fasta \\\n    --genes_gtf genome.gtf \\\n    --blacklist blacklist.bed",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Genomes"
+    ]
+  },
+  {
+    "objectID": "devs/contributors.html",
+    "href": "devs/contributors.html",
+    "title": "Contributors",
+    "section": "",
+    "text": "Contributors\n\n\n\n\n\n\n\n\nKelly Sovacool, PhD\nSamantha\nVishal Koparde, PhD\n\n\n\nView the contributors graph on GitHub for more details.",
+    "crumbs": [
+      "Home",
+      "Developer Guide",
+      "Contributors"
+    ]
+  },
+  {
+    "objectID": "changelog.html",
+    "href": "changelog.html",
+    "title": "Changelog",
+    "section": "",
+    "text": "The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-development-version",
+    "href": "changelog.html#champagne-development-version",
+    "title": "Changelog",
+    "section": "",
+    "text": "The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.7.0",
+    "href": "changelog.html#champagne-0.7.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.7.0",
+    "text": "CHAMPAGNE 0.7.0\n\nFix broken link to diagram in docs. (#348, @padmashris)\nOptionally skip blacklist filtering if no blacklist index, bed, or fasta file is provided. (#349, @kelly-sovacool)\nSkip fastq screen if the config file or database are not provided. (#351, @kelly-sovacool)\nFix process container syntax to comply with docker runtime. (#352, @padmashris, @kelly-sovacool)\nImprove documentation:\n\nSpecify that Nextflow version 25.10.0 is required as of now. (#356, @kelly-sovacool)\n\nReplace the -entry MAKE_REFERENCE workflow entrypoint with a --build_reference flag, fixing an error caused by incompatible output directives between the two workflows. (#385, @kelly-sovacool)\n\nCustom reference genome FASTA, GTF, and blacklist files may now be gzip-compressed.\nCustom spike-in genomes are now supported with --spike_genome_fasta and --spike_blacklist_bed, which build the spike-in reference the same way as the main reference genome.\nUnknown genome names now raise an informative error that lists the genomes available in conf/genomes.config.\n\nAdd support for T2T human genome with ribosomal DNA (hs1_chrR) on biowulf. (#386, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.6.0",
+    "href": "changelog.html#champagne-0.6.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.6.0",
+    "text": "CHAMPAGNE 0.6.0\n\nSupport uncompressed fastq files – they will be gzipped after the samplesheet check. (#306, @kelly-sovacool)\nAdd configurable correlation method parameter for deeptools plotCorrelation. (#307, @kelly-sovacool)\n\nUsers can now set --deeptools_corr_method to pearson or spearman (default).\n\nAdd workflow diagram to the documentation. (#309, @JWrows2014, @kelly-sovacool)\nAdd an intro and description of the workflow steps to the docs. (#310, @kelly-sovacool)\nOutput deduplicated tagalign files to results/align/tagalign/. (#313, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.5.3",
+    "href": "changelog.html#champagne-0.5.3",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.5.3",
+    "text": "CHAMPAGNE 0.5.3\n\nCHAMPAGNE now requires nextflow version 25.10.0 or later. (#303, @kelly-sovacool)\nIncrease memory for: (#298, @kelly-sovacool)\n\nmain slurm job\ndiffbind\ndeeptools plot_heatmap",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.5.2",
+    "href": "changelog.html#champagne-0.5.2",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.5.2",
+    "text": "CHAMPAGNE 0.5.2\n\nCalculate spike-in scaling factors on deduplicated reads after aligning to the spike-in genome. (#289, @kelly-sovacool)\nImprove the spike-in scaling factor table to include the antibody used for each sample in the MultiQC report. (#290, @kelly-sovacool)\nInclude an example MultiQC report in the documentation. (#291, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.5.1",
+    "href": "changelog.html#champagne-0.5.1",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.5.1",
+    "text": "CHAMPAGNE 0.5.1\n\nMinor documentation improvements. (#273, @kelly-sovacool)\nSet --blacklist to a custom bed or fasta file to override the default blacklist used by a built-in --genome. (#278, @kelly-sovacool)\n\nAlso add support for the hg19 genome on biowulf.\n\nFix spike-in normalization: (#279, @kelly-sovacool)\n\nDo not include inputs in the scale factor calculation.\nGroup samples by antibody for scale factor calculation.\nCreate separate parameters for controlling the deeptools normalization method for samples and inputs.",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.5.0",
+    "href": "changelog.html#champagne-0.5.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.5.0",
+    "text": "CHAMPAGNE 0.5.0\n\nCHAMPAGNE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#247, @kelly-sovacool)\nReorganized output directory structure. (#256, @kelly-sovacool)\nNextflow parameters are now validated at the start of the workflow. (#257, @kelly-sovacool)\n\n\nNew features\n\nContrasts are now specified as a TSV file instead of YAML. (#224, @kelly-sovacool)\n\nSee the example contrast sheets in assets/.\n\nNew consensus peak method from Corces et al. (doi:10.1126/science.aav1898). (#225, #246, @kelly-sovacool)\nNormalization with a spike-in genome is now supported. (#259, @kelly-sovacool)\n\nSet params.spike_genome to dmelr6.32 or ecoli_k12\nThe normalization method can be set with params.spike_norm_method to delorenzi (default) or guenther. (#267, @kelly-sovacool)\n\nCLI improvements\n\nUse nextflow run -resume by default, or turn it off with champagne run --forceall. (#224, @kelly-sovacool)\nAdd --output argument for champagne init and champagne run. (#232, #233, @kelly-sovacool)\n\nThis is equivalent to the nextflow launchDir constant.\n\n--mode now has slurm as the default. (#249, @kelly-sovacool)\n\nImproved nextflow options:\n\nSet publish_dir_mode to link by default.\nSet process.cache to deep by default rather than lenient. (#224, @kelly-sovacool)\nEnable the nextflow timeline & trace reports by default. (#226, @kelly-sovacool)\nOutput BioCompute objects by default using the nf-prov plugin. (#260, @kelly-sovacool)\n\n\n\n\nBug fixes\n\nRefactor checks for the sample sheet & contrast sheet to prevent unnecessary re-running. (#224, @kelly-sovacool)\nFix a file name clash during input pooling. (#224, @kelly-sovacool)\nFix bug in MEME AME process that caused it not to run on all samples. (#234, @kelly-sovacool)\n\nAlso correct the motif rank calculation. (#234, @kopardev)\n\nEnsure inputs are pooled correctly for paired end reads. (#250, @kelly-sovacool)\nFix chipseeker filename collision. (#252, @kelly-sovacool)\nAllow fraction-in-peaks plot to run when there is only 1 sample. (#265, @kelly-sovacool)\n\n\n\nDocumentation\n\nNow using the readthedocs theme for the docs website. (#236, @kelly-sovacool)\nImproved help message for champagne run. (#249, @kelly-sovacool)\nMajor improvements to fill out the documentation website. (#262, #263, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.4.1",
+    "href": "changelog.html#champagne-0.4.1",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.4.1",
+    "text": "CHAMPAGNE 0.4.1\n\nThe CHAMPAGNE nextflow workflow now has a version entry in nextflow.config, in compliance with nf-core. (#213, @kelly-sovacool)\nPool input (control) reads of the same sample name by default. Any inputs that should not be pooled must have different sample names in the samplesheet. (#214, @kelly-sovacool)\nAdd histone samples to the test_human dataset. (#215, @kelly-sovacool)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.4.0",
+    "href": "changelog.html#champagne-0.4.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.4.0",
+    "text": "CHAMPAGNE 0.4.0\n\nNew features\n\nCreate a script (bin/champagne) to provide an interface to the champagne CLI that works out-of-the-box without the need to install the python package with pip. (#180, @kelly-sovacool)\n\nHowever, any dependencies not in the Python Standard Library must be installed for this to work. See the dependencies list in pyproject.toml.\n\nAllow additional columns in the sample sheet beyond the minimum required header. (#176, @kelly-sovacool)\nAdd a workflow entry point to download fastq files from SRA. (#176, @kelly-sovacool)\nAdd test_human profile with chipseq data from ENCODE. (#176, @kelly-sovacool)\n\n\n\nBug fixes\n\nFix configuration files for compatibility with using the GitHub repo as the source. (#173, @kelly-sovacool)\n\nThese equivalent commands now work:\nnextflow run CCBR/CHAMPAGNE\nchampagne run --main CCBR/CHAMPAGNE\n\nAllow multiple samples to use the same input. (#176, @kelly-sovacool)\nIn the biowulf config profile, switch variable $SLURM_JOBID to $SLURM_JOB_ID. (@kelly-sovacool)\nIncrease resource allocations for chipseeker and deeptools. (#192, @slsevilla)\nCheck the validity of the contrastsheet earlier on in the workflow. (#192, @slsevilla; #200, @kelly-sovacool)\nFix bug where manorm was using R1 twice instead of R1 and R2. (#206, @kelly-sovacool)\n\n\n\nMisc\n\nChange the peak widths histogram type from overlay to stack. (#176, @kelly-sovacool)\nDocumentation improvements. (#192, @slsevilla)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.3.0",
+    "href": "changelog.html#champagne-0.3.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.3.0",
+    "text": "CHAMPAGNE 0.3.0\n\nNew features\n\nFind motifs in the genome with Homer. (#142)\nRun motif enrichment analysis with MEME. (#142)\nAnnotate peaks with chipseeker. (#142,#147,#157)\nAdd preseq complexity curve and fastq screen to multiqc report. (#147)\nSupport multiple replicates per sample and call consensus peaks on replicates. (#129)\n\nOptionally normalize p-values with the CCBR/consensus_peaks subworkflow.\n\nImplement differential peak calling. (#158)\n\nOptionally specify contrasts via a YAML file. If no file is specified, differential analysis is not performed.\nIf any sample has only one replicate, run MAnorm, otherwise run diffbind.\n\nPrint the recommended citation in bibtex format with champagne --citation. (#153)\n\nCHAMPAGNE is also now archived in Zenodo with DOI 10.5281/zenodo.10516078.\n\nThe docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#170)\n\n\n\nBug fixes\n\nFix deepTools plots (#144):\n\nPer sample fingerprint plots instead of per replicate.\nInput normalized profile plots.\nProtein-coding-only versions of plots.\nEnsure sample IDs are sorted. (#150)\n\nFix a bug where the wrong SICER output file was used for downstream analyses. (#155)\nFix CLI profile on machines other than biowulf & FRCE. (#168)\nFix broken bold styling in documentation website. (#53)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.2.2",
+    "href": "changelog.html#champagne-0.2.2",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.2.2",
+    "text": "CHAMPAGNE 0.2.2\n\nFix permissions issues in the CLI. (#167)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.2.1",
+    "href": "changelog.html#champagne-0.2.1",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.2.1",
+    "text": "CHAMPAGNE 0.2.1\n\nFix a bug in QC stats that mixed up the statistics for different samples. (#125)\nFix a bug in the CLI that added the -profile to the nextflow command even if it wasn’t needed (#125).\nReport read counts between blacklist & filtering steps in the QC table. (#125)\nRun spooker on workflow completion (#126).",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.2.0",
+    "href": "changelog.html#champagne-0.2.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.2.0",
+    "text": "CHAMPAGNE 0.2.0\n\nNew features\n\nImplement peak calling with sicer2, macs2, and gem. (#52)\nAdd parameter options to skip QC, input normalization, and/or peak calling steps. (#72)\nCalculate and plot QC metrics for called peaks:\n\nFraction in Peaks (FRiP) (#89)\nJaccard index (#92)\nHistogram of peak widths (#92)\n\nAdd support for paired-end reads. (#105)\nAdd an option to use a custom reference from a genome fasta, gtf, and blacklist file. (#105)\nChampagne CLI: (#112)\n\nNew --mode option for champagne run to execute the workflow locally (‘local’) or submit it as a slurm job (‘slurm’).\nOption to override the path to the champagne main.nf file or specify the github repo (CCBR/CHAMPAGNE) instead.\n# use the default path\nchampagne run ...\n# override the path\nchampagne run path/to/champagne/main.nf\n# use a revision from github instead\nchampagne run CCBR/CHAMPAGNE -r v0.1.0\n\n\n\n\nBug fixes\n\nCLI:\n\nError when biowulf-specific environment variables are not defined. (#54)\nThe host is now correctly detected as biowulf via scontrol. (#75)\n\nContainers:\n\nContainers are now specified in process definitions instead of withName/withLabel for better control. (#69)\n\nShared containers are specified as parameters in the config file conf/containers.config.\n\nNo longer use --mount type=bind or --volume for making directories available to processes in containers. Instead, use Nextflow’s Channel.fromPath constructor with type: 'dir'. (#71)\n\n\n\n\nAPI-breaking changes\n\nAn error is thrown when a required input file doesn’t exist. (#71)\n\nPreviously, the workflow quietly didn’t run the process(es) that required the missing file.\n\nRenamed champagne config to champagne init to avoid clashing with nextflow config. (#112)",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "changelog.html#champagne-0.1.0",
+    "href": "changelog.html#champagne-0.1.0",
+    "title": "Changelog",
+    "section": "CHAMPAGNE 0.1.0",
+    "text": "CHAMPAGNE 0.1.0\n\nQuality control steps implemented for single-end reads\n\nTrim raw reads, FastQC on raw and trimmed reads, and FastQ Screen on trimmed reads.\nExclude reads that align to blacklist regions, align remaining reads to the reference genome, and deduplicate.\nPreseq on aligned reads.\nPhantompeakqualtools on aligned and deduplicated reads.\nProcess reads with deepTools: bam coverage to generate bigwigs for each sample, summarize all bigwigs, and compute matrices relative to TSSs and scaled to metagene regions.\nGenerate plots with deepTools: PCA, profile, heatmap, spearman correlation, and fingerprint plots.\nSummarize all quality control steps in a MultiQC report.\nInput-normalize ChIP fragments for the next stage of the pipeline.",
+    "crumbs": [
+      "Home",
+      "Changelog"
+    ]
+  },
+  {
+    "objectID": "devs/contributing.html",
+    "href": "devs/contributing.html",
+    "title": "Contributing to CHAMPAGNE",
+    "section": "",
+    "text": "If you want to make a change, it’s a good idea to first open an issue and make sure someone from the team agrees that it’s needed.\nIf you’ve decided to work on an issue, assign yourself to the issue so others will know you’re working on it.\n\n\n\nWe use GitHub Flow as our collaboration process. Follow the steps below for detailed instructions on contributing changes to CHAMPAGNE.\n\n\n\nGitHub Flow diagram\n\n\n\n\nIf you are a member of CCBR, you can clone this repository to your computer or development environment. Otherwise, you will first need to fork the repo and clone your fork. You only need to do this step once.\ngit clone https://github.com/CCBR/CHAMPAGNE\n\nCloning into ‘CHAMPAGNE’…  remote: Enumerating objects: 1136, done.  remote: Counting objects: 100% (463/463), done.  remote: Compressing objects: 100% (357/357), done.  remote: Total 1136 (delta 149), reused 332 (delta 103), pack-reused 673  Receiving objects: 100% (1136/1136), 11.01 MiB | 9.76 MiB/s, done.  Resolving deltas: 100% (530/530), done. \n\ncd CHAMPAGNE\n\n\n\n\nInstall nextflow and singularity or docker if needed (biowulf already has these available as modules).\nInstall the python dependencies with pip\npip install .\nIf you’re developing on biowulf, you can use our shared conda environment which already has these dependencies installed\n. \"/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh\"\nconda activate py311\nInstall pre-commit if you don’t already have it. Then from the repo’s root directory, run\npre-commit install\nThis will install the repo’s pre-commit hooks. You’ll only need to do this step the first time you clone the repo.\n\n\n\n\nCreate a Git branch for your pull request (PR). Give the branch a descriptive name for the changes you will make, such as iss-10 if it is for a specific issue.\n# create a new branch and switch to it\ngit branch iss-10\ngit switch iss-10\n\nSwitched to a new branch ‘iss-10’\n\n\n\n\nEdit the code, write and run tests, and update the documentation as needed.\n\n\nChanges to the python package code will also need unit tests to demonstrate that the changes work as intended. We write unit tests with pytest and store them in the tests/ subdirectory. Run the tests with python -m pytest.\nIf you change the workflow, please run the workflow with the test profile and make sure your new feature or bug fix works as intended.\nNextflow module tests use nf-test. On Biowulf, load the dependencies and run from the repository root:\nmodule load ccbrpipeliner nextflow python/3.12\nnf-test test --profile \"+singularity\"\nOn Apple Silicon macOS, install Pixi, Podman, and nf-test. Start the Podman machine, then run from the repository root:\npodman machine start\npixi run -e test test-podman\nPixi supplies Nextflow. The Podman test profile runs AMD64 containers, so the Podman machine must support AMD64 emulation. Test fixtures and container images require internet access. If Java reports certificate verification errors while connected to a VPN, retry off the VPN or configure Java to trust your organization’s CA; do not disable certificate verification.\nCI runs the same tests with --profile \"+docker\", and only runs the tests affected by a pull request. Add new module tests in each module’s tests/ directory; test data paths are defined in tests/test-data.config.\nRun only local module and subworkflow tests with:\npixi run -e test nf-test test modules/local subworkflows/local --profile +podman\nReal-execution cases are in main.real.nf.test and tagged real; the existing stub cases remain in main.nf.test. Real cases use the production processes with small local fixtures or reproducible generated datasets. Containers match the pipeline, except peak-workflow plotting uses the smaller pinned rocker/tidyverse:4.3.0 image to run the same R scripts. Run the real cases alone with:\npixi run -e test nf-test test modules/local/**/tests/*.real.nf.test subworkflows/local/**/tests/*.real.nf.test --profile +podman\nThe shared generator in tests/helpers/chipseq.nf creates small indexed BAMs, FASTQs, peak sets, references, and motif databases. It runs during test setup; no large generated alignments are committed. Initial container pulls can be large even though the test datasets are small. Keep the real scientific-output assertions separate from the faster stub metadata and wiring checks.\n\n\n\nIf you have added a new feature or changed the API of an existing feature, you will likely need to update the documentation in docs/. The docs website is built with Quarto. Preview it locally with quarto preview docs.\n\n\n\n\nIf you’re not sure how often you should commit or what your commits should consist of, we recommend following the “atomic commits” principle where each commit contains one new feature, fix, or task. Learn more about atomic commits here: https://www.freshconsulting.com/insights/blog/atomic-commits/\nFirst, add the files that you changed to the staging area:\ngit add path/to/changed/files/\nThen make the commit. Your commit message should follow the Conventional Commits specification. Briefly, each commit should start with one of the approved types such as feat, fix, docs, etc. followed by a description of the commit. Take a look at the Conventional Commits specification for more detailed information about how to write commit messages.\ngit commit -m 'feat: create function for awesome feature'\npre-commit will enforce that your commit message and the code changes are styled correctly and will attempt to make corrections if needed.\n\nCheck for added large files……………………………………….Passed  Fix End of Files…………………………………………………Passed  Trim Trailing Whitespace………………………………………….Failed \n\nhook id: trailing-whitespace \nexit code: 1 \nfiles were modified by this hook \n Fixing path/to/changed/files/file.txt   codespell……………………………………………………….Passed  style-files……………………………………(no files to check)Skipped  readme-rmd-rendered…………………………….(no files to check)Skipped  use-tidy-description……………………………(no files to check)Skipped \n\n\nIn the example above, one of the hooks modified a file in the proposed commit, so the pre-commit check failed. You can run git diff to see the changes that pre-commit made and git status to see which files were modified. To proceed with the commit, re-add the modified file(s) and re-run the commit command:\ngit add path/to/changed/files/file.txt\ngit commit -m 'feat: create function for awesome feature'\nThis time, all the hooks either passed or were skipped (e.g. hooks that only run on R code will not run if no R files were committed). When the pre-commit check is successful, the usual commit success message will appear after the pre-commit messages showing that the commit was created.\n\nCheck for added large files……………………………………….Passed  Fix End of Files…………………………………………………Passed  Trim Trailing Whitespace………………………………………….Passed  codespell……………………………………………………….Passed  style-files……………………………………(no files to check)Skipped  readme-rmd-rendered…………………………….(no files to check)Skipped  use-tidy-description……………………………(no files to check)Skipped  Conventional Commit………………………………………………Passed  [iss-10 9ff256e] feat: create function for awesome feature  1 file changed, 22 insertions(+), 3 deletions(-) \n\nFinally, push your changes to GitHub:\ngit push\nIf this is the first time you are pushing this branch, you may have to explicitly set the upstream branch:\ngit push --set-upstream origin iss-10\n\nEnumerating objects: 7, done.  Counting objects: 100% (7/7), done.  Delta compression using up to 10 threads  Compressing objects: 100% (4/4), done.  Writing objects: 100% (4/4), 648 bytes | 648.00 KiB/s, done.  Total 4 (delta 3), reused 0 (delta 0), pack-reused 0  remote: Resolving deltas: 100% (3/3), completed with 3 local objects.  remote:  remote: Create a pull request for ‘iss-10’ on GitHub by visiting:  remote: https://github.com/CCBR/CHAMPAGNE/pull/new/iss-10  remote:  To https://github.com/CCBR/CHAMPAGNE   [new branch] iss-10 -&gt; iss-10  branch ‘iss-10’ set up to track ‘origin/iss-10’. \n\nWe recommend pushing your commits often so they will be backed up on GitHub. You can view the files in your branch on GitHub at https://github.com/CCBR/CHAMPAGNE/tree/&lt;your-branch-name&gt; (replace &lt;your-branch-name&gt; with the actual name of your branch).\n\n\n\nOnce your branch is ready, create a PR on GitHub: https://github.com/CCBR/CHAMPAGNE/pull/new/\nSelect the branch you just pushed:\n\n\n\nCreate a new PR from your branch\n\n\nEdit the PR title and description. The title should briefly describe the change. Follow the comments in the template to fill out the body of the PR, and you can delete the comments (everything between &lt;!-- and --&gt;) as you go. Be sure to fill out the checklist, checking off items as you complete them or striking through any irrelevant items. When you’re ready, click ‘Create pull request’ to open it.\n\n\n\nOpen the PR after editing the title and description\n\n\nOptionally, you can mark the PR as a draft if you’re not yet ready for it to be reviewed, then change it later when you’re ready.\n\n\n\nWe will do our best to follow the tidyverse code review principles: https://code-review.tidyverse.org/. The reviewer may suggest that you make changes before accepting your PR in order to improve the code quality or style. If that’s the case, continue to make changes in your branch and push them to GitHub, and they will appear in the PR.\nOnce the PR is approved, the maintainer will merge it and the issue(s) the PR links will close automatically. Congratulations and thank you for your contribution!\n\n\n\nAfter your PR has been merged, update your local clone of the repo by switching to the main branch and pulling the latest changes:\ngit checkout main\ngit pull\nIt’s a good idea to run git pull before creating a new branch so it will start from the most recent commits in main.\n\n\n\n\n\nGitHub Flow\nsemantic versioning guidelines\nchangelog guidelines\ntidyverse code review principles\nreproducible examples\nnf-core extensions for VS Code",
+    "crumbs": [
+      "Home",
+      "Developer Guide",
+      "How to contribute"
+    ]
+  },
+  {
+    "objectID": "devs/contributing.html#proposing-changes-with-issues",
+    "href": "devs/contributing.html#proposing-changes-with-issues",
+    "title": "Contributing to CHAMPAGNE",
+    "section": "",
+    "text": "If you want to make a change, it’s a good idea to first open an issue and make sure someone from the team agrees that it’s needed.\nIf you’ve decided to work on an issue, assign yourself to the issue so others will know you’re working on it.",
+    "crumbs": [
+      "Home",
+      "Developer Guide",
+      "How to contribute"
+    ]
+  },
+  {
+    "objectID": "devs/contributing.html#pull-request-process",
+    "href": "devs/contributing.html#pull-request-process",
+    "title": "Contributing to CHAMPAGNE",
+    "section": "",
+    "text": "We use GitHub Flow as our collaboration process. Follow the steps below for detailed instructions on contributing changes to CHAMPAGNE.\n\n\n\nGitHub Flow diagram\n\n\n\n\nIf you are a member of CCBR, you can clone this repository to your computer or development environment. Otherwise, you will first need to fork the repo and clone your fork. You only need to do this step once.\ngit clone https://github.com/CCBR/CHAMPAGNE\n\nCloning into ‘CHAMPAGNE’…  remote: Enumerating objects: 1136, done.  remote: Counting objects: 100% (463/463), done.  remote: Compressing objects: 100% (357/357), done.  remote: Total 1136 (delta 149), reused 332 (delta 103), pack-reused 673  Receiving objects: 100% (1136/1136), 11.01 MiB | 9.76 MiB/s, done.  Resolving deltas: 100% (530/530), done. \n\ncd CHAMPAGNE\n\n\n\n\nInstall nextflow and singularity or docker if needed (biowulf already has these available as modules).\nInstall the python dependencies with pip\npip install .\nIf you’re developing on biowulf, you can use our shared conda environment which already has these dependencies installed\n. \"/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh\"\nconda activate py311\nInstall pre-commit if you don’t already have it. Then from the repo’s root directory, run\npre-commit install\nThis will install the repo’s pre-commit hooks. You’ll only need to do this step the first time you clone the repo.\n\n\n\n\nCreate a Git branch for your pull request (PR). Give the branch a descriptive name for the changes you will make, such as iss-10 if it is for a specific issue.\n# create a new branch and switch to it\ngit branch iss-10\ngit switch iss-10\n\nSwitched to a new branch ‘iss-10’\n\n\n\n\nEdit the code, write and run tests, and update the documentation as needed.\n\n\nChanges to the python package code will also need unit tests to demonstrate that the changes work as intended. We write unit tests with pytest and store them in the tests/ subdirectory. Run the tests with python -m pytest.\nIf you change the workflow, please run the workflow with the test profile and make sure your new feature or bug fix works as intended.\nNextflow module tests use nf-test. On Biowulf, load the dependencies and run from the repository root:\nmodule load ccbrpipeliner nextflow python/3.12\nnf-test test --profile \"+singularity\"\nOn Apple Silicon macOS, install Pixi, Podman, and nf-test. Start the Podman machine, then run from the repository root:\npodman machine start\npixi run -e test test-podman\nPixi supplies Nextflow. The Podman test profile runs AMD64 containers, so the Podman machine must support AMD64 emulation. Test fixtures and container images require internet access. If Java reports certificate verification errors while connected to a VPN, retry off the VPN or configure Java to trust your organization’s CA; do not disable certificate verification.\nCI runs the same tests with --profile \"+docker\", and only runs the tests affected by a pull request. Add new module tests in each module’s tests/ directory; test data paths are defined in tests/test-data.config.\nRun only local module and subworkflow tests with:\npixi run -e test nf-test test modules/local subworkflows/local --profile +podman\nReal-execution cases are in main.real.nf.test and tagged real; the existing stub cases remain in main.nf.test. Real cases use the production processes with small local fixtures or reproducible generated datasets. Containers match the pipeline, except peak-workflow plotting uses the smaller pinned rocker/tidyverse:4.3.0 image to run the same R scripts. Run the real cases alone with:\npixi run -e test nf-test test modules/local/**/tests/*.real.nf.test subworkflows/local/**/tests/*.real.nf.test --profile +podman\nThe shared generator in tests/helpers/chipseq.nf creates small indexed BAMs, FASTQs, peak sets, references, and motif databases. It runs during test setup; no large generated alignments are committed. Initial container pulls can be large even though the test datasets are small. Keep the real scientific-output assertions separate from the faster stub metadata and wiring checks.\n\n\n\nIf you have added a new feature or changed the API of an existing feature, you will likely need to update the documentation in docs/. The docs website is built with Quarto. Preview it locally with quarto preview docs.\n\n\n\n\nIf you’re not sure how often you should commit or what your commits should consist of, we recommend following the “atomic commits” principle where each commit contains one new feature, fix, or task. Learn more about atomic commits here: https://www.freshconsulting.com/insights/blog/atomic-commits/\nFirst, add the files that you changed to the staging area:\ngit add path/to/changed/files/\nThen make the commit. Your commit message should follow the Conventional Commits specification. Briefly, each commit should start with one of the approved types such as feat, fix, docs, etc. followed by a description of the commit. Take a look at the Conventional Commits specification for more detailed information about how to write commit messages.\ngit commit -m 'feat: create function for awesome feature'\npre-commit will enforce that your commit message and the code changes are styled correctly and will attempt to make corrections if needed.\n\nCheck for added large files……………………………………….Passed  Fix End of Files…………………………………………………Passed  Trim Trailing Whitespace………………………………………….Failed \n\nhook id: trailing-whitespace \nexit code: 1 \nfiles were modified by this hook \n Fixing path/to/changed/files/file.txt   codespell……………………………………………………….Passed  style-files……………………………………(no files to check)Skipped  readme-rmd-rendered…………………………….(no files to check)Skipped  use-tidy-description……………………………(no files to check)Skipped \n\n\nIn the example above, one of the hooks modified a file in the proposed commit, so the pre-commit check failed. You can run git diff to see the changes that pre-commit made and git status to see which files were modified. To proceed with the commit, re-add the modified file(s) and re-run the commit command:\ngit add path/to/changed/files/file.txt\ngit commit -m 'feat: create function for awesome feature'\nThis time, all the hooks either passed or were skipped (e.g. hooks that only run on R code will not run if no R files were committed). When the pre-commit check is successful, the usual commit success message will appear after the pre-commit messages showing that the commit was created.\n\nCheck for added large files……………………………………….Passed  Fix End of Files…………………………………………………Passed  Trim Trailing Whitespace………………………………………….Passed  codespell……………………………………………………….Passed  style-files……………………………………(no files to check)Skipped  readme-rmd-rendered…………………………….(no files to check)Skipped  use-tidy-description……………………………(no files to check)Skipped  Conventional Commit………………………………………………Passed  [iss-10 9ff256e] feat: create function for awesome feature  1 file changed, 22 insertions(+), 3 deletions(-) \n\nFinally, push your changes to GitHub:\ngit push\nIf this is the first time you are pushing this branch, you may have to explicitly set the upstream branch:\ngit push --set-upstream origin iss-10\n\nEnumerating objects: 7, done.  Counting objects: 100% (7/7), done.  Delta compression using up to 10 threads  Compressing objects: 100% (4/4), done.  Writing objects: 100% (4/4), 648 bytes | 648.00 KiB/s, done.  Total 4 (delta 3), reused 0 (delta 0), pack-reused 0  remote: Resolving deltas: 100% (3/3), completed with 3 local objects.  remote:  remote: Create a pull request for ‘iss-10’ on GitHub by visiting:  remote: https://github.com/CCBR/CHAMPAGNE/pull/new/iss-10  remote:  To https://github.com/CCBR/CHAMPAGNE   [new branch] iss-10 -&gt; iss-10  branch ‘iss-10’ set up to track ‘origin/iss-10’. \n\nWe recommend pushing your commits often so they will be backed up on GitHub. You can view the files in your branch on GitHub at https://github.com/CCBR/CHAMPAGNE/tree/&lt;your-branch-name&gt; (replace &lt;your-branch-name&gt; with the actual name of your branch).\n\n\n\nOnce your branch is ready, create a PR on GitHub: https://github.com/CCBR/CHAMPAGNE/pull/new/\nSelect the branch you just pushed:\n\n\n\nCreate a new PR from your branch\n\n\nEdit the PR title and description. The title should briefly describe the change. Follow the comments in the template to fill out the body of the PR, and you can delete the comments (everything between &lt;!-- and --&gt;) as you go. Be sure to fill out the checklist, checking off items as you complete them or striking through any irrelevant items. When you’re ready, click ‘Create pull request’ to open it.\n\n\n\nOpen the PR after editing the title and description\n\n\nOptionally, you can mark the PR as a draft if you’re not yet ready for it to be reviewed, then change it later when you’re ready.\n\n\n\nWe will do our best to follow the tidyverse code review principles: https://code-review.tidyverse.org/. The reviewer may suggest that you make changes before accepting your PR in order to improve the code quality or style. If that’s the case, continue to make changes in your branch and push them to GitHub, and they will appear in the PR.\nOnce the PR is approved, the maintainer will merge it and the issue(s) the PR links will close automatically. Congratulations and thank you for your contribution!\n\n\n\nAfter your PR has been merged, update your local clone of the repo by switching to the main branch and pulling the latest changes:\ngit checkout main\ngit pull\nIt’s a good idea to run git pull before creating a new branch so it will start from the most recent commits in main.",
+    "crumbs": [
+      "Home",
+      "Developer Guide",
+      "How to contribute"
+    ]
+  },
+  {
+    "objectID": "devs/contributing.html#helpful-links-for-more-information",
+    "href": "devs/contributing.html#helpful-links-for-more-information",
+    "title": "Contributing to CHAMPAGNE",
+    "section": "",
+    "text": "GitHub Flow\nsemantic versioning guidelines\nchangelog guidelines\ntidyverse code review principles\nreproducible examples\nnf-core extensions for VS Code",
+    "crumbs": [
+      "Home",
+      "Developer Guide",
+      "How to contribute"
+    ]
+  },
+  {
+    "objectID": "diagram/index.html",
+    "href": "diagram/index.html",
+    "title": "CHAMPAGNE",
+    "section": "",
+    "text": "Workflow overview"
+  },
+  {
+    "objectID": "diagram/index.html#workflow-overview",
+    "href": "diagram/index.html#workflow-overview",
+    "title": "CHAMPAGNE",
+    "section": "",
+    "text": "Workflow overview"
+  },
+  {
+    "objectID": "diagram/index.html#detailed-diagram",
+    "href": "diagram/index.html#detailed-diagram",
+    "title": "CHAMPAGNE",
+    "section": "Detailed diagram",
+    "text": "Detailed diagram\n\n\n\nDetailed workflow diagram"
+  },
+  {
+    "objectID": "guide/intro.html",
+    "href": "guide/intro.html",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Workflow Diagram\n\n\nCHAMPAGNE is a comprehensive ChIP-seq analysis pipeline that integrates multiple preprocessing, quality control, peak calling, annotation, and downstream analysis steps. Below is a detailed breakdown of each workflow stage.\n\n\nValidates the sample sheet and contrast sheet to ensure the samples and contrasts names are defined correctly.\n\n\n\nRemoves sequencing adapters and low-quality bases from raw reads.\n\n\n\nConcatenates trimmed reads from multiple input files belonging to the same sample.\n\n\n\nPrepares genome information for a custom genome when given a fasta & gtf file.\n\nGenerates reference genome files and indices\nCreates chromosome sizes, effective genome size, blacklist regions, and other reference data\nOutputs annotation files for downstream use\n\n\n\n\nRemoves reads mapping to known problematic genomic regions (blacklisted regions).\n\n\n\n\nAligns reads to reference genome using BWA\nFilters alignments by quality score\nSorts BAM files for downstream processing\nGenerates flagstat metrics at alignment and filtering stages\n\n\n\n\n\nRemoves PCR duplicates using MACS2 filterdup (single-end) or Picard MarkDuplicates (paired-end)\nConverts BAM files to tag-align format for MACS2/SICER peak calling\nMaintains BAM/BAMPE format for GEM peak calling\nGenerates flagstat metrics for quality assessment\n\n\n\n\n\nCalculates fragment length estimates and quality metrics using PhantomPeaks\nAssesses library complexity and cross-correlation\n\n\n\n\n\nRuns FastQC on raw and trimmed reads for sequence quality assessment\nRuns FASTQ_SCREEN for contamination detection\nEstimates library complexity using PRESEQ\nCompiles alignment and deduplication statistics\nGenerates comprehensive QC report for MultiQC\n\n\n\n\nAligns reads to spike-in genome (e.g. Drosophila) for exogenous normalization and calculates normalization scaling factors using either the Guenther or deLorenzi method. See the spike-in normalization page for more details.\n\n\n\n\nGenerates genome-wide coverage bigWig files\nCreates input-normalized bigWig files (background subtraction)\nProduces correlation matrices and heatmaps\nCalculates fingerprint plots for quality assessment\n\n\n\n\n\nIdentifies enriched regions using multiple peak-calling algorithms:\n\nMACS2 (broad and narrow)\nGEM\nSICER\n\nCalculates fraction of reads in peaks (FRiP) for quality assessment\nComputes Jaccard index for peak overlap between samples\nAnalyzes peak width distributions\nOutputs peak files in BED format\n\n\n\n\n\n\n\nMerges peaks across replicates using union approach\nRetains all peaks detected in any replicate\nAnnotates and performs motif analysis on consensus peaks\n\n\n\n\n\nMerges peaks using the Corces algorithm (based on peak summits)\nMore stringent consensus approach\nAnnotates and performs motif analysis on consensus peaks\n\n\n\n\n\nUses ChIPseeker to assign genomic features to peaks and identify nearest genes\n\n\n\nGenerates motif predictions and enrichment statistics and identifies transcription factors likely binding at detected peaks.\n\nHOMER performs reference and de novo motif discovery in peak sequences\nMEME-AME performs known motif enrichment analysis against genomic motif databases\n\n\n\n\nPerforms differential binding analysis when contrasts are provided using one of two methods:\n\nDiffBind, used when each sample has at least 2 replicates\nMAnorm, used when any sample has only 1 replicate\n\n\n\n\nCompiles all quality metrics and statistics into an interactive HTML report summarizing all pipeline results",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#input-validation-input_check",
+    "href": "guide/intro.html#input-validation-input_check",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Validates the sample sheet and contrast sheet to ensure the samples and contrasts names are defined correctly.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#adapter-trimming-cutadapt",
+    "href": "guide/intro.html#adapter-trimming-cutadapt",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Removes sequencing adapters and low-quality bases from raw reads.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#input-pooling-pool_inputs",
+    "href": "guide/intro.html#input-pooling-pool_inputs",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Concatenates trimmed reads from multiple input files belonging to the same sample.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#genome-preparation-prepare_genome",
+    "href": "guide/intro.html#genome-preparation-prepare_genome",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Prepares genome information for a custom genome when given a fasta & gtf file.\n\nGenerates reference genome files and indices\nCreates chromosome sizes, effective genome size, blacklist regions, and other reference data\nOutputs annotation files for downstream use",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#blacklist-filtering-filter_blacklist",
+    "href": "guide/intro.html#blacklist-filtering-filter_blacklist",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Removes reads mapping to known problematic genomic regions (blacklisted regions).",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#genome-alignment-align_genome",
+    "href": "guide/intro.html#genome-alignment-align_genome",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Aligns reads to reference genome using BWA\nFilters alignments by quality score\nSorts BAM files for downstream processing\nGenerates flagstat metrics at alignment and filtering stages",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#deduplication-deduplicate",
+    "href": "guide/intro.html#deduplication-deduplicate",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Removes PCR duplicates using MACS2 filterdup (single-end) or Picard MarkDuplicates (paired-end)\nConverts BAM files to tag-align format for MACS2/SICER peak calling\nMaintains BAM/BAMPE format for GEM peak calling\nGenerates flagstat metrics for quality assessment",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#quality-metrics-phantom_peaks",
+    "href": "guide/intro.html#quality-metrics-phantom_peaks",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Calculates fragment length estimates and quality metrics using PhantomPeaks\nAssesses library complexity and cross-correlation",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#quality-control-qc",
+    "href": "guide/intro.html#quality-control-qc",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Runs FastQC on raw and trimmed reads for sequence quality assessment\nRuns FASTQ_SCREEN for contamination detection\nEstimates library complexity using PRESEQ\nCompiles alignment and deduplication statistics\nGenerates comprehensive QC report for MultiQC",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#spike-in-normalization-align_spikein-optional",
+    "href": "guide/intro.html#spike-in-normalization-align_spikein-optional",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Aligns reads to spike-in genome (e.g. Drosophila) for exogenous normalization and calculates normalization scaling factors using either the Guenther or deLorenzi method. See the spike-in normalization page for more details.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#genome-coverage-visualization-deeptools",
+    "href": "guide/intro.html#genome-coverage-visualization-deeptools",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Generates genome-wide coverage bigWig files\nCreates input-normalized bigWig files (background subtraction)\nProduces correlation matrices and heatmaps\nCalculates fingerprint plots for quality assessment",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#peak-calling-call_peaks",
+    "href": "guide/intro.html#peak-calling-call_peaks",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Identifies enriched regions using multiple peak-calling algorithms:\n\nMACS2 (broad and narrow)\nGEM\nSICER\n\nCalculates fraction of reads in peaks (FRiP) for quality assessment\nComputes Jaccard index for peak overlap between samples\nAnalyzes peak width distributions\nOutputs peak files in BED format",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#consensus-peak-calling-optional",
+    "href": "guide/intro.html#consensus-peak-calling-optional",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Merges peaks across replicates using union approach\nRetains all peaks detected in any replicate\nAnnotates and performs motif analysis on consensus peaks\n\n\n\n\n\nMerges peaks using the Corces algorithm (based on peak summits)\nMore stringent consensus approach\nAnnotates and performs motif analysis on consensus peaks",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#peak-annotation-annotate",
+    "href": "guide/intro.html#peak-annotation-annotate",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Uses ChIPseeker to assign genomic features to peaks and identify nearest genes",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#motif-discovery-motifs",
+    "href": "guide/intro.html#motif-discovery-motifs",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Generates motif predictions and enrichment statistics and identifies transcription factors likely binding at detected peaks.\n\nHOMER performs reference and de novo motif discovery in peak sequences\nMEME-AME performs known motif enrichment analysis against genomic motif databases",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#differential-analysis-diff-optional",
+    "href": "guide/intro.html#differential-analysis-diff-optional",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Performs differential binding analysis when contrasts are provided using one of two methods:\n\nDiffBind, used when each sample has at least 2 replicates\nMAnorm, used when any sample has only 1 replicate",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/intro.html#quality-report-aggregation-multiqc",
+    "href": "guide/intro.html#quality-report-aggregation-multiqc",
+    "title": "CHAMPAGNE Workflow Overview",
+    "section": "",
+    "text": "Compiles all quality metrics and statistics into an interactive HTML report summarizing all pipeline results",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "guide/params.html",
+    "href": "guide/params.html",
+    "title": "How to set pipeline parameters",
+    "section": "",
+    "text": "Any parameter can be set via the CLI using two hyphens (--) followed by the parameter name and value. For example:\nchampagne run --output /data/$USER/champagne_project \\\n    --input assets/samplesheet_full_mm10.csv \\\n    --contrasts assets/contrasts_full_mm10.csv \\\n    --genome mm10 \\\n    --run_gem false \\\n    --run_chipseeker false \\\n    --run_qc true\nAlternatively, you can create a YAML file with the parameters you want to set. This is useful for managing multiple parameters or for sharing configurations with others. Here’s an example YAML file with some common parameters:\nassets/params.yml\ninput: './assets/samplesheet_full_mm10.csv'\ncontrasts: './assets/contrasts_full_mm10.csv'\ngenome: mm10\nrun_gem: false\nrun_chipseeker: false\nrun_qc: true\nYou can then use these parameters with the -params-file option:\nchampagne run --output /data/$USER/champagne_project \\\n    -params-file assets/params.yml\nView the full list of pipeline parameters below.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#inputoutput-options",
+    "href": "guide/params.html#inputoutput-options",
+    "title": "How to set pipeline parameters",
+    "section": "Input/output options",
+    "text": "Input/output options\nThe most commonly used pipeline options\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\ninput\nPath to comma-separated file containing information about the samples in the experiment. \nstring\n\nTrue\n\n\n\ncontrasts\nOptional contrasts specification for differential analysis\nstring\n\n\n\n\n\ngenome\nReference genome (e.g. hg38, mm10). This can be a genome in conf/genomes.config, or see ‘Custom genome options’ to build a custom reference from a fasta & gtf file.\nstring\n\nTrue\n\n\n\noutputDir\n\nstring\n${launchDir}/results\n\nTrue\n\n\ntracedir\n\nstring\n${outputDir}/pipeline_info\n\nTrue\n\n\npublish_dir_mode\nHow to publish files to the results directory. This parameter sets Nextflow’s workflow.output.mode configuration option. (accepted: link|copy|move|copyNoFollow|rellink|symlink)\nstring\nlink",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#custom-genome-options",
+    "href": "guide/params.html#custom-genome-options",
+    "title": "How to set pipeline parameters",
+    "section": "Custom genome options",
+    "text": "Custom genome options\nUse these to build a custom reference genome not already listed in conf/genomes.config. For an example, see conf/test.config.\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nbuild_reference\nBuild the custom genome reference and stop without running sample analysis.\nboolean\nFalse\n\n\n\n\ngenome_fasta\nGenome fasta file\nstring\n\n\n\n\n\ngenes_gtf\nGenome gtf file\nstring\n\n\n\n\n\nblacklist\nCustom blacklisted sequences as a fasta file or bed file. These will be filtered out of the trimmed reads before aligning to the reference genome. If null, blacklist filtering will be skipped.\nstring\n\n\n\n\n\nread_length\nRead length used for counting unique kmers and computing the effective genome size.\ninteger\n\n\n\n\n\nrename_contigs\nFile with map to translate chromosome names (see assets/R64-1-1_ensembl2UCSC.txt as an example)\nstring\n\n\n\n\n\nmeme_motifs\nMotif file in MEME format. If null, MEME motif analysis will be skipped.\nstring\n\n\n\n\n\nbioc_txdb\nBioconductor TxDb annotation package name used by ChIPseeker (e.g. TxDb.Hsapiens.UCSC.hg38.knownGene). If null, ChIPseeker annotation will be skipped.\nstring\n\n\n\n\n\nbioc_annot\nBioconductor OrgDb annotation package name used by ChIPseeker (e.g. org.Hs.eg.db). If null, ChIPseeker annotation will be skipped.\nstring",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#general-parameters",
+    "href": "guide/params.html#general-parameters",
+    "title": "How to set pipeline parameters",
+    "section": "General parameters",
+    "text": "General parameters\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nmax_memory\n\nstring\n224 GB\n\n\n\n\nmax_cpus\n\ninteger\n32\n\n\n\n\nmax_time\n\nstring\n72 h\n\n\n\n\nalign_min_quality\n\ninteger\n6\n\n\n\n\nmin_fragment_length\n\ninteger\n200",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#spike-in-options",
+    "href": "guide/params.html#spike-in-options",
+    "title": "How to set pipeline parameters",
+    "section": "Spike-in options",
+    "text": "Spike-in options\nOptions for experiments that use a spike-in genome\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nspike_genome\nOptional spike-in genome (e.g. dmelr6.32, ecoli_k12). If null, spike-in normalization will not be performed.\nstring\n\n\n\n\n\nspike_genome_fasta\nSpike-in genome fasta file. Use this to build a custom spike-in reference when spike_genome is not listed in conf/genomes.config. Requires read_length.\nstring\n\n\n\n\n\nspike_blacklist_bed\nBlacklisted regions of the custom spike-in genome as a bed file, excluded by deepTools multiBamSummary. If null, no regions are excluded.\nstring\n\n\n\n\n\nspike_norm_method\nMethod to compute scaling factors for spike-in normalization. “guenther” uses a simple fraction of the reads aligning to the spike-in genome as described in https://doi.org/10.1016/j.celrep.2014.10.018. “delorenzi” uses deepTools multiBamSummary with –scalingFactors, which is similar to the method described in https://doi.org/10.1101/gr.168260.113. (accepted: delorenzi|guenther)\nstring\ndelorenzi\n\n\n\n\nspike_deeptools_bin_size\nWhen spike_norm_method is delorenzi, this sets –binSize in deepTools multiBamSummary\ninteger\n5000\n\n\n\n\nspike_deeptools_min_map_quality\nWhen spike_norm_method is delorenzi, this sets –minMappingQuality in deepTools multiBamSummary\ninteger\n30",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#qc-options",
+    "href": "guide/params.html#qc-options",
+    "title": "How to set pipeline parameters",
+    "section": "QC options",
+    "text": "QC options\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\ndeeptools_normalize_using\nThis parameter has been renamed to “deeptools_normalize_samples”. It is kept for backward compatibility.\nstring\nRPGC\n\nTrue\n\n\ndeeptools_normalize_samples\nThis normalization method is applied to the samples only, not the inputs. If using a spike-in genome, recommend setting this to “None”\nstring\nRPGC\n\n\n\n\ndeeptools_normalize_input\nNormalization method applied to inputs only. This way you can disable additional normalization for samples such as when using spike-in normalization, but still normalize the inputs.\nstring\nRPGC\n\n\n\n\ndeeptools_bin_size\n\ninteger\n25\n\n\n\n\ndeeptools_smooth_length\n\ninteger\n75\n\n\n\n\ndeeptools_corr_method\nCorrelation method for deeptools plotCorrelation heatmap and scatterplot (accepted: spearman|pearson)\nstring\nspearman\n\n\n\n\ndeeptools_excluded_chroms\n\nstring\nchrM chrX chrY\n\n\n\n\nmultiqc_config\n\nstring\nassets/multiqc_config.yaml\n\n\n\n\nmultiqc_logo\n\nstring\nassets/ccbr_logo.png",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#peak-callers",
+    "href": "guide/params.html#peak-callers",
+    "title": "How to set pipeline parameters",
+    "section": "Peak callers",
+    "text": "Peak callers\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nmacs_narrow_q\n\nnumber\n0.01\n\n\n\n\nmacs_broad_q\n\nnumber\n0.01\n\n\n\n\nmacs_broad_cutoff\n\nnumber\n0.01\n\n\n\n\ngem_read_dists\n\nstring\nassets/gem/Read_Distribution_default.txt\n\n\n\n\ngem_fold\n\ninteger\n3\n\n\n\n\ngem_k_min\n\ninteger\n6\n\n\n\n\ngem_k_max\n\ninteger\n13\n\n\n\n\nsicer_species\n\nstring",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#motifs",
+    "href": "guide/params.html#motifs",
+    "title": "How to set pipeline parameters",
+    "section": "motifs",
+    "text": "motifs\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nhomer_de_novo\n\nboolean\nTrue\n\n\n\n\nhomer_jaspar_db\n\nstring\nassets/JASPAR2022_CORE_vertebrates_non-redundant_pfms_jaspar.txt",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#run-control",
+    "href": "guide/params.html#run-control",
+    "title": "How to set pipeline parameters",
+    "section": "run control",
+    "text": "run control\nToggle various steps of the pipeline on/off\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nrun_qc\n\nboolean\nTrue\n\n\n\n\nrun_deeptools\n\nboolean\nTrue\n\n\n\n\nrun_normalize_input\n\nboolean\nTrue\n\n\n\n\nrun_call_peaks\n\nboolean\nTrue\n\n\n\n\nrun_gem\n\nboolean\nTrue\n\n\n\n\nrun_sicer\n\nboolean\nTrue\n\n\n\n\nrun_macs_broad\n\nboolean\nTrue\n\n\n\n\nrun_macs_narrow\n\nboolean\nTrue\n\n\n\n\nrun_normalize_peaks\n\nboolean\n\n\n\n\n\nrun_chipseeker\n\nboolean\n\n\n\n\n\nrun_homer\n\nboolean\nTrue\n\n\n\n\nrun_meme\n\nboolean\nTrue\n\n\n\n\nrun_consensus_union\n\nboolean\nTrue\n\n\n\n\nrun_consensus_corces\n\nboolean\nTrue",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#platform-options",
+    "href": "guide/params.html#platform-options",
+    "title": "How to set pipeline parameters",
+    "section": "Platform options",
+    "text": "Platform options\nOptions for the platform or HPC on which the pipeline is run. These are set by platform-specific profiles, e.g. conf/biowulf.config. If you are running the pipeline on biowulf, these will be set by CHAMPAGNE automatically.\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\nindex_dir\nAbsolute path to directory containing pre-built reference genomes.\nstring\n\n\n\n\n\nfastq_screen_conf\nPath to the config file for fastq screen. See assets/fastq_screen_biowulf.conf as an example.\nstring\n\n\n\n\n\nfastq_screen_db_dir\nPath to the directory containing fastq screen databases.\nstring",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#containers",
+    "href": "guide/params.html#containers",
+    "title": "How to set pipeline parameters",
+    "section": "containers",
+    "text": "containers\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\ncontainers_base\n\nstring\nnciccbr/ccbr_ubuntu_base_20.04:v6.1\n\n\n\n\ncontainers_deeptools\n\nstring\nnciccbr/ccbr_deeptools_3.5.3:v1\n\n\n\n\ncontainers_fastqc\n\nstring\nnciccbr/ccrgb_qctools:v4.0\n\n\n\n\ncontainers_fastq_screen\n\nstring\nnciccbr/ccbr_fastq_screen_0.14.1:v1.0\n\n\n\n\ncontainers_frip\n\nstring\nnciccbr/ccbr_frip:v1\n\n\n\n\ncontainers_gem\n\nstring\nnciccbr/ccbr_gem_3.4:v1\n\n\n\n\ncontainers_macs2\n\nstring\nnciccbr/ccbr_macs2_2.2.9.1:v1\n\n\n\n\ncontainers_multiqc\n\nstring\nnciccbr/ccbr_multiqc_1.15:v1\n\n\n\n\ncontainers_ngsqc\n\nstring\nnciccbr/ccbr_ngsqc_0.31:v1\n\n\n\n\ncontainers_phantom_peaks\n\nstring\nquay.io/biocontainers/phantompeakqualtools:1.2.2–hdfd78af_1\n\n\n\n\ncontainers_picard\n\nstring\nnciccbr/ccbr_picard_2.27.5:v1\n\n\n\n\ncontainers_preseq\n\nstring\nnciccbr/ccbr_preseq_v2.0:v1\n\n\n\n\ncontainers_r\n\nstring\nnciccbr/ccbr_r_4.3.0:v1\n\n\n\n\ncontainers_sicer\n\nstring\nnciccbr/ccbr_sicer2_1.0.3:v1",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/params.html#other-parameters",
+    "href": "guide/params.html#other-parameters",
+    "title": "How to set pipeline parameters",
+    "section": "Other parameters",
+    "text": "Other parameters\n\n\n\n\n\n\n\n\n\n\n\nParameter\nDescription\nType\nDefault\nRequired\nHidden\n\n\n\n\ndiffbind_report\n\nstring\nassets/diffbind_report.Rmd\n\nTrue",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Parameters"
+    ]
+  },
+  {
+    "objectID": "guide/troubleshooting.html",
+    "href": "guide/troubleshooting.html",
+    "title": "Troubleshooting",
+    "section": "",
+    "text": "If you submitted the pipeline to slurm, there will be a slurm log file log/ with the name log/slurm_${SLURM_JOB_ID}.log. Otherwise, it will be printed to standard output and standard error in your terminal.\n\n\n\nIf you are running the pipeline on a cluster, try resubmitting the job. Sometimes jobs fail due to temporary issues with the cluster or resources.\nCHAMPAGNE uses -resume by default, so calling champagne run with the same options as your original run will resume the pipeline from where it left off, rather than starting over. If you do want to start over, use --forceall with champagne run.\n\n\n\nIf you think your issue is a bug, open an issue and include a minimal reproducible example.\nIf you have a general question about the pipeline, ask it in discussions.\nGeneral Inquiries and Collaboration: Please contact the CCBR Pipeliner team at CCBR_Pipeliner@mail.nih.gov.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Troubleshooting"
+    ]
+  },
+  {
+    "objectID": "guide/troubleshooting.html#view-the-log-file",
+    "href": "guide/troubleshooting.html#view-the-log-file",
+    "title": "Troubleshooting",
+    "section": "",
+    "text": "If you submitted the pipeline to slurm, there will be a slurm log file log/ with the name log/slurm_${SLURM_JOB_ID}.log. Otherwise, it will be printed to standard output and standard error in your terminal.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Troubleshooting"
+    ]
+  },
+  {
+    "objectID": "guide/troubleshooting.html#try-resubmitting",
+    "href": "guide/troubleshooting.html#try-resubmitting",
+    "title": "Troubleshooting",
+    "section": "",
+    "text": "If you are running the pipeline on a cluster, try resubmitting the job. Sometimes jobs fail due to temporary issues with the cluster or resources.\nCHAMPAGNE uses -resume by default, so calling champagne run with the same options as your original run will resume the pipeline from where it left off, rather than starting over. If you do want to start over, use --forceall with champagne run.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Troubleshooting"
+    ]
+  },
+  {
+    "objectID": "guide/troubleshooting.html#getting-help",
+    "href": "guide/troubleshooting.html#getting-help",
+    "title": "Troubleshooting",
+    "section": "",
+    "text": "If you think your issue is a bug, open an issue and include a minimal reproducible example.\nIf you have a general question about the pipeline, ask it in discussions.\nGeneral Inquiries and Collaboration: Please contact the CCBR Pipeliner team at CCBR_Pipeliner@mail.nih.gov.",
+    "crumbs": [
+      "Home",
+      "User Guide",
+      "Troubleshooting"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "CHAMPAGNE 🍾",
+    "section": "",
+    "text": "CHromAtin iMmuno PrecipitAtion sequencinG aNalysis pipEline\n   \nView the full documentation website: https://ccbr.github.io/CHAMPAGNE\n\n\n\n\nCHAMPAGNE Workflow Overview. View a detailed version of the workflow diagram on the website.\n\n\n\n\n\nChampagne is installed on the Biowulf HPC. For installation in other execution environments, refer to the docs.\n\n\nChampagne is available on Biowulf in the ccbrpipeliner module. You’ll first need to start an interactive session, then load the module:\n# start an interactive node\nsinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200\n\n# load the ccbrpipeliner module\nmodule load ccbrpipeliner\n\n\n\n\nInitialize and run champagne with test data:\n# copy the champagne config files to your project directory.\n# --output is optional and defaults to your current working directory.\nchampagne init --output /data/$USER/champagne_project\n\n# preview the champagne jobs that will run with the test dataset\nchampagne run --output /data/$USER/champagne_project \\\n  --mode local -profile test -preview\n\n# launch a champagne run on slurm with the test dataset\nchampagne run --output /data/$USER/champagne_project \\\n  --mode slurm -profile test\nTo run champagne on your own data, you’ll need to create a sample sheet. Take a look at these examples:\n\nassets/samplesheet_test.csv - mix of single and paired end reads downloaded from github.\nassets/samplesheet_full_mm10.csv - single end reads on biowulf.\n\nOnce you’ve created a samplesheet with paths to your fastq files, run champagne with the --input option to specify the path to your sample sheet:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --input samplesheet.csv \\\n    --genome hg38\n\n\nYou can specify workflow parameters via the command line or in a YAML file. Here’s an example YAML file with some common parameters:\nassets/params.yml\ninput: './assets/samplesheet_full_mm10.csv'\ncontrasts: './assets/contrasts_full_mm10.csv'\ngenome: mm10\nrun_gem: false\nrun_chipseeker: false\nrun_qc: true\nYou can then use these parameters with the -params-file option:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    -params-file assets/params.yml\nView the full list of parameters in the documentation.\n\n\n\nView the list of available reference genomes to see which genomes are pre-configured for use with champagne on biowulf. If you’d like to use a genome that’s not already available, view the guide on preparing a custom reference genome.\n\n\n\nIf your experiment uses a spike-in control, you can specify the spike-in genome with the --spike_genome parameter:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --input samplesheet.csv \\\n    --genome hg38 \\\n    --spike_genome dmelr6.32 \\\n    --deeptools_normalize_using None\nView the spike-in docs for more information on how to use & customize spike-in controls.\n\n\n\n\nCome across a bug? Open an issue and include a minimal reproducible example.\nHave a question? Ask it in discussions.\nWant to contribute to this project? Check out the contributing guidelines.\nGeneral Inquiries and Collaboration: Please contact the CCBR Pipeliner team at CCBR_Pipeliner@mail.nih.gov.\n\n\n\nThis repo was originally generated from the CCBR Nextflow Template. The template takes inspiration from nektool1 and the nf-core template. If you plan to contribute your pipeline to nf-core, don’t use this template – instead follow nf-core’s instructions2.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#set-up",
+    "href": "index.html#set-up",
+    "title": "CHAMPAGNE 🍾",
+    "section": "",
+    "text": "Champagne is installed on the Biowulf HPC. For installation in other execution environments, refer to the docs.\n\n\nChampagne is available on Biowulf in the ccbrpipeliner module. You’ll first need to start an interactive session, then load the module:\n# start an interactive node\nsinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200\n\n# load the ccbrpipeliner module\nmodule load ccbrpipeliner",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#quickstart",
+    "href": "index.html#quickstart",
+    "title": "CHAMPAGNE 🍾",
+    "section": "",
+    "text": "Initialize and run champagne with test data:\n# copy the champagne config files to your project directory.\n# --output is optional and defaults to your current working directory.\nchampagne init --output /data/$USER/champagne_project\n\n# preview the champagne jobs that will run with the test dataset\nchampagne run --output /data/$USER/champagne_project \\\n  --mode local -profile test -preview\n\n# launch a champagne run on slurm with the test dataset\nchampagne run --output /data/$USER/champagne_project \\\n  --mode slurm -profile test\nTo run champagne on your own data, you’ll need to create a sample sheet. Take a look at these examples:\n\nassets/samplesheet_test.csv - mix of single and paired end reads downloaded from github.\nassets/samplesheet_full_mm10.csv - single end reads on biowulf.\n\nOnce you’ve created a samplesheet with paths to your fastq files, run champagne with the --input option to specify the path to your sample sheet:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --input samplesheet.csv \\\n    --genome hg38\n\n\nYou can specify workflow parameters via the command line or in a YAML file. Here’s an example YAML file with some common parameters:\nassets/params.yml\ninput: './assets/samplesheet_full_mm10.csv'\ncontrasts: './assets/contrasts_full_mm10.csv'\ngenome: mm10\nrun_gem: false\nrun_chipseeker: false\nrun_qc: true\nYou can then use these parameters with the -params-file option:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    -params-file assets/params.yml\nView the full list of parameters in the documentation.\n\n\n\nView the list of available reference genomes to see which genomes are pre-configured for use with champagne on biowulf. If you’d like to use a genome that’s not already available, view the guide on preparing a custom reference genome.\n\n\n\nIf your experiment uses a spike-in control, you can specify the spike-in genome with the --spike_genome parameter:\nchampagne run --output /data/$USER/champagne_project \\\n    --mode slurm \\\n    --input samplesheet.csv \\\n    --genome hg38 \\\n    --spike_genome dmelr6.32 \\\n    --deeptools_normalize_using None\nView the spike-in docs for more information on how to use & customize spike-in controls.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#help-contributing",
+    "href": "index.html#help-contributing",
+    "title": "CHAMPAGNE 🍾",
+    "section": "",
+    "text": "Come across a bug? Open an issue and include a minimal reproducible example.\nHave a question? Ask it in discussions.\nWant to contribute to this project? Check out the contributing guidelines.\nGeneral Inquiries and Collaboration: Please contact the CCBR Pipeliner team at CCBR_Pipeliner@mail.nih.gov.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#references",
+    "href": "index.html#references",
+    "title": "CHAMPAGNE 🍾",
+    "section": "",
+    "text": "This repo was originally generated from the CCBR Nextflow Template. The template takes inspiration from nektool1 and the nf-core template. If you plan to contribute your pipeline to nf-core, don’t use this template – instead follow nf-core’s instructions2.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "CHAMPAGNE 🍾",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nnektool https://github.com/beardymcjohnface/nektool↩︎\ninstructions for nf-core pipelines https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core↩︎",
+    "crumbs": [
+      "Home"
+    ]
+  }
+]
