@@ -130,19 +130,48 @@
             return;
         }
         if (placement === "none") return;
-        if (placement !== "fixed") {
-            var tools = document.querySelector("#quarto-header .quarto-navbar-tools");
-            var collapse = document.querySelector("#quarto-header .navbar-collapse");
-            var container = document.querySelector("#quarto-header .navbar .container-fluid, #quarto-header .navbar > .container");
+        if (placement === "sidebar") {
+            // Top of the docked sidebar; fall back to navbar-left without one.
+            var sidebar = document.querySelector("#quarto-sidebar");
+            if (sidebar) {
+                widget.classList.add("quarto-version-selector-sidebar");
+                sidebar.insertBefore(widget, sidebar.firstChild);
+                return;
+            }
+            placement = "navbar-left";
+        }
+        var fixed = placement === "fixed-left" || placement === "fixed-right";
+        if (!fixed) {
+            var header = "#quarto-header ";
+            var left = document.querySelector(header + ".navbar-collapse .navbar-nav.me-auto") ||
+                document.querySelector(header + ".navbar-collapse .navbar-nav");
+            var tools = document.querySelector(header + ".quarto-navbar-tools");
+            var collapse = document.querySelector(header + ".navbar-collapse");
+            var container = document.querySelector(header + ".navbar .container-fluid, " + header + ".navbar > .container");
+            widget.classList.add("quarto-version-selector-navbar");
+            if (placement === "navbar-right" && tools) {
+                tools.insertBefore(widget, tools.firstChild);
+                return;
+            }
+            if (placement !== "navbar-right" && left) {
+                // First item of the left navbar menu, as a Bootstrap nav item.
+                var item = document.createElement("li");
+                item.className = "nav-item quarto-version-selector-item";
+                item.appendChild(widget);
+                left.insertBefore(item, left.firstChild);
+                return;
+            }
             var host = tools || collapse || container;
             if (host) {
-                widget.classList.add("quarto-version-selector-navbar");
                 if (tools) host.insertBefore(widget, host.firstChild);
                 else host.appendChild(widget);
                 return;
             }
+            widget.classList.remove("quarto-version-selector-navbar");
         }
-        widget.classList.add("quarto-version-selector-fixed");
+        // No navbar: pin to the matching side (navbar-left -> fixed-left).
+        var side = placement === "fixed-left" || placement === "navbar-left" ? "left" : "right";
+        widget.classList.add("quarto-version-selector-fixed", "quarto-version-selector-fixed-" + side);
         document.body.appendChild(widget);
     }
 
@@ -154,7 +183,7 @@
             ? window.location.pathname.slice(root.pathname.length)
             : "";
         var versionsFile = meta("version-selector:versions-file", "versions.json");
-        var placement = meta("version-selector:placement", "auto");
+        var placement = meta("version-selector:placement", "navbar-left");
 
         fetch(new URL(versionsFile, siteRoot).href)
             .then(function (r) {

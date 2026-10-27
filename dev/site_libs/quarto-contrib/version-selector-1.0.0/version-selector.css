@@ -80,9 +80,38 @@
   align-self: center;
 }
 
+.quarto-version-selector-item {
+  display: flex;
+  align-items: center;
+}
+
+.quarto-version-selector-sidebar {
+  --version-selector-fg: var(--bs-body-color);
+  --version-selector-fg-hover: var(--bs-link-hover-color);
+  display: block;
+  margin: 0;
+}
+
+/* Quarto pads every sidebar child by 1em; tighten the gap below the selector. */
+#quarto-sidebar>.quarto-version-selector-sidebar+* {
+  padding-top: 0.5em;
+}
+
+.quarto-version-selector-sidebar .quarto-version-selector-menu {
+  right: auto;
+  left: 0;
+}
+
 .quarto-version-selector-fixed {
   position: fixed;
   top: 0.5rem;
-  right: 0.5rem;
   z-index: 1100;
+}
+
+.quarto-version-selector-fixed-left {
+  left: 0.5rem;
+}
+
+.quarto-version-selector-fixed-right {
+  right: 0.5rem;
 }
