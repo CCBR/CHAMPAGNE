@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.19">
+<meta name="generator" content="quarto-1.10.20">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -77,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-590a784f2ee704dda8193c56deec6dde.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46ba4298f0a949ace67e1ffae482fa5a.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-590a784f2ee704dda8193c56deec6dde.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e85cac113bbd539fc5f0bbfa2b118cb9.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0fc2ddc39a9e0f26236c20755091d677.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e85cac113bbd539fc5f0bbfa2b118cb9.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-bdc110991319f6491ce756c4c8d0b0d3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -550,8 +550,18 @@ gtag('config', 'G-D3SL9V30KL', { 'anonymize_ip': true});
 <p>CI runs the same tests with <code>--profile "+docker"</code>, and only runs the tests affected by a pull request. Add new module tests in each module’s <code>tests/</code> directory; test data paths are defined in <code>tests/test-data.config</code>.</p>
 <p>Run only local module and subworkflow tests with:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> run <span class="at">-e</span> test nf-test test modules/local subworkflows/local <span class="at">--profile</span> +podman</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Follow the nf-core component layout for all modules and subworkflows:</p>
+<ul>
+<li>Each module contains exactly one process in <code>modules/local/&lt;tool&gt;/main.nf</code> or <code>modules/local/&lt;tool&gt;/&lt;subtool&gt;/main.nf</code>. For example, deepTools coverage and summary processes live in <code>deeptools/bam_coverage/main.nf</code> and <code>deeptools/multibam_summary/main.nf</code>, respectively.</li>
+<li>Each subworkflow contains exactly one named workflow in <code>subworkflows/local/&lt;name&gt;/main.nf</code>.</li>
+<li>Use lowercase directory names with underscores. Keep templates and other supporting files beside the component that uses them.</li>
+<li>Put nf-test suites in the component’s <code>tests/</code> directory, named <code>main.nf.test</code> and, for real-execution cases, <code>main.real.nf.test</code>. The suite’s script declaration must be <code>script "../main.nf"</code>.</li>
+<li>Include components by directory, updating relative paths and test setup scripts whenever moving a component. Preserve process names and aliases so process selectors, output naming, and publish rules remain unchanged.</li>
+</ul>
+<p>Check nf-test discovery without running containers:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> run nf-test test modules/local subworkflows/local <span class="at">--dry-run</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Real-execution cases are in <code>main.real.nf.test</code> and tagged <code>real</code>; the existing stub cases remain in <code>main.nf.test</code>. Real cases use the production processes with small local fixtures or reproducible generated datasets. Containers match the pipeline, except peak-workflow plotting uses the smaller pinned <code>rocker/tidyverse:4.3.0</code> image to run the same R scripts. Run the real cases alone with:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> run <span class="at">-e</span> test nf-test test modules/local/<span class="pp">**</span>/tests/<span class="pp">*</span>.real.nf.test subworkflows/local/<span class="pp">**</span>/tests/<span class="pp">*</span>.real.nf.test <span class="at">--profile</span> +podman</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> run <span class="at">-e</span> test nf-test test modules/local subworkflows/local <span class="at">--tag</span> real <span class="at">--profile</span> +podman</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The shared generator in <code>tests/helpers/chipseq.nf</code> creates small indexed BAMs, FASTQs, peak sets, references, and motif databases. It runs during test setup; no large generated alignments are committed. Initial container pulls can be large even though the test datasets are small. Keep the real scientific-output assertions separate from the faster stub metadata and wiring checks.</p>
 </section>
 <section id="document" class="level4">
@@ -563,9 +573,9 @@ gtag('config', 'G-D3SL9V30KL', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="commit-and-push-your-changes">Commit and push your changes</h3>
 <p>If you’re not sure how often you should commit or what your commits should consist of, we recommend following the “atomic commits” principle where each commit contains one new feature, fix, or task. Learn more about atomic commits here: <a href="https://www.freshconsulting.com/insights/blog/atomic-commits/" class="uri">https://www.freshconsulting.com/insights/blog/atomic-commits/</a></p>
 <p>First, add the files that you changed to the staging area:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add path/to/changed/files/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add path/to/changed/files/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then make the commit. Your commit message should follow the <a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> specification. Briefly, each commit should start with one of the approved types such as <code>feat</code>, <code>fix</code>, <code>docs</code>, etc. followed by a description of the commit. Take a look at the <a href="https://www.conventionalcommits.org/en/v1.0.0/#summary">Conventional Commits specification</a> for more detailed information about how to write commit messages.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">'feat: create function for awesome feature'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">'feat: create function for awesome feature'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>pre-commit will enforce that your commit message and the code changes are styled correctly and will attempt to make corrections if needed.</p>
 <blockquote class="blockquote">
 <p>Check for added large files……………………………………….Passed <br> Fix End of Files…………………………………………………Passed <br> Trim Trailing Whitespace………………………………………….Failed <br></p>
@@ -577,16 +587,16 @@ gtag('config', 'G-D3SL9V30KL', { 'anonymize_ip': true});
 </ul>
 </blockquote>
 <p>In the example above, one of the hooks modified a file in the proposed commit, so the pre-commit check failed. You can run <code>git diff</code> to see the changes that pre-commit made and <code>git status</code> to see which files were modified. To proceed with the commit, re-add the modified file(s) and re-run the commit command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add path/to/changed/files/file.txt</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">'feat: create function for awesome feature'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add path/to/changed/files/file.txt</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">'feat: create function for awesome feature'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This time, all the hooks either passed or were skipped (e.g.&nbsp;hooks that only run on R code will not run if no R files were committed). When the pre-commit check is successful, the usual commit success message will appear after the pre-commit messages showing that the commit was created.</p>
 <blockquote class="blockquote">
 <p>Check for added large files……………………………………….Passed <br> Fix End of Files…………………………………………………Passed <br> Trim Trailing Whitespace………………………………………….Passed <br> codespell……………………………………………………….Passed <br> style-files……………………………………(no files to check)Skipped <br> readme-rmd-rendered…………………………….(no files to check)Skipped <br> use-tidy-description……………………………(no files to check)Skipped <br> Conventional Commit………………………………………………Passed <br> [iss-10 9ff256e] feat: create function for awesome feature <br> 1 file changed, 22 insertions(+), 3 deletions(-) <br></p>
 </blockquote>
 <p>Finally, push your changes to GitHub:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If this is the first time you are pushing this branch, you may have to explicitly set the upstream branch:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">--set-upstream</span> origin iss-10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">--set-upstream</span> origin iss-10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <blockquote class="blockquote">
 <p>Enumerating objects: 7, done. <br> Counting objects: 100% (7/7), done. <br> Delta compression using up to 10 threads <br> Compressing objects: 100% (4/4), done. <br> Writing objects: 100% (4/4), 648 bytes | 648.00 KiB/s, done. <br> Total 4 (delta 3), reused 0 (delta 0), pack-reused 0 <br> remote: Resolving deltas: 100% (3/3), completed with 3 local objects. <br> remote: <br> remote: Create a pull request for ‘iss-10’ on GitHub by visiting: <br> remote: https://github.com/CCBR/CHAMPAGNE/pull/new/iss-10 <br> remote: <br> To https://github.com/CCBR/CHAMPAGNE <br> <br> [new branch] iss-10 -&gt; iss-10 <br> branch ‘iss-10’ set up to track ‘origin/iss-10’. <br></p>
 </blockquote>
@@ -619,8 +629,8 @@ gtag('config', 'G-D3SL9V30KL', { 'anonymize_ip': true});
 <section id="after-your-pr-has-been-merged" class="level3">
 <h3 class="anchored" data-anchor-id="after-your-pr-has-been-merged">After your PR has been merged</h3>
 <p>After your PR has been merged, update your local clone of the repo by switching to the main branch and pulling the latest changes:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>It’s a good idea to run <code>git pull</code> before creating a new branch so it will start from the most recent commits in main.</p>
 </section>
 </section>
