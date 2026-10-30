@@ -1,0 +1,69 @@
+nextflow_process {
+    name "Test Process FILTER_QUALITY (real)"
+    script "../main.nf"
+    process "FILTER_QUALITY"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+
+    test("Filter single-end alignments with the real samtools command") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'single', single_end: true], file("\$projectDir/tests/test_data/alignments.sam")]
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                align_min_quality = 30
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_SORT.out.bam
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.bam[0][0] == [id: 'single', single_end: true] },
+                { assert path(process.out.bam[0][1]).fileName.toString() == 'alignments.sorted.filtered.bam' },
+                { assert new java.util.zip.GZIPInputStream(path(process.out.bam[0][1]).newInputStream()).withCloseable { stream -> stream.readNBytes(4).toList() } == [66, 65, 77, 1] }
+            )
+        }
+    }
+
+    test("Filter paired-end alignments with the real Python helper") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'paired', single_end: false], file("\$projectDir/tests/test_data/alignments.sam")]
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                align_min_quality = 30
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_SORT.out.bam
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.bam[0][0] == [id: 'paired', single_end: false] },
+                { assert new java.util.zip.GZIPInputStream(path(process.out.bam[0][1]).newInputStream()).withCloseable { stream -> stream.readNBytes(4).toList() } == [66, 65, 77, 1] }
+            )
+        }
+    }
+}

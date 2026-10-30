@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow QC"
-    script "../../qc.nf"
+    script "../main.nf"
     workflow "QC"
     config "tests/nextflow_stub.config"
     autoSort false

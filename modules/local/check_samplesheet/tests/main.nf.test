@@ -1,7 +1,7 @@
 nextflow_process {
 
     name "Test Process CHECK_SAMPLESHEET"
-    script "../../check_samplesheet.nf"
+    script "../main.nf"
     process "CHECK_SAMPLESHEET"
     tag "check_samplesheet"
     tag "modules_local"

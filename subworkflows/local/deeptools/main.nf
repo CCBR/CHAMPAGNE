@@ -1,13 +1,13 @@
-include { BAM_COVERAGE
-          NORMALIZE_INPUT
-          BIGWIG_SUM
-          BED_PROTEIN_CODING
-          COMPUTE_MATRIX
-          PLOT_FINGERPRINT
-          PLOT_CORRELATION
-          PLOT_PCA
-          PLOT_HEATMAP
-          PLOT_PROFILE        } from "../../../modules/local/deeptools.nf"
+include { BAM_COVERAGE } from "../../../modules/local/deeptools/bam_coverage"
+include { NORMALIZE_INPUT } from "../../../modules/local/deeptools/normalize_input"
+include { BIGWIG_SUM } from "../../../modules/local/deeptools/bigwig_sum"
+include { BED_PROTEIN_CODING } from "../../../modules/local/custom/bed_protein_coding"
+include { COMPUTE_MATRIX } from "../../../modules/local/deeptools/compute_matrix"
+include { PLOT_FINGERPRINT } from "../../../modules/local/deeptools/plot_fingerprint"
+include { PLOT_CORRELATION } from "../../../modules/local/deeptools/plot_correlation"
+include { PLOT_PCA } from "../../../modules/local/deeptools/plot_pca"
+include { PLOT_HEATMAP } from "../../../modules/local/deeptools/plot_heatmap"
+include { PLOT_PROFILE } from "../../../modules/local/deeptools/plot_profile"
 
 workflow DEEPTOOLS {
     take:

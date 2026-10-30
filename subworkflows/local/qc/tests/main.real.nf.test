@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow QC (real)"
-    script "../../qc.nf"
+    script "../main.nf"
     workflow "QC"
     autoSort false
     tag "subworkflows_local"
@@ -17,7 +17,7 @@ nextflow_workflow {
                 }
             }
             run("SAMTOOLS_INDEX") {
-                script "modules/local/samtools_index.nf"
+                script "modules/local/samtools/index/main.nf"
                 process {
                     """
                     input[0] = GENERATE_CHIPSEQ.out.bam.map { meta, bam, bai -> [meta, bam] }

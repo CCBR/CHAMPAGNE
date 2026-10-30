@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow CALL_PEAKS"
-    script "../../peaks.nf"
+    script "../main.nf"
     workflow "CALL_PEAKS"
     config "tests/nextflow_stub.config"
     tag "subworkflows_local"

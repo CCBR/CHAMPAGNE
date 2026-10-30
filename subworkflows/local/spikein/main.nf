@@ -1,14 +1,14 @@
 
 include { BWA_MEM               } from '../../../modules/CCBR/bwa/mem'
-include { DEDUPLICATE           } from "../../../subworkflows/local/deduplicate.nf"
+include { DEDUPLICATE           } from "../deduplicate"
 include { SAMTOOLS_COUNT        } from '../../../modules/local/samtools/count'
-include { COMPUTE_SCALINGFACTOR } from '../../../modules/local/spikein/compute_scalingFactor'
-include { MULTIBAM_SUMMARY      } from "../../../modules/local/deeptools.nf"
+include { COMPUTE_SCALINGFACTOR } from '../../../modules/local/spikein/compute_scaling_factor'
+include { MULTIBAM_SUMMARY } from "../../../modules/local/deeptools/multibam_summary"
 include { MAKE_TABLE            } from '../../../modules/local/spikein/make_table'
 include { BWA_INDEX as BWA_INDEX_SPIKEIN                 } from '../../../modules/CCBR/bwa/index'
 include { KHMER_UNIQUEKMERS as KHMER_UNIQUEKMERS_SPIKEIN } from '../../../modules/CCBR/khmer/uniquekmers'
-include { GUNZIP_REFERENCE as GUNZIP_SPIKEIN_FASTA
-          SPLIT_REF_CHROMS as SPLIT_SPIKEIN_CHROMS       } from '../../../modules/local/prepare_genome.nf'
+include { GUNZIP_REFERENCE as GUNZIP_SPIKEIN_FASTA } from '../../../modules/local/gunzip'
+include { SPLIT_REF_CHROMS as SPLIT_SPIKEIN_CHROMS } from '../../../modules/local/custom/split_ref_chroms'
 
 workflow ALIGN_SPIKEIN {
     take:

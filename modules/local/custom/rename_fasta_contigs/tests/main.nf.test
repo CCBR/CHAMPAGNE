@@ -1,0 +1,29 @@
+nextflow_process {
+
+    name "Test Process RENAME_FASTA_CONTIGS"
+    script "../main.nf"
+    process "RENAME_FASTA_CONTIGS"
+    tag "prepare_genome"
+    tag "modules_local"
+    tag "modules"
+
+    test("Rename mapped contigs and preserve unmapped contigs and sequences") {
+        when {
+            process {
+                """
+                def contigMap = file("$outputDir/contigs.tsv")
+                contigMap.text = '1\\tchr1\\n2\\tchr2\\n'
+                input[0] = file("\$projectDir/tests/test_data/genome.fa", checkIfExists: true)
+                input[1] = contigMap
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.fasta[0]).fileName.toString() == 'genome_renamed.fa' },
+                { assert path(process.out.fasta[0]).readLines() == ['>chr1', 'ACGTACGT', '>chr2', 'TTTTCCCCAAAA', '>unplaced_scaffold', 'GGGG'] }
+            )
+        }
+    }
+}

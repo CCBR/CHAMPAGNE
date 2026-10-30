@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow ANNOTATE"
-    script "../../annotate.nf"
+    script "../main.nf"
     workflow "ANNOTATE"
     config "tests/nextflow_stub.config"
     tag "subworkflows_local"

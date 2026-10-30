@@ -1,7 +1,7 @@
 nextflow_workflow {
 
     name "Test Workflow PREPARE_BLACKLIST"
-    script "../../prepare_blacklist.nf"
+    script "../main.nf"
     workflow "PREPARE_BLACKLIST"
     tag "prepare_blacklist"
     tag "subworkflows_local"

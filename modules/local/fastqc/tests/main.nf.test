@@ -1,0 +1,26 @@
+nextflow_process {
+    name "Test Process FASTQC"
+    script "../main.nf"
+    process "FASTQC"
+    config "tests/nextflow_stub.config"
+    tag "modules_local"
+    tag "modules"
+    tag "stub"
+    test("Stub: distinguish raw-read QC reports by sample and read stage") {
+        options "-stub-run"
+        when {
+            process {
+                """
+                input[0] = [[id: 'sample'], [file("\$projectDir/tests/test_data/reads_1.fastq")], 'raw']
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.html[0]).fileName.toString() == 'sample_raw_fastqc.html' },
+                { assert path(process.out.zip[0]).fileName.toString() == 'sample_raw_fastqc.zip' }
+            )
+        }
+    }
+}

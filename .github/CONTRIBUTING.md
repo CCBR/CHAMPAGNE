@@ -130,6 +130,30 @@ Run only local module and subworkflow tests with:
 pixi run -e test nf-test test modules/local subworkflows/local --profile +podman
 ```
 
+Follow the nf-core component layout for all modules and subworkflows:
+
+- Each module contains exactly one process in
+  `modules/local/<tool>/main.nf` or
+  `modules/local/<tool>/<subtool>/main.nf`. For example, deepTools coverage
+  and summary processes live in `deeptools/bam_coverage/main.nf` and
+  `deeptools/multibam_summary/main.nf`, respectively.
+- Each subworkflow contains exactly one named workflow in
+  `subworkflows/local/<name>/main.nf`.
+- Use lowercase directory names with underscores. Keep templates and other
+  supporting files beside the component that uses them.
+- Put nf-test suites in the component's `tests/` directory, named
+  `main.nf.test` and, for real-execution cases, `main.real.nf.test`.
+  The suite's script declaration must be `script "../main.nf"`.
+- Include components by directory, updating relative paths and test setup
+  scripts whenever moving a component. Preserve process names and aliases
+  so process selectors, output naming, and publish rules remain unchanged.
+
+Check nf-test discovery without running containers:
+
+```sh
+pixi run nf-test test modules/local subworkflows/local --dry-run
+```
+
 Real-execution cases are in `main.real.nf.test` and tagged `real`; the existing
 stub cases remain in `main.nf.test`. Real cases use the production processes
 with small local fixtures or reproducible generated datasets. Containers match
@@ -138,7 +162,7 @@ the pipeline, except peak-workflow plotting uses the smaller pinned
 Run the real cases alone with:
 
 ```sh
-pixi run -e test nf-test test modules/local/**/tests/*.real.nf.test subworkflows/local/**/tests/*.real.nf.test --profile +podman
+pixi run -e test nf-test test modules/local subworkflows/local --tag real --profile +podman
 ```
 
 The shared generator in `tests/helpers/chipseq.nf` creates small indexed BAMs,

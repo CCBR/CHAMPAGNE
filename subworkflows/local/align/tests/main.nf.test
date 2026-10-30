@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow ALIGN_GENOME"
-    script "../../align.nf"
+    script "../main.nf"
     workflow "ALIGN_GENOME"
     config "tests/nextflow_stub.config"
     tag "subworkflows_local"

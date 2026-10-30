@@ -1,7 +1,7 @@
 nextflow_workflow {
 
     name "Test Workflow PREPARE_GENOME"
-    script "../../prepare_genome.nf"
+    script "../main.nf"
     workflow "PREPARE_GENOME"
     tag "prepare_genome"
     tag "subworkflows_local"

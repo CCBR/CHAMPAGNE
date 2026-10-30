@@ -2,29 +2,29 @@ nextflow.enable.dsl = 2
 
 // SUBWORKFLOWS
 include { FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS as DOWNLOAD_FASTQ } from './subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools/'
-include { INPUT_CHECK              } from './subworkflows/local/input_check.nf'
-include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome.nf'
+include { INPUT_CHECK              } from './subworkflows/local/input_check'
+include { PREPARE_GENOME           } from './subworkflows/local/prepare_genome'
 include { ALIGN_SPIKEIN            } from './subworkflows/local/spikein/'
 include { POOL_INPUTS              } from './subworkflows/local/pool_inputs/'
 include { FILTER_BLACKLIST         } from './subworkflows/CCBR/filter_blacklist/'
-include { ALIGN_GENOME             } from "./subworkflows/local/align.nf"
-include { DEDUPLICATE              } from "./subworkflows/local/deduplicate.nf"
+include { ALIGN_GENOME             } from "./subworkflows/local/align"
+include { DEDUPLICATE              } from "./subworkflows/local/deduplicate"
 include { DEEPTOOLS                } from "./subworkflows/local/deeptools"
-include { QC                       } from './subworkflows/local/qc.nf'
-include { CALL_PEAKS               } from './subworkflows/local/peaks.nf'
+include { QC                       } from './subworkflows/local/qc'
+include { CALL_PEAKS               } from './subworkflows/local/peaks'
 include { CONSENSUS_PEAKS as CONSENSUS_UNION } from './subworkflows/CCBR/consensus_peaks/'
 include { MOTIFS as MOTIFS_PEAKS;
           MOTIFS as MOTIFS_CONS_UNION;
           MOTIFS as MOTIFS_CONS_CORCES       } from './subworkflows/local/motifs/'
 include { ANNOTATE as ANNOTATE_CONS_UNION;
-          ANNOTATE as ANNOTATE_CONS_CORCES   } from './subworkflows/local/annotate.nf'
+          ANNOTATE as ANNOTATE_CONS_CORCES   } from './subworkflows/local/annotate'
 include { DIFF                     } from './subworkflows/local/differential/'
 
 // MODULES
 include { CUTADAPT                 } from "./modules/CCBR/cutadapt/"
-include { PHANTOM_PEAKS
-          PPQT_PROCESS
-          MULTIQC                  } from "./modules/local/qc.nf"
+include { PHANTOM_PEAKS } from "./modules/local/phantompeakqualtools/run_spp"
+include { PPQT_PROCESS } from "./modules/local/phantompeakqualtools/process"
+include { MULTIQC } from "./modules/local/multiqc"
 include { CONSENSUS_CORCES         } from "./modules/local/consensus/corces/main.nf"
 include { CUSTOM_COUNTFASTQ        } from './modules/CCBR/custom/countfastq'
 

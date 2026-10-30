@@ -1,0 +1,39 @@
+nextflow_process {
+    name "Test Process BAM_COVERAGE (real)"
+    script "../main.nf"
+    process "BAM_COVERAGE"
+    tag "modules_local"
+    tag "modules"
+    tag "real"
+    test("Create a normalized BigWig from a small indexed alignment") {
+        setup {
+            run("SAMTOOLS_SORT") {
+                script "modules/CCBR/samtools/sort/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'single', single_end: true], file("\$projectDir/tests/test_data/alignments.sam")]
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                deeptools_bin_size = 10
+                deeptools_smooth_length = 10
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_SORT.out.bam.map { meta, bam, bai -> [meta, bam, bai, 'CPM', 1.0, 8, 1000] }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.bigwig[0][0] == [id: 'single', single_end: true] },
+                { assert path(process.out.bigwig[0][1]).fileName.toString() == 'single.bw' },
+                { assert path(process.out.bigwig[0][1]).newInputStream().withCloseable { stream -> stream.readNBytes(4).collect { it & 255 } } == [38, 252, 143, 136] }
+            )
+        }
+    }
+}

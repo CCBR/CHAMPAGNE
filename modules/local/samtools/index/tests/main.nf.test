@@ -1,0 +1,32 @@
+nextflow_process {
+
+    name "Test Process SAMTOOLS_INDEX"
+    script "../main.nf"
+    process "SAMTOOLS_INDEX"
+    tag "samtools_index"
+    tag "modules_local"
+    tag "modules"
+
+    test("Sort and index alignments and report mapped and unmapped counts") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'test', single_end: false], file("\$projectDir/tests/test_data/alignments.sam", checkIfExists: true)]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.bam[0][0] == [id: 'test', single_end: false] },
+                { assert path(process.out.bam[0][1]).fileName.toString() == 'alignments.sort.bam' },
+                { assert path(process.out.bam[0][1]).size() > 0 },
+                { assert path(process.out.bam[0][2]).fileName.toString() == 'alignments.sort.bam.bai' },
+                { assert path(process.out.bam[0][2]).size() > 0 },
+                { assert path(process.out.flagstat[0][1]).text.contains('6 + 0 in total') },
+                { assert path(process.out.flagstat[0][1]).text.contains('5 + 0 mapped') },
+                { assert path(process.out.flagstat[0][2]).readLines() == ['chr1\t1000\t5\t0', '*\t0\t0\t1'] }
+            )
+        }
+    }
+}

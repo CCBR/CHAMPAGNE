@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow CALL_PEAKS (real)"
-    script "../../peaks.nf"
+    script "../main.nf"
     workflow "CALL_PEAKS"
     autoSort false
     tag "subworkflows_local"

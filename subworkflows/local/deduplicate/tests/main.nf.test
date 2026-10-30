@@ -1,6 +1,6 @@
 nextflow_workflow {
     name "Test Workflow DEDUPLICATE"
-    script "../../deduplicate.nf"
+    script "../main.nf"
     workflow "DEDUPLICATE"
     config "tests/nextflow_stub.config"
     tag "subworkflows_local"

@@ -1,7 +1,7 @@
 nextflow_workflow {
 
     name "Test Workflow INPUT_CHECK"
-    script "../../input_check.nf"
+    script "../main.nf"
     workflow "INPUT_CHECK"
     tag "input_check"
     tag "subworkflows_local"
