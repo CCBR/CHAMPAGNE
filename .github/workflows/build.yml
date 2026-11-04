@@ -147,7 +147,7 @@ jobs:
           pip install pdiff
 
       - name: Clean up Disk space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
 
       - name: Run nf-test
         run: |
