@@ -1,5 +1,6 @@
 ## CHAMPAGNE development version
 
+- Pin `ccbr_tools` to v0.7. (#400, @kelly-sovacool)
 - The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)
 
 ## CHAMPAGNE 0.7.0
