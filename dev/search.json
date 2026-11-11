@@ -186,7 +186,7 @@
     "href": "changelog.html",
     "title": "Changelog",
     "section": "",
-    "text": "The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
+    "text": "Pin ccbr_tools to v0.7. (#400, @kelly-sovacool)\nThe documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
     "crumbs": [
       "Home",
       "Changelog"
@@ -197,7 +197,7 @@
     "href": "changelog.html#champagne-development-version",
     "title": "Changelog",
     "section": "",
-    "text": "The documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
+    "text": "Pin ccbr_tools to v0.7. (#400, @kelly-sovacool)\nThe documentation website is now built with Quarto and uses the FNL theme, with a version selector for viewing docs of past releases. (#394, @kelly-sovacool)",
     "crumbs": [
       "Home",
       "Changelog"
